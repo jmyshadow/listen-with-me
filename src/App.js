@@ -1,11 +1,17 @@
 import "./App.css";
 import Login from "./components/Login";
+import HomePage from "./components/HomePage";
+
+//
+// client specific urls in dev in:
+//  Login.js
+//  useAuth.js
+//
 
 function App() {
+  const code = window.location.search.split("=")[1];
   return (
-    <div className="App">
-      <Login />
-    </div>
+    <div className="App">{code ? <HomePage code={code} /> : <Login />}</div>
   );
 }
 
