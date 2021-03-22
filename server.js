@@ -6,10 +6,16 @@ const cors = require("cors");
 const port = process.env.PORT || 3001;
 
 const app = express();
-app.use(express.static("public"));
+app.use(express.static("/public"));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+const spotifyApi = new SpotifyWebApi({
+  redirectUri: process.env.REDIRECT_URI,
+  clientId: process.env.CLIENT_ID,
+  clientSecret: process.env.CLIENT_SECRET,
+});
 
 const scopes = [
   "ugc-image-upload",
@@ -38,23 +44,12 @@ app.get("/", (req, res) => {
 });
 
 app.get("/login", (req, res) => {
-  const spotifyApi = new SpotifyWebApi({
-    redirectUri: process.env.REDIRECT_URI,
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-  });
   const authUrl = spotifyApi.createAuthorizeURL(scopes);
   res.json(authUrl);
 });
 
 app.post("/getAuth", (req, res) => {
   const code = req.body.code;
-
-  const spotifyApi = new SpotifyWebApi({
-    redirectUri: process.env.REDIRECT_URI,
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-  });
 
   spotifyApi
     .authorizationCodeGrant(code)
@@ -72,13 +67,14 @@ app.post("/getAuth", (req, res) => {
 });
 
 app.post("/refresh", (req, res) => {
-  const refreshToken = req.body.refreshToken;
-  const spotifyApi = new SpotifyWebApi({
+  // const refreshToken = req.body.refreshToken;
+  //  spotifyApi.setRefreshToken(refreshToken)
+  /*  const spotifyApi = new SpotifyWebApi({
     redirectUri: process.env.REDIRECT_URI,
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     refreshToken,
-  });
+  });*/
 
   spotifyApi
     .refreshAccessToken()
@@ -93,6 +89,30 @@ app.post("/refresh", (req, res) => {
       res.sendStatus(400);
     });
 });
+
+// spotify API requests:
+
+// basic search on spotify
+app.post("/search", (req, res) => {
+  const spotifyApi = new SpotifyWebApi({
+    accessToken: req.body.accessToken,
+  });
+
+  const search = req.body.search;
+
+  // Get tracks in a playlist
+  spotifyApi
+    .search(search, ["album", "artist", "track", "show"])
+    .then((data) => {
+      res.json(data.body);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json("error in search");
+    });
+});
+
+/////////////////////////////////////////////////
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

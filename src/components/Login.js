@@ -2,7 +2,7 @@ import React from "react";
 import axios from "axios";
 
 export default function Login() {
-  const redirectAuth = async function () {
+  const redirectAuth = () => {
     //   let result = await fetch("http://localhost:3001/login");
     //   let authUrl = await result.json();
     //   window.location.href = authUrl;
