@@ -25,16 +25,18 @@ export default function Track({ track }) {
     track.uri,
   ];
   return (
-    <>
+    <div>
+      <img
+        src={track.album.images[2].url}
+        className='float-sm-left mr-5'
+        alt='new'
+      />
+
       <ul>
-        {name}
-        <br></br>
-        <img src={track.album.images[1].url} alt='new' />
-        <br></br>
+        <li key={name}> {name} </li>
         <li key={album.id}> Album: {album} </li>
         <li key={artist.id}> Artist: {artist} </li>
       </ul>
-      <br></br>
-    </>
+    </div>
   );
 }

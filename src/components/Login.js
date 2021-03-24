@@ -1,5 +1,6 @@
 import React from "react";
 import axios from "axios";
+import { Button } from "react-bootstrap";
 
 export default function Login() {
   const redirectAuth = () => {
@@ -19,8 +20,10 @@ export default function Login() {
   };
 
   return (
-    <div>
-      <button onClick={redirectAuth}>Login</button>
+    <div className='pt-4'>
+      <Button variant='success' onClick={redirectAuth}>
+        Login
+      </Button>
     </div>
   );
 }

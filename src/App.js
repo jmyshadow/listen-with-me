@@ -14,7 +14,9 @@ function App() {
   const code = window.location.search.split("=")[1];
 
   return (
-    <div className='App'>{code ? <HomePage code={code} /> : <Login />}</div>
+    <div className='App bg-secondary h-100'>
+      {code ? <HomePage code={code} /> : <Login />}
+    </div>
   );
 }
 
