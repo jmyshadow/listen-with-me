@@ -99,10 +99,12 @@ app.post("/search", (req, res) => {
   });
 
   const search = req.body.search;
+  const types = req.body.types;
+  const options = req.body.options;
 
   // Get tracks in a playlist
   spotifyApi
-    .search(search, ["album", "artist", "track", "show"])
+    .search(search, types, options)
     .then((data) => {
       res.json(data.body);
     })

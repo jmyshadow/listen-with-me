@@ -1,13 +1,13 @@
 import React from "react";
 import SpotifyPlayer from "react-spotify-web-playback";
 
-export default function Player({ accessToken, tracks }) {
+export default function Player({ accessToken, setPlayerReady }) {
   function logIt(state) {
     console.log(state);
+    state.status === "READY" ? setPlayerReady(true) : setPlayerReady(false);
   }
 
-  let trackUris = tracks.map((track) => track.uri);
-  console.log(trackUris);
+  let trackUris = [];
   if (!accessToken) return null;
   return (
     <div>
