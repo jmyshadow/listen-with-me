@@ -37,7 +37,8 @@ export default function useAuth(code) {
 
           console.log("access token refreshed");
         })
-        .catch(() => {
+        .catch((err) => {
+          console.log("token not refreshed: ", err);
           window.location = "/";
         });
     }, (expiresIn - 60) * 1000);

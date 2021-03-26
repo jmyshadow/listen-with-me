@@ -8,16 +8,17 @@ import Queue from "./Queue";
 
 export default function HomePage({ code }) {
   const accessToken = useAuth(code);
-  let [searchResult, setSearchResult] = useState({
-    tracks: { items: [], next: null },
-    artists: { items: [], next: null },
-    albums: { items: [], next: null },
-    playlists: { items: [], next: null },
-    episodes: { items: [], next: null },
-    shows: { items: [], next: null },
+  const [searchResult, setSearchResult] = useState({
+    tracks: [],
+    albums: [],
+    playlists: [],
+    artists: [],
+    episodes: [],
+    shows: [],
   });
-  let [searching, setSearching] = useState("");
-  let [playerReady, setPlayerReady] = useState(false);
+  const [searching, setSearching] = useState("");
+  const [playerReady, setPlayerReady] = useState(false);
+  const [playQueue, setPlayQueue] = useState([]);
 
   return (
     <div className='homepage d-flex h-100 w-100 pb-5'>
@@ -33,11 +34,15 @@ export default function HomePage({ code }) {
               />
             </div>
             <div className='bg-primary playlist m-0'>
-              {" "}
               {searching ? (
-                <SearchResults searchResult={searchResult} />
+                <SearchResults
+                  searchResult={searchResult}
+                  playQueue={playQueue}
+                  setPlayQueue={setPlayQueue}
+                  accessToken={accessToken}
+                />
               ) : (
-                <Queue />
+                <Queue playQueue={playQueue} />
               )}
             </div>
           </div>

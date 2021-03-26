@@ -114,6 +114,39 @@ app.post("/search", (req, res) => {
     });
 });
 
+//grabs artists top tracks
+app.post("/artisttoptracks", (req, res) => {
+  const spotifyApi = new SpotifyWebApi({
+    accessToken: req.body.accessToken,
+  });
+
+  spotifyApi
+    .getArtistTopTracks(req.body.id, "from_token")
+    .then((data) => {
+      res.json(data.body);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json("error grabbing artist's tracks");
+    });
+});
+
+app.post("/albumTracks", (req, res) => {
+  const spotifyApi = new SpotifyWebApi({
+    accessToken: req.body.accessToken,
+  });
+
+  spotifyApi
+    .getArtistTopTracks(req.body.id, "from_token")
+    .then((data) => {
+      res.json(data.body);
+    })
+    .catch((err) => {
+      console.log(err);
+      res.json("error grabbing albums's tracks");
+    });
+});
+
 /////////////////////////////////////////////////
 
 app.listen(port, () => {

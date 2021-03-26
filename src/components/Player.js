@@ -7,7 +7,7 @@ export default function Player({ accessToken, setPlayerReady }) {
     state.status === "READY" ? setPlayerReady(true) : setPlayerReady(false);
   }
 
-  let trackUris = [];
+  let trackUris = ["spotify:artist:53A0W3U0s8diEn9RhXQhVz"];
   if (!accessToken) return null;
   return (
     <div>
