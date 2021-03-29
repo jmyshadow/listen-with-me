@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const SpotifyWebApi = require("spotify-web-api-node");
 const cors = require("cors");
+const axios = require("axios");
 
 const port = process.env.PORT || 3001;
 
@@ -131,13 +132,14 @@ app.post("/artisttoptracks", (req, res) => {
     });
 });
 
+// get album's tracks
 app.post("/albumTracks", (req, res) => {
   const spotifyApi = new SpotifyWebApi({
     accessToken: req.body.accessToken,
   });
 
   spotifyApi
-    .getArtistTopTracks(req.body.id, "from_token")
+    .getAlbumTracks(req.body.id, "from_token")
     .then((data) => {
       res.json(data.body);
     })

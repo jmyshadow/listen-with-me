@@ -33,7 +33,7 @@ export default function HomePage({ code }) {
                 setSearching={setSearching}
               />
             </div>
-            <div className='bg-primary playlist m-0'>
+            <div className='bg-primary playlist'>
               {searching ? (
                 <SearchResults
                   searchResult={searchResult}
@@ -50,7 +50,12 @@ export default function HomePage({ code }) {
         </>
       ) : null}
       <div className='fixed-bottom'>
-        <Player accessToken={accessToken} setPlayerReady={setPlayerReady} />
+        <Player
+          accessToken={accessToken}
+          setPlayerReady={setPlayerReady}
+          playQueue={playQueue}
+          setPlayQueue={setPlayQueue}
+        />
       </div>
     </div>
   );

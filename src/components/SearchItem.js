@@ -7,6 +7,8 @@ export default function SearchItem({
   playQueue,
   setPlayQueue,
   accessToken,
+  expanded,
+  setExpanded,
 }) {
   const host = "http://localhost:3001/";
 
@@ -22,18 +24,39 @@ export default function SearchItem({
 
   // write functions to deal with promises and setting up track uri in one function
 
+  function queueTrack(id) {
+    axios
+      .post(
+        `https://api.spotify.com/v1/me/player/queue?uri=spotify%3Atrack%3A${id}`,
+        {},
+        {
+          headers: {
+            Authorization: "Bearer " + accessToken,
+          },
+        }
+      )
+      .then(() => {
+        console.log("track queued");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+
   function getTrackUris(track) {
     const artist = track.artists.map((artist) => [artist.name, artist.uri]);
-    console.log(artist);
     setPlayQueue([
       {
         song: track.name,
         artist: artist,
         album: track.album.name,
         duration: track.duration_ms,
+        uri: track.uri,
+        id: track.id,
       },
       ...playQueue,
     ]);
+    return [track.uri];
   }
 
   function getArtistUris(artist) {
@@ -43,14 +66,16 @@ export default function SearchItem({
     axios
       .post(`${host}artisttoptracks`, { accessToken, id })
       .then((res) => {
-        res.data.tracks.map((track) =>
+        res.data.tracks.forEach((track) => {
           tracks.push({
             song: track.name,
             artist: [item.name, item.uri],
             album: track.album.name,
             duration: track.duration_ms,
-          })
-        );
+            uri: track.uri,
+            id: track.id,
+          });
+        });
         setPlayQueue([...tracks, ...playQueue]);
       })
       .catch((err) => {
@@ -65,12 +90,14 @@ export default function SearchItem({
     axios
       .post(`${host}albumTracks`, { accessToken, id })
       .then((res) => {
-        res.data.tracks.map((track) =>
+        res.data.items.map((track) =>
           tracks.push({
             song: track.name,
             artist: artist,
-            album: track.album.name,
+            album: album.name,
             duration: track.duration_ms,
+            uri: track.uri,
+            id: track.id,
           })
         );
         setPlayQueue([...tracks, ...playQueue]);
@@ -92,11 +119,17 @@ export default function SearchItem({
     console.log(item);
   }
 
-  function playImmediately() {
+  async function playImmediately() {
     // get function to make appropriate call (if needed) back to spotify
     const getUris = getUriFunction();
-    getUris(item);
+    const uris = await getUris(item);
+    console.log(uris);
     //   setPlayQueue([...playQueueInfo, ...playQueue]);
+  }
+
+  function expandSearch() {
+    console.log("expanded");
+    setExpanded([...expanded, item.uri]);
   }
 
   function getUriFunction() {
@@ -128,6 +161,7 @@ export default function SearchItem({
         </div>
         <div
           className='pl-2 w-100'
+          onClick={expandSearch}
           style={{ height: "75px", overflow: "hidden" }}
         >
           {item.name}
