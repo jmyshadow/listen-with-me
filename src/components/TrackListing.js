@@ -17,10 +17,12 @@ export default function TrackListing({ name, artists, album, ms, id }) {
   }
 
   return (
-    <Row xs={5} sm={5} className='row-nowrap' noGutters>
+    <Row xs={2} sm={5} className='row-nowrap' noGutters>
       <Col sm='1' onClick={playSong}>
-        {" "}
-        [play]{" "}
+        <div className='d-flex'>
+          <div>[play]</div>
+          <div>[ + ]</div>
+        </div>
       </Col>
       <Col sm='4'>{name}</Col>
       <Col sm='3'>{artists.map((artist) => artist.name).join(", ")}</Col>

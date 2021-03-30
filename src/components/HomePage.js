@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import useAuth from "./useAuth";
+import useAuth from "./hooks/useAuth";
 import SearchBar from "./SearchBar";
 import Player from "./Player";
 import SearchResults from "./SearchResults";
@@ -19,6 +19,8 @@ export default function HomePage({ code }) {
   const [searching, setSearching] = useState("");
   const [playerReady, setPlayerReady] = useState(false);
   const [playQueue, setPlayQueue] = useState([]);
+  const [expanded, setExpanded] = useState([]);
+  const [index, setIndex] = useState(0);
 
   return (
     <div className='homepage d-flex h-100 w-100 pb-5'>
@@ -31,6 +33,10 @@ export default function HomePage({ code }) {
                 setSearchResult={setSearchResult}
                 accessToken={accessToken}
                 setSearching={setSearching}
+                expanded={expanded}
+                setExpanded={setExpanded}
+                index={index}
+                setIndex={setIndex}
               />
             </div>
             <div className='bg-primary playlist'>
@@ -40,6 +46,11 @@ export default function HomePage({ code }) {
                   playQueue={playQueue}
                   setPlayQueue={setPlayQueue}
                   accessToken={accessToken}
+                  setSearching={setSearching}
+                  index={index}
+                  setIndex={setIndex}
+                  expanded={expanded}
+                  setExpanded={setExpanded}
                 />
               ) : (
                 <Queue playQueue={playQueue} />

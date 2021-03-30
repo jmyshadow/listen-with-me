@@ -6,10 +6,27 @@ export default function SearchBar({
   setSearchResult,
   accessToken,
   setSearching,
+  expanded,
+  setExpanded,
+  index,
+  setIndex,
 }) {
   const host = "http://localhost:3001/";
 
   let [search, setSearch] = useState("");
+
+  function prevResult() {
+    setIndex(index - 1);
+  }
+
+  function nextResult() {
+    setIndex(index + 1);
+  }
+
+  function clearSearch() {
+    setSearch("");
+    setExpanded([]);
+  }
 
   useEffect(() => {
     const types = ["album", "artist", "track", "show", "playlist", "episode"];
@@ -60,9 +77,29 @@ export default function SearchBar({
           <Button
             variant='primary'
             className={search ? "d-block" : "d-none"}
-            onClick={() => setSearch("")}
+            onClick={() => prevResult("")}
+            disabled={index === 0}
           >
-            Back
+            {"<"}
+          </Button>
+        </InputGroup.Append>
+        <InputGroup.Append>
+          <Button
+            variant='primary'
+            className={search ? "d-block" : "d-none"}
+            onClick={() => nextResult("")}
+            disabled={index >= expanded.length - 1}
+          >
+            {">"}
+          </Button>
+        </InputGroup.Append>
+        <InputGroup.Append>
+          <Button
+            variant='primary'
+            className={search ? "d-block" : "d-none"}
+            onClick={() => clearSearch("")}
+          >
+            {"X"}
           </Button>
         </InputGroup.Append>
       </InputGroup>

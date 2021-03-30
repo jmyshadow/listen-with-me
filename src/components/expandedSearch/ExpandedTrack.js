@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import TrackListing from "./TrackListing";
+import TrackListing from "../TrackListing";
 
-export default function ExpandedTrack({ track, accessToken, type }) {
+export default function ExpandedTrack({ track, accessToken }) {
   // eslint-disable-next-line no-unused-vars
   const [trackId, setTrackId] = useState("");
-  const [album, setAlbum] = useState({});
+  const [album, setAlbum] = useState("");
   const [albumTracks, setAlbumTracks] = useState([]);
 
   useEffect(() => {
@@ -14,6 +14,7 @@ export default function ExpandedTrack({ track, accessToken, type }) {
 
   useEffect(() => {
     if (!trackId) return;
+    console.log(trackId);
     axios
       .get(`https://api.spotify.com/v1/tracks/${trackId}`, {
         headers: {
@@ -22,6 +23,7 @@ export default function ExpandedTrack({ track, accessToken, type }) {
       })
       .then((res) => {
         console.log(res.data.album);
+        console.log("album");
         setAlbum(res.data.album);
       })
       .catch((err) => {
@@ -46,22 +48,18 @@ export default function ExpandedTrack({ track, accessToken, type }) {
       });
   }, [album, accessToken]);
 
-  if (type === "track") {
-    return (
-      <>
-        {albumTracks.map((track) => (
-          <TrackListing
-            key={track.id}
-            name={track.name}
-            artists={track.artists}
-            album={album.name}
-            ms={track.duration_ms}
-            id={track.id}
-          />
-        ))}
-      </>
-    );
-  } else {
-    return null;
-  }
+  return (
+    <>
+      {albumTracks.map((track) => (
+        <TrackListing
+          key={track.id}
+          name={track.name}
+          artists={track.artists}
+          album={album.name}
+          ms={track.duration_ms}
+          id={track.id}
+        />
+      ))}
+    </>
+  );
 }
