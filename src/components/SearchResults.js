@@ -1,7 +1,7 @@
-import React, { useState } from "react";
+import React from "react";
 import { Container, Row } from "react-bootstrap";
 
-import ExpandedSearchResults from "./ExpandedSearchResults";
+import ExpandedSearchResults from "./expandedSearch/ExpandedSearchResults";
 import SearchFactory from "./SearchFactory";
 
 export default function SearchResults({
@@ -9,9 +9,13 @@ export default function SearchResults({
   playQueue,
   setPlayQueue,
   accessToken,
+  setSearching,
+  expanded,
+  setExpanded,
+  index,
+  setIndex,
 }) {
   //  breadcrumbs of uris
-  const [expanded, setExpanded] = useState([]);
 
   return (
     <Container fluid>
@@ -35,6 +39,9 @@ export default function SearchResults({
           expanded={expanded}
           setExpanded={setExpanded}
           accessToken={accessToken}
+          setSearching={setSearching}
+          index={index}
+          setIndex={setIndex}
         />
       )}
     </Container>
