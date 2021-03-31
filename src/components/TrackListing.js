@@ -1,7 +1,7 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
 
-export default function TrackListing({ name, artists, album, ms, id }) {
+export default function TrackListing({ name, artists, album, ms, id, expanded, setExpanded, index, setIndex }) {
   function playSong() {
     //to do
     const url = id;
@@ -16,7 +16,19 @@ export default function TrackListing({ name, artists, album, ms, id }) {
     return `${min}:${sec.toString().length === 1 ? "0" + sec.toString() : sec}`;
   }
 
-  return (
+  function uriClicked(uri) {
+    setExpanded([...expanded, uri])
+    setIndex(index + 1)
+  }
+
+  function setupArtist() {
+    const otherArtists = artists.slice(1);
+    if (otherArtists.length > 0)
+      return otherArtists.map((artist) => <a onClick={() => uriClicked(artist.uri)}> {artist.name}</a >)
+  }
+
+  return (<>
+
     <Row xs={2} sm={5} className='row-nowrap' noGutters>
       <Col sm='1' onClick={playSong}>
         <div className='d-flex'>
@@ -25,9 +37,10 @@ export default function TrackListing({ name, artists, album, ms, id }) {
         </div>
       </Col>
       <Col sm='4'>{name}</Col>
-      <Col sm='3'>{artists.map((artist) => artist.name).join(", ")}</Col>
+      <Col sm='3'>{setupArtist()}</Col>
       <Col sm='3'>{album}</Col>
       <Col sm='1'>{milToMin(ms)}</Col>
     </Row>
+  </>
   );
 }

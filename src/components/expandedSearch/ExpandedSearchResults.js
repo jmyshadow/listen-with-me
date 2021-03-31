@@ -19,6 +19,7 @@ export default function ExpandedSearchResults({
 
   useEffect(() => {
     console.log(expanded, index);
+    console.log("use effect called")
     setType(expanded[index].split(":")[1]);
   }, [index, type, expanded]);
 
@@ -32,6 +33,10 @@ export default function ExpandedSearchResults({
             type={type}
             accessToken={accessToken}
             track={expanded[index]}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            index={index}
+            setIndex={setIndex}
           />
         </>
       );

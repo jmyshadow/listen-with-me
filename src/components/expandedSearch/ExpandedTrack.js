@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import TrackListing from "../TrackListing";
 
-export default function ExpandedTrack({ track, accessToken }) {
+export default function ExpandedTrack({ track, accessToken, expanded, setExpanded, index, setIndex }) {
   // eslint-disable-next-line no-unused-vars
   const [trackId, setTrackId] = useState("");
   const [album, setAlbum] = useState("");
@@ -58,6 +58,10 @@ export default function ExpandedTrack({ track, accessToken }) {
           album={album.name}
           ms={track.duration_ms}
           id={track.id}
+          expanded={expanded}
+          setExpanded={setExpanded}
+          index={index}
+          setIndex={setIndex}
         />
       ))}
     </>
