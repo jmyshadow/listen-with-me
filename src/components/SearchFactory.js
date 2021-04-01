@@ -10,6 +10,8 @@ export default function SearchFactory({
   accessToken,
   expanded,
   setExpanded,
+  spotifyQueue,
+  setSpotifyQueue,
 }) {
   let order = 12;
   switch (title) {
@@ -49,6 +51,8 @@ export default function SearchFactory({
             accessToken={accessToken}
             expanded={expanded}
             setExpanded={setExpanded}
+            spotifyQueue={spotifyQueue}
+            setSpotifyQueue={setSpotifyQueue}
           />
         ))}
       </Row>

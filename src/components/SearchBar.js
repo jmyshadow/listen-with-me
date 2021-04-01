@@ -11,6 +11,17 @@ export default function SearchBar({
   index,
   setIndex,
 }) {
+  // export default function SearchBar({ fun }) {
+  //   const mine = fun();
+  //   console.log(mine);
+  //   const setSearchResult = mine.setSearchResult,
+  //     accessToken = mine.accessToken,
+  //     setSearching = mine.setSearching,
+  //     expanded = mine.expanded,
+  //     setExpanded = mine.setExpanded,
+  //     index = mine.index,
+  //     setIndex = mine.setIndex;
+
   const host = "http://localhost:3001/";
 
   let [search, setSearch] = useState("");
@@ -23,17 +34,14 @@ export default function SearchBar({
     setIndex(index + 1);
   }
 
-  function clearSearch() {
-    setSearch("");
-    setExpanded([]);
-  }
-
   useEffect(() => {
     const types = ["album", "artist", "track", "show", "playlist", "episode"];
     //const types = ["album"];
     const options = { limit: 6 };
 
     if (!accessToken) return;
+    setExpanded([]);
+    setIndex(0);
     if (!search) {
       setSearchResult({
         tracks: [],
@@ -62,7 +70,14 @@ export default function SearchBar({
       .catch((err) => {
         console.log(err);
       });
-  }, [accessToken, search, setSearching, setSearchResult]);
+  }, [
+    accessToken,
+    search,
+    setSearching,
+    setSearchResult,
+    setExpanded,
+    setIndex,
+  ]);
 
   return (
     <div>
@@ -97,7 +112,7 @@ export default function SearchBar({
           <Button
             variant='primary'
             className={search ? "d-block" : "d-none"}
-            onClick={() => clearSearch("")}
+            onClick={() => setSearch("")}
           >
             {"X"}
           </Button>

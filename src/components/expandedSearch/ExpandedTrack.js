@@ -1,8 +1,15 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import TrackListing from "../TrackListing";
+import TrackListing from "./TrackListing";
 
-export default function ExpandedTrack({ track, accessToken, expanded, setExpanded, index, setIndex }) {
+export default function ExpandedTrack({
+  track,
+  accessToken,
+  expanded,
+  setExpanded,
+  index,
+  setIndex,
+}) {
   // eslint-disable-next-line no-unused-vars
   const [trackId, setTrackId] = useState("");
   const [album, setAlbum] = useState("");
@@ -33,6 +40,7 @@ export default function ExpandedTrack({ track, accessToken, expanded, setExpande
 
   useEffect(() => {
     if (Object.keys(album).length === 0) return;
+    console.log(Object.keys(album));
     axios
       .get(`https://api.spotify.com/v1/albums/${album.id}/tracks`, {
         headers: {
@@ -48,11 +56,34 @@ export default function ExpandedTrack({ track, accessToken, expanded, setExpande
       });
   }, [album, accessToken]);
 
+  // return (
+  //   <>
+  //     <h1> {album.name} </h1>{" "}
+  //     <h4>{album.artists ? "by: " + album.artists[0].name : ""}</h4>
+  //     {albumTracks.map((track) => (
+  //       <TrackListing
+  //         key={track.id + Math.random()}
+  //         name={track.name}
+  //         artists={track.artists}
+  //         album={album.name}
+  //         ms={track.duration_ms}
+  //         id={track.id}
+  //         expanded={expanded}
+  //         setExpanded={setExpanded}
+  //         index={index}
+  //         setIndex={setIndex}
+  //       />
+  //     ))}
+  //   </>
+  // );
+
   return (
     <>
+      <h1> {album.name} </h1>{" "}
+      <h4>{album.artists ? "by: " + album.artists[0].name : ""}</h4>
       {albumTracks.map((track) => (
-        <TrackListing
-          key={track.id}
+        <ExpandedTrack
+          key={track.id + Math.random()}
           name={track.name}
           artists={track.artists}
           album={album.name}

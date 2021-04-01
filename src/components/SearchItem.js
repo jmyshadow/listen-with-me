@@ -9,6 +9,8 @@ export default function SearchItem({
   accessToken,
   expanded,
   setExpanded,
+  spotifyQueue,
+  setSpotifyQueue,
 }) {
   const defaultImg = "./fav.ico";
   let imgUrl =
@@ -22,28 +24,9 @@ export default function SearchItem({
 
   // write functions to deal with promises and setting up track uri in one function
 
-  function queueTrack(id) {
-    axios
-      .post(
-        `https://api.spotify.com/v1/me/player/queue?uri=spotify%3Atrack%3A${id}`,
-        {},
-        {
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      )
-      .then(() => {
-        console.log("track queued");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
   async function getTrackUris(track) {
     const artist = track.artists.map((artist) => [artist.name, artist.uri]);
-    setPlayQueue([
+    return [
       {
         song: track.name,
         artist: artist,
@@ -53,16 +36,13 @@ export default function SearchItem({
         id: track.id,
       },
       ...playQueue,
-    ]);
-    return [track.uri];
+    ];
   }
 
   async function getArtistUris(artist) {
     // look up artist and grab top 10 songs, then return array of track objects
-    console.log(artist.id);
     const id = artist.id;
     const tracks = [];
-    const trackUris = [];
     axios
       .get(
         `https://api.spotify.com/v1/artists/${id}/top-tracks?market=from_token`,
@@ -73,9 +53,7 @@ export default function SearchItem({
         }
       )
       .then((res) => {
-        console.log(res);
         res.data.tracks.forEach((track) => {
-          trackUris.push(track.uri);
           tracks.push({
             song: track.name,
             artist: artist,
@@ -85,25 +63,22 @@ export default function SearchItem({
             id: track.id,
           });
         });
-        setPlayQueue([...tracks, ...playQueue]);
       })
       .catch((err) => {
         console.log(err);
       });
-    return trackUris;
+    return tracks;
   }
 
   async function getAlbumUris(album) {
     const artist = album.artists.map((artist) => [artist.name, artist.uri]);
     const id = album.id;
     const tracks = [];
-    const trackUris = [];
     axios
       .get(`https://api.spotify.com/v1/albums/${id}`, {
         headers: { Authorization: "Bearer " + accessToken },
       })
       .then((res) => {
-        console.log(res);
         res.data.tracks.items.forEach((track) => {
           tracks.push({
             song: track.name,
@@ -113,20 +88,17 @@ export default function SearchItem({
             uri: track.uri,
             id: track.id,
           });
-          trackUris.push(track.uri);
         });
-        setPlayQueue([...tracks, ...playQueue]);
       })
       .catch((err) => {
         console.log(err);
       });
-    return trackUris;
+    return tracks;
   }
 
   async function getPlaylistUris(playlist) {
     const id = playlist.id;
     const tracks = [];
-    const trackUris = [];
     axios
       .get(`https://api.spotify.com/v1/playlists/${id}`, {
         headers: { Authorization: "Bearer " + accessToken },
@@ -141,18 +113,16 @@ export default function SearchItem({
             uri: track.uri,
             id: track.id,
           });
-          trackUris.push(track.uri);
         });
-        setPlayQueue([...tracks, ...playQueue]);
       })
       .catch((err) => {
         console.log(err);
       });
-    return trackUris;
+    return tracks;
   }
 
   async function getEpisodeUris(episode) {
-    setPlayQueue([
+    return [
       {
         song: episode.name,
         artist: [" ", " "],
@@ -161,16 +131,12 @@ export default function SearchItem({
         uri: episode.uri,
         id: episode.id,
       },
-      ...playQueue,
-    ]);
-    return [episode.uri];
+    ];
   }
 
   async function getShowUris(show) {
-    console.log(show);
     const id = show.id;
     const tracks = [];
-    const trackUris = [];
     axios
       .get(`https://api.spotify.com/v1/shows/${id}/episodes`, {
         headers: { Authorization: "Bearer " + accessToken },
@@ -185,26 +151,23 @@ export default function SearchItem({
             uri: episode.uri,
             id: episode.id,
           });
-          trackUris.push(episode.uri);
         });
-        setPlayQueue([...tracks, ...playQueue]);
       })
       .catch((err) => {
         console.log(err);
       });
-    return trackUris;
+    return tracks;
   }
 
   async function playImmediately() {
     // get function to make appropriate call (if needed) back to spotify
     const getUris = getUriFunction();
-    const uris = await getUris(item);
-    console.log(uris);
-    //   setPlayQueue([...playQueueInfo, ...playQueue]);
+    const tracks = await getUris(item);
+    setPlayQueue([...tracks, ...playQueue]);
+    setSpotifyQueue([...tracks.map((item) => item.uri), ...spotifyQueue]);
   }
 
   function expandSearch() {
-    console.log("expanded");
     setExpanded([...expanded, item.uri]);
   }
 

@@ -15,12 +15,11 @@ export default function ExpandedSearchResults({
   index,
   setIndex,
 }) {
-  const [type, setType] = useState("track");
+  const [type, setType] = useState("");
 
   useEffect(() => {
-    console.log(expanded, index);
-    console.log("use effect called")
     setType(expanded[index].split(":")[1]);
+    console.log(expanded);
   }, [index, type, expanded]);
 
   switch (type) {
@@ -29,10 +28,22 @@ export default function ExpandedSearchResults({
     case "track":
       return (
         <>
-          <ExpandedTrack
-            type={type}
+          <ExpandedAlbum
             accessToken={accessToken}
             track={expanded[index]}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            index={index}
+            setIndex={setIndex}
+          />
+        </>
+      );
+    case "album":
+      return (
+        <>
+          <ExpandedAlbum
+            accessToken={accessToken}
+            album={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}
@@ -45,20 +56,12 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedArtist
-            type={type}
             accessToken={accessToken}
             artist={expanded[index]}
-          />
-        </>
-      );
-
-    case "album":
-      return (
-        <>
-          <ExpandedAlbum
-            type={type}
-            accessToken={accessToken}
-            album={expanded[index]}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            index={index}
+            setIndex={setIndex}
           />
         </>
       );
@@ -67,9 +70,12 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedPlaylist
-            type={type}
             accessToken={accessToken}
             playlist={expanded[index]}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            index={index}
+            setIndex={setIndex}
           />
         </>
       );
@@ -77,10 +83,13 @@ export default function ExpandedSearchResults({
     case "episode":
       return (
         <>
-          <ExpandedEpisode
-            type={type}
+          <ExpandedShow
             accessToken={accessToken}
             episode={expanded[index]}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            index={index}
+            setIndex={setIndex}
           />
         </>
       );
@@ -89,9 +98,12 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedShow
-            type={type}
             accessToken={accessToken}
             show={expanded[index]}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            index={index}
+            setIndex={setIndex}
           />
         </>
       );

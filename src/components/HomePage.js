@@ -19,6 +19,7 @@ export default function HomePage({ code }) {
   const [searching, setSearching] = useState("");
   const [playerReady, setPlayerReady] = useState(false);
   const [playQueue, setPlayQueue] = useState([]);
+  const [spotifyQueue, setSpotifyQueue] = useState([]);
   const [expanded, setExpanded] = useState([]);
   const [index, setIndex] = useState(0);
 
@@ -43,14 +44,16 @@ export default function HomePage({ code }) {
               {searching ? (
                 <SearchResults
                   searchResult={searchResult}
-                  playQueue={playQueue}
-                  setPlayQueue={setPlayQueue}
+                  spotifyQueue={spotifyQueue}
+                  setSpotifyQueue={setSpotifyQueue}
                   accessToken={accessToken}
                   setSearching={setSearching}
                   index={index}
                   setIndex={setIndex}
                   expanded={expanded}
                   setExpanded={setExpanded}
+                  playQueue={playQueue}
+                  setPlayQueue={setPlayQueue}
                 />
               ) : (
                 <Queue playQueue={playQueue} />
@@ -64,8 +67,7 @@ export default function HomePage({ code }) {
         <Player
           accessToken={accessToken}
           setPlayerReady={setPlayerReady}
-          playQueue={playQueue}
-          setPlayQueue={setPlayQueue}
+          spotifyQueue={spotifyQueue}
         />
       </div>
     </div>

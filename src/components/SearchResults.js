@@ -14,6 +14,8 @@ export default function SearchResults({
   setExpanded,
   index,
   setIndex,
+  spotifyQueue,
+  setSpotifyQueue,
 }) {
   //  breadcrumbs of uris
 
@@ -31,6 +33,8 @@ export default function SearchResults({
               accessToken={accessToken}
               expanded={expanded}
               setExpanded={setExpanded}
+              spotifyQueue={spotifyQueue}
+              setSpotifyQueue={setSpotifyQueue}
             />
           ))}
         </Row>
@@ -42,6 +46,10 @@ export default function SearchResults({
           setSearching={setSearching}
           index={index}
           setIndex={setIndex}
+          spotifyQueue={spotifyQueue}
+          setSpotifyQueue={setSpotifyQueue}
+          setPlayQueue={setPlayQueue}
+          playQueue={playQueue}
         />
       )}
     </Container>
