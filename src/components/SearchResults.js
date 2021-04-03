@@ -9,7 +9,6 @@ export default function SearchResults({
   playQueue,
   setPlayQueue,
   accessToken,
-  setSearching,
   expanded,
   setExpanded,
   index,
@@ -18,7 +17,7 @@ export default function SearchResults({
   setSpotifyQueue,
 }) {
   //  breadcrumbs of uris
-
+  console.log("search item rendered");
   return (
     <Container fluid>
       {expanded.length === 0 ? (
@@ -43,7 +42,6 @@ export default function SearchResults({
           expanded={expanded}
           setExpanded={setExpanded}
           accessToken={accessToken}
-          setSearching={setSearching}
           index={index}
           setIndex={setIndex}
           spotifyQueue={spotifyQueue}

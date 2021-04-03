@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import useSpotifyApi from "../hooks/useSpotifyApi";
 import TrackListing from "./TrackListing";
 
 export default function ExpandedPlaylist({
@@ -12,66 +12,19 @@ export default function ExpandedPlaylist({
   track,
 }) {
   // eslint-disable-next-line no-unused-vars
-  const [playlistId, setPlaylistId] = useState("");
-  const [playlistTracks, setPlaylistTracks] = useState([]);
-  const [playlistData, setPlaylistData] = useState({});
+  const [id, setId] = useState("");
+  const { playlistData, playlistTracks } = useSpotifyApi(
+    "playlist",
+    id,
+    accessToken
+  );
 
   useEffect(() => {
     if (!playlist) return;
-    setPlaylistId(playlist.split(":")[2]);
+    setId(playlist.split(":")[2]);
   }, [playlist]);
 
-  // useEffect(() => {
-  //   if (!trackId) return;
-  //   console.log(trackId);
-  //   axios
-  //     .get(`https://api.spotify.com/v1/tracks/${trackId}`, {
-  //       headers: {
-  //         Authorization: "Bearer " + accessToken,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       console.log(res.data.album);
-  //       console.log("album");
-  //       setAlbum(res.data.album);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, [trackId, track, accessToken]);
-
-  useEffect(() => {
-    if (!playlistId) return;
-    axios
-      .get(
-        `https://api.spotify.com/v1/playlists/${playlistId}/tracks?market=from_token`,
-        {
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      )
-      .then((res) => {
-        setPlaylistTracks(res.data.items);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    axios
-      .get(`https://api.spotify.com/v1/playlists/${playlistId}`, {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        setPlaylistData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [accessToken, playlistId]);
-
+  console.log("ex playlist rendered");
   return (
     <>
       <h1> {playlistData.name} </h1>

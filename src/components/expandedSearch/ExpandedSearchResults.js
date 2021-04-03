@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from "react";
-import { Row, Col } from "react-bootstrap";
-import ExpandedTrack from "./ExpandedTrack";
 import ExpandedAlbum from "./ExpandedAlbum";
 import ExpandedArtist from "./ExpandedArtist";
 import ExpandedPlaylist from "./ExpandedPlaylist";
 import ExpandedShow from "./ExpandedShow";
-import ExpandedEpisode from "./ExpandedEpisode";
 
 export default function ExpandedSearchResults({
   expanded,
   setExpanded,
   accessToken,
-  setSearching,
   index,
   setIndex,
 }) {
@@ -19,8 +15,9 @@ export default function ExpandedSearchResults({
 
   useEffect(() => {
     setType(expanded[index].split(":")[1]);
-    console.log(expanded);
   }, [index, type, expanded]);
+
+  console.log("ex search results rendered");
 
   switch (type) {
     default:

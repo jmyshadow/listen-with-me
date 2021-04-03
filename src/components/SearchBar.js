@@ -27,7 +27,8 @@ export default function SearchBar({
   let [search, setSearch] = useState("");
 
   function prevResult() {
-    setIndex(index - 1);
+    if (index > 0) setIndex(index - 1);
+    else setExpanded([]);
   }
 
   function nextResult() {
@@ -40,9 +41,9 @@ export default function SearchBar({
     const options = { limit: 6 };
 
     if (!accessToken) return;
-    setExpanded([]);
-    setIndex(0);
     if (!search) {
+      setExpanded([]);
+      setIndex(0);
       setSearchResult({
         tracks: [],
         artists: [],
@@ -79,6 +80,7 @@ export default function SearchBar({
     setIndex,
   ]);
 
+  console.log("searchbar rendered");
   return (
     <div>
       <InputGroup className='p-3'>
@@ -93,7 +95,7 @@ export default function SearchBar({
             variant='primary'
             className={search ? "d-block" : "d-none"}
             onClick={() => prevResult("")}
-            disabled={index === 0}
+            disabled={expanded.length === 0}
           >
             {"<"}
           </Button>

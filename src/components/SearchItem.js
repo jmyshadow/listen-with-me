@@ -1,6 +1,7 @@
 import React from "react";
 import { Col } from "react-bootstrap";
 import axios from "axios";
+import TrackListing from "./expandedSearch/TrackListing";
 
 export default function SearchItem({
   item,
@@ -42,8 +43,7 @@ export default function SearchItem({
   async function getArtistUris(artist) {
     // look up artist and grab top 10 songs, then return array of track objects
     const id = artist.id;
-    const tracks = [];
-    axios
+    const tracks = await axios
       .get(
         `https://api.spotify.com/v1/artists/${id}/top-tracks?market=from_token`,
         {
@@ -53,70 +53,75 @@ export default function SearchItem({
         }
       )
       .then((res) => {
-        res.data.tracks.forEach((track) => {
-          tracks.push({
+        const tracks = res.data.tracks.map((track) => {
+          return {
             song: track.name,
             artist: artist,
             album: track.album.name,
             duration: track.duration_ms,
             uri: track.uri,
             id: track.id,
-          });
+          };
         });
+        return tracks;
       })
       .catch((err) => {
         console.log(err);
+        return [];
       });
+    console.log(tracks);
     return tracks;
   }
 
   async function getAlbumUris(album) {
     const artist = album.artists.map((artist) => [artist.name, artist.uri]);
     const id = album.id;
-    const tracks = [];
-    axios
+    const tracks = await axios
       .get(`https://api.spotify.com/v1/albums/${id}`, {
         headers: { Authorization: "Bearer " + accessToken },
       })
       .then((res) => {
-        res.data.tracks.items.forEach((track) => {
-          tracks.push({
+        const tracks = res.data.tracks.items.map((track) => {
+          return {
             song: track.name,
             artist: artist,
             album: album.name,
             duration: track.duration_ms,
             uri: track.uri,
             id: track.id,
-          });
+          };
         });
+        return tracks;
       })
       .catch((err) => {
         console.log(err);
+        return [];
       });
     return tracks;
   }
 
   async function getPlaylistUris(playlist) {
     const id = playlist.id;
-    const tracks = [];
-    axios
+    const tracks = await axios
       .get(`https://api.spotify.com/v1/playlists/${id}`, {
         headers: { Authorization: "Bearer " + accessToken },
       })
       .then((res) => {
-        res.data.tracks.items.forEach((track) => {
-          tracks.push({
+        const tracks = res.data.tracks.items.map((track) => {
+          return {
             song: track.name,
             artist: track.track.artists,
             album: track.track.album.name,
             duration: track.track.duration_ms,
             uri: track.uri,
             id: track.id,
-          });
+          };
         });
+        return tracks;
       })
       .catch((err) => {
         console.log(err);
+        return [];
       });
     return tracks;
   }
@@ -136,25 +141,26 @@ export default function SearchItem({
 
   async function getShowUris(show) {
     const id = show.id;
-    const tracks = [];
-    axios
+    const tracks = await axios
       .get(`https://api.spotify.com/v1/shows/${id}/episodes`, {
         headers: { Authorization: "Bearer " + accessToken },
       })
       .then((res) => {
-        res.data.items.forEach((episode) => {
-          tracks.push({
+        const tracks = res.data.items.map((episode) => {
+          return {
             song: episode.name,
             artist: [" ", " "],
             album: show.name,
             duration: episode.duration_ms,
             uri: episode.uri,
             id: episode.id,
-          });
+          };
         });
+        return tracks;
       })
       .catch((err) => {
         console.log(err);
+        return [];
       });
     return tracks;
   }
@@ -163,8 +169,9 @@ export default function SearchItem({
     // get function to make appropriate call (if needed) back to spotify
     const getUris = getUriFunction();
     const tracks = await getUris(item);
+    const uris = tracks.map((track) => track.uri);
     setPlayQueue([...tracks, ...playQueue]);
-    setSpotifyQueue([...tracks.map((item) => item.uri), ...spotifyQueue]);
+    setSpotifyQueue([...uris, ...spotifyQueue]);
   }
 
   function expandSearch() {
@@ -188,7 +195,7 @@ export default function SearchItem({
       default:
     }
   }
-
+  console.log("searchitem rendered");
   return (
     <Col>
       <div className='d-flex flex-nowrap flex-row pb-1'>

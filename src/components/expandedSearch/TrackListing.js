@@ -1,5 +1,6 @@
 import React from "react";
 import { Row, Col } from "react-bootstrap";
+import axios from "axios";
 
 export default function TrackListing({
   name,
@@ -12,12 +13,28 @@ export default function TrackListing({
   index,
   setIndex,
   playlist,
+  accessToken,
 }) {
   function playSong() {
     //to do
     const url = id;
     console.log(artists);
     return url;
+  }
+
+  function queueSong(id) {
+    axios
+      .post(
+        `https://api.spotify.com/v1/me/player/queue?uri=spotify%3Atrack%3A${id}`,
+        {},
+        { headers: { Authorization: "Bearer " + accessToken } }
+      )
+      .then(() => {
+        console.log("song queued");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
   function milToMin(milli) {
@@ -62,7 +79,9 @@ export default function TrackListing({
       <Row className='row-nowrap' noGutters>
         <Col xs={11}>
           <button className='btn-success'>P</button>
-          <button className='btn-warning'>Q</button>
+          <button className='btn-warning' onClick={() => queueSong(id)}>
+            Q
+          </button>
           {" " + name}
           {artists.length > 1 ? " - " : ""}
           {artists.length > 1 ? setupArtist() : ""}

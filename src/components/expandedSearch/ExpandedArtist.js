@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import TrackListing from "./TrackListing";
 import ExpandedAlbum from "./ExpandedAlbum";
+import useSpotifyApi from "../hooks/useSpotifyApi";
 
 export default function ExpandedArtist({
   artist,
@@ -11,68 +11,18 @@ export default function ExpandedArtist({
   index,
   setIndex,
 }) {
-  const [artistId, setArtistId] = useState("");
-  const [artistAlbums, setArtistAlbums] = useState([]);
-  const [artistTracks, setArtistTracks] = useState([]);
+  const [id, setId] = useState("");
+  const { artistAlbums, artistTracks } = useSpotifyApi(
+    "artists",
+    id,
+    accessToken
+  );
 
   useEffect(() => {
-    setArtistId(artist.split(":")[2]);
+    setId(artist.split(":")[2]);
   }, [artist]);
 
-  useEffect(() => {
-    if (!artistId) return;
-    console.log(artistId);
-    axios
-      .get(
-        `https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=from_token`,
-        {
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      )
-      .then((res) => {
-        console.log(res.data);
-        console.log("artist");
-        setArtistTracks(res.data.tracks);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-
-    axios
-      .get(`https://api.spotify.com/v1/artists/${artistId}/albums`, {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
-      })
-      .then((res) => {
-        console.log(res.data);
-        console.log("artist");
-        setArtistAlbums(res.data.items);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [artistId, accessToken]);
-
-  // useEffect(() => {
-  //   if (Object.keys(album).length === 0) return;
-  //   axios
-  //     .get(`https://api.spotify.com/v1/albums/${album.id}/tracks`, {
-  //       headers: {
-  //         Authorization: "Bearer " + accessToken,
-  //       },
-  //     })
-  //     .then((res) => {
-  //       console.log(res.data.items);
-  //       setArtistTracks(res.data.items);
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //     });
-  // }, [album, accessToken]);
-
+  console.log("ex artist rendered");
   return (
     <>
       <h1>Top Tracks:</h1>
@@ -92,7 +42,7 @@ export default function ExpandedArtist({
       ))}
       {artistAlbums.map((album) => (
         <ExpandedAlbum
-          key={album.id}
+          key={album.id + Math.random()}
           type={"album"}
           accessToken={accessToken}
           album={album.uri}

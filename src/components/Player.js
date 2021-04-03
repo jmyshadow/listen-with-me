@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from "react";
 import SpotifyPlayer from "react-spotify-web-playback";
-import axios from "axios";
 
-export default function Player({ accessToken, setPlayerReady, spotifyQueue }) {
+export default function Player({ accessToken, spotifyQueue }) {
   const [tracks, setTracks] = useState([]);
   const [play, setPlay] = useState(false);
-  const [thisDev, setThisDev] = useState("");
-  const [playDev, setPlayDev] = useState("");
 
   function logIt(state) {
-    setPlay(state.isPlaying);
     console.log(state);
-    setThisDev(state.currentDeviceId);
-    // figure out how to only run this once
-    state.status === "READY" ? setPlayerReady(true) : setPlayerReady(false);
     //     setPlayQueue(playQueue.filter((val, index) => console.log(index)));
   }
 
@@ -23,9 +16,11 @@ export default function Player({ accessToken, setPlayerReady, spotifyQueue }) {
     setPlay(true);
   }, [spotifyQueue]);
 
+  console.log("player rendered");
+
   if (!accessToken) return null;
   return (
-    <div>
+    <div className='fixed-bottom'>
       <SpotifyPlayer
         token={accessToken}
         uris={tracks}
@@ -37,7 +32,6 @@ export default function Player({ accessToken, setPlayerReady, spotifyQueue }) {
           activeColor: "#fff",
           bgColor: "#333",
           color: "#fff",
-          loaderSize: "100vh",
           loaderColor: "#fff",
           sliderColor: "#1cb954",
           trackArtistColor: "#ccc",

@@ -24,6 +24,8 @@ export default function Track({ track }) {
     track.href,
     track.uri,
   ];
+
+  console.log("track rendered");
   return (
     <div>
       <img

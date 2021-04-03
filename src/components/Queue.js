@@ -4,7 +4,6 @@ import { Container, Row } from "react-bootstrap";
 
 export default function Queue({ playQueue }) {
   console.log("queue rendered");
-  console.log(playQueue);
   return (
     <Container className='overflow-hidden' fluid>
       <Row noGutters>

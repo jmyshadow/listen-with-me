@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
 import EpisodeListing from "./EpisodeListing";
 import useSpotifyApi from "../hooks/useSpotifyApi";
+
 export default function ExpandedShow({
   show,
   accessToken,
@@ -12,27 +12,25 @@ export default function ExpandedShow({
   episode,
 }) {
   // eslint-disable-next-line no-unused-vars
-  const [showId, setShowId] = useState("");
-  // const [episodeId, setEpisodeId] = useState("");
+  const [id, setId] = useState("");
+  const [endPoint, setEndPoint] = useState("");
   // const [episodeData, setEpisodeData] = useState([]);
   // const [showName, setShowName] = useState("");
   // const [showDesc, setShowDesc] = useState("");
 
-  const [episodeData, showName, showDesc] = useSpotifyApi(
-    "shows",
-    showId,
-    accessToken
-  );
+  const data = useSpotifyApi(endPoint, id, accessToken);
 
   useEffect(() => {
     if (!show) return;
-    setShowId(show.split(":")[2]);
+    setId(show.split(":")[2]);
+    setEndPoint("shows");
   }, [show]);
 
-  // useEffect(() => {
-  //   if (!episode) return;
-  //   setEpisodeId(episode.split(":")[2]);
-  // }, [episode]);
+  useEffect(() => {
+    if (!episode) return;
+    setId(episode.split(":")[2]);
+    setEndPoint("episodes");
+  }, [episode]);
 
   // useEffect(() => {
   //   if (!episodeId) return;
@@ -73,10 +71,10 @@ export default function ExpandedShow({
 
   return (
     <>
-      {showName}
       {/**have show link to show incase viewing episode only */}
-      <h1> {showName} </h1> <h4>{showDesc}</h4>
-      {episodeData.map((episode) => (
+      <h1> {data.showName} </h1>
+      <h4>{data.showDesc}</h4>
+      {data.episodeData.map((episode) => (
         <EpisodeListing
           key={episode.id + Math.random()}
           name={episode.name}

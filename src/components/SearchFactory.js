@@ -36,6 +36,8 @@ export default function SearchFactory({
       order = 5;
       break;
   }
+
+  console.log("search factory rendered");
   return (
     <Col className={`bg-primary order-${order}`}>
       <Row className='bg-light' noGutters>

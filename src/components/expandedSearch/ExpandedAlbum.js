@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import TrackListing from "./TrackListing";
+import useSpotifyApi from "../hooks/useSpotifyApi";
 
 export default function ExpandedAlbum({
   album,
@@ -12,67 +13,30 @@ export default function ExpandedAlbum({
   track,
 }) {
   // eslint-disable-next-line no-unused-vars
-  const [albumId, setAlbumId] = useState("");
-  const [trackId, setTrackId] = useState("");
-  const [trackNum, setTrackNum] = useState("");
-  const [albumTracks, setAlbumTracks] = useState([]);
-  const [albumData, setAlbumData] = useState({});
+  const [id, setId] = useState("");
+  const [endPoint, setEndpoint] = useState("");
+
+  const { trackNum, albumUri, albumTracks, albumData } = useSpotifyApi(
+    endPoint,
+    id,
+    accessToken
+  );
 
   useEffect(() => {
-    if (!album) return;
-    setAlbumId(album.split(":")[2]);
-  }, [album]);
+    if (album || albumUri) {
+      const uri = album ? album : albumUri;
+      setId(uri.split(":")[2]);
+      setEndpoint("albums");
+    }
+  }, [albumUri, album]);
 
   useEffect(() => {
     if (!track) return;
-    setTrackId(track.split(":")[2]);
+    setId(track.split(":")[2]);
+    setEndpoint("tracks");
   }, [track]);
 
-  useEffect(() => {
-    if (!trackId) return;
-    axios
-      .get(`https://api.spotify.com/v1/tracks/${trackId}`, {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
-      })
-      .then((res) => {
-        setTrackNum(res.data.track_number);
-        setAlbumId(res.data.album.id);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [trackId, track, accessToken]);
-
-  useEffect(() => {
-    if (!albumId) return;
-    axios
-      .get(`https://api.spotify.com/v1/albums/${albumId}`, {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
-      })
-      .then((res) => {
-        setAlbumData(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-    axios
-      .get(`https://api.spotify.com/v1/albums/${albumId}/tracks`, {
-        headers: {
-          Authorization: "Bearer " + accessToken,
-        },
-      })
-      .then((res) => {
-        setAlbumTracks(res.data.items);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, [albumId, accessToken]);
-
+  console.log("ex album rendered");
   return (
     <>
       <h1> {albumData.name} </h1>{" "}
@@ -89,6 +53,7 @@ export default function ExpandedAlbum({
           setExpanded={setExpanded}
           index={index}
           setIndex={setIndex}
+          accessToken={accessToken}
         />
       ))}
     </>

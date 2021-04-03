@@ -13,6 +13,7 @@ export default function QueueItem({ entry }) {
     return `${min}:${sec.toString().length === 1 ? "0" + sec.toString() : sec}`;
   }
 
+  console.log("queue item rendered");
   return (
     <Row xs={5} sm={5} className='row-nowrap' noGutters>
       <Col sm='1' onClick={playSong}>
