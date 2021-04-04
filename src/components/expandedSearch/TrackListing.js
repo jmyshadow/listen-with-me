@@ -15,6 +15,17 @@ export default function TrackListing({
   playlist,
   accessToken,
 }) {
+  /**
+      format for song queue
+      {
+        song: track.name,
+        artist: artist,
+        album: track.album.name,
+        duration: track.duration_ms,
+        uri: track.uri,
+        id: track.id,
+      },
+   */
   function playSong() {
     //to do
     const url = id;
@@ -23,18 +34,18 @@ export default function TrackListing({
   }
 
   function queueSong(id) {
-    axios
-      .post(
-        `https://api.spotify.com/v1/me/player/queue?uri=spotify%3Atrack%3A${id}`,
-        {},
-        { headers: { Authorization: "Bearer " + accessToken } }
-      )
-      .then(() => {
-        console.log("song queued");
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // axios
+    //   .post(
+    //     `https://api.spotify.com/v1/me/player/queue?uri=spotify%3Atrack%3A${id}`,
+    //     {},
+    //     { headers: { Authorization: "Bearer " + accessToken } }
+    //   )
+    //   .then(() => {
+    //     console.log("song queued");
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   }
 
   function milToMin(milli) {
@@ -66,7 +77,9 @@ export default function TrackListing({
       <Row className='row-nowrap' noGutters>
         <Col xs={5}>
           <button className='btn-success'>P</button>
-          <button className='btn-warning'>Q</button>
+          <button className='btn-warning' onClick={() => queueSong(id)}>
+            Q
+          </button>
           {" " + name}
         </Col>
         <Col xs={3}> {setupArtist()} </Col>
@@ -79,9 +92,7 @@ export default function TrackListing({
       <Row className='row-nowrap' noGutters>
         <Col xs={11}>
           <button className='btn-success'>P</button>
-          <button className='btn-warning' onClick={() => queueSong(id)}>
-            Q
-          </button>
+          <button className='btn-warning'>Q</button>
           {" " + name}
           {artists.length > 1 ? " - " : ""}
           {artists.length > 1 ? setupArtist() : ""}

@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import TrackListing from "./TrackListing";
 import ExpandedAlbum from "./ExpandedAlbum";
 import useSpotifyApi from "../hooks/useSpotifyApi";
+import { TokenContext } from "../context/SpotifyContext";
 
 export default function ExpandedArtist({
   artist,
-  accessToken,
   expanded,
   setExpanded,
   index,
   setIndex,
 }) {
+  const accessToken = useContext(TokenContext);
   const [id, setId] = useState("");
   const { artistAlbums, artistTracks } = useSpotifyApi(
     "artists",

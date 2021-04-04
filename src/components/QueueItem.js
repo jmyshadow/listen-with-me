@@ -1,9 +1,25 @@
 import React from "react";
-import { Row, Col } from "react-bootstrap";
+import { Col } from "react-bootstrap";
 
 export default function QueueItem({ entry }) {
   function playSong() {
     "todo";
+  }
+
+  function uriClicked() {
+    console.log("clicked");
+  }
+
+  function setupArtist(artist) {
+    // removes main artist in album view, keeps all artists in playlist view
+    if (artist.length > 0)
+      return artist.map((artist, index) => (
+        <button className='btn-success' onClick={() => uriClicked(artist.uri)}>
+          {" "}
+          {artist.name}
+          {index < artist.length - 1 ? ", " : null}
+        </button>
+      ));
   }
 
   function milToMin(milli) {
@@ -15,20 +31,11 @@ export default function QueueItem({ entry }) {
 
   console.log("queue item rendered");
   return (
-    <Row xs={5} sm={5} className='row-nowrap' noGutters>
-      <Col sm='1' onClick={playSong}>
-        {" "}
-        [play]{" "}
-      </Col>
-      <Col sm='4'>{entry.song}</Col>
-      <Col sm='3'>
-        {entry.artist
-          .flat()
-          .filter((_artist, uri) => uri % 2 === 0)
-          .join(", ")}
-      </Col>
-      <Col sm='3'>{entry.album}</Col>
-      <Col sm='1'>{milToMin(entry.duration)}</Col>
-    </Row>
+    <>
+      <Col>{entry.song}</Col>
+      <Col>{setupArtist(entry.artist)}</Col>
+      <Col>{entry.album}</Col>
+      <Col sm='auto'>{milToMin(entry.duration)}</Col>
+    </>
   );
 }

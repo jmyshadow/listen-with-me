@@ -1,9 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import SpotifyPlayer from "react-spotify-web-playback";
+import { TokenContext } from "./context/SpotifyContext";
 
-export default function Player({ accessToken, spotifyQueue }) {
+export default function Player({ spotifyQueue }) {
   const [tracks, setTracks] = useState([]);
   const [play, setPlay] = useState(false);
+
+  const accessToken = useContext(TokenContext);
 
   function logIt(state) {
     console.log(state);

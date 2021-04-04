@@ -1,15 +1,10 @@
 import React, { useState } from "react";
-import SearchBar from "./SearchBar";
-import SearchResults from "./SearchResults";
+import SearchBar from "./search/SearchBar";
+import SearchResults from "./search/SearchResults";
 import Queue from "./Queue";
 
-export default function MainSearch({
-  accessToken,
-  spotifyQueue,
-  setSpotifyQueue,
-}) {
+export default function MainSearch({ spotifyQueue, setSpotifyQueue }) {
   const [searching, setSearching] = useState("");
-  const [playQueue, setPlayQueue] = useState([]);
   const [expanded, setExpanded] = useState([]);
   const [index, setIndex] = useState(0);
   const [searchResult, setSearchResult] = useState({
@@ -24,7 +19,7 @@ export default function MainSearch({
   return (
     <div className='d-flex flex-column bg-success h-100 w-100'>
       <SearchBar
-        accessToken={accessToken}
+        // accessToken={accessToken}
         index={index}
         setIndex={setIndex}
         expanded={expanded}
@@ -35,7 +30,6 @@ export default function MainSearch({
       <div className='bg-primary playlist'>
         {searching ? (
           <SearchResults
-            accessToken={accessToken}
             index={index}
             setIndex={setIndex}
             expanded={expanded}
@@ -43,11 +37,9 @@ export default function MainSearch({
             searchResult={searchResult}
             spotifyQueue={spotifyQueue}
             setSpotifyQueue={setSpotifyQueue}
-            playQueue={playQueue}
-            setPlayQueue={setPlayQueue}
           />
         ) : (
-          <Queue playQueue={playQueue} />
+          <Queue />
         )}
       </div>
     </div>

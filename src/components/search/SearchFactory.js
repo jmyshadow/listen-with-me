@@ -5,9 +5,6 @@ import SearchItem from "./SearchItem";
 export default function SearchFactory({
   title,
   list,
-  playQueue,
-  setPlayQueue,
-  accessToken,
   expanded,
   setExpanded,
   spotifyQueue,
@@ -44,19 +41,18 @@ export default function SearchFactory({
         <h4>{title[0].toUpperCase() + title.substring(1)}</h4>
       </Row>
       <Row sm={1} lg={2} noGutters>
-        {list.map((item) => (
-          <SearchItem
-            key={item.id}
-            item={item}
-            playQueue={playQueue}
-            setPlayQueue={setPlayQueue}
-            accessToken={accessToken}
-            expanded={expanded}
-            setExpanded={setExpanded}
-            spotifyQueue={spotifyQueue}
-            setSpotifyQueue={setSpotifyQueue}
-          />
-        ))}
+        {list === []
+          ? null
+          : list.map((item) => (
+              <SearchItem
+                key={item.id}
+                item={item}
+                expanded={expanded}
+                setExpanded={setExpanded}
+                spotifyQueue={spotifyQueue}
+                setSpotifyQueue={setSpotifyQueue}
+              />
+            ))}
       </Row>
     </Col>
   );

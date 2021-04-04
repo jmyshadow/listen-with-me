@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import useSpotifyApi from "../hooks/useSpotifyApi";
 import TrackListing from "./TrackListing";
+import { TokenContext } from "../context/SpotifyContext";
 
 export default function ExpandedPlaylist({
   playlist,
-  accessToken,
   expanded,
   setExpanded,
   index,
   setIndex,
   track,
 }) {
+  const accessToken = useContext(TokenContext);
   // eslint-disable-next-line no-unused-vars
   const [id, setId] = useState("");
   const { playlistData, playlistTracks } = useSpotifyApi(

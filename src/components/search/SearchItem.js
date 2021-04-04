@@ -1,19 +1,18 @@
-import React from "react";
-import { Col } from "react-bootstrap";
+import React, { useContext } from "react";
+import { Col, Media } from "react-bootstrap";
 import axios from "axios";
-import TrackListing from "./expandedSearch/TrackListing";
+import { TokenContext, QueueContext } from "../context/SpotifyContext";
 
 export default function SearchItem({
   item,
-  playQueue,
-  setPlayQueue,
-  accessToken,
   expanded,
   setExpanded,
   spotifyQueue,
   setSpotifyQueue,
 }) {
-  const defaultImg = "./fav.ico";
+  const accessToken = useContext(TokenContext);
+  const { playQueue, setPlayQueue } = useContext(QueueContext);
+  const defaultImg = "../images/qmark.jpg";
   let imgUrl =
     item.type === "track"
       ? item.album.images[1]
@@ -198,7 +197,7 @@ export default function SearchItem({
   console.log("searchitem rendered");
   return (
     <Col>
-      <div className='d-flex flex-nowrap flex-row pb-1'>
+      {/* <div className='d-flex flex-nowrap flex-row pb-1'>
         <div
           onClick={playImmediately}
           style={{ width: "75px", height: "75px" }}
@@ -212,7 +211,18 @@ export default function SearchItem({
         >
           {item.name}
         </div>
-      </div>
+      </div> */}
+      <Media onClick={playImmediately}>
+        <img src={imgUrl} alt='no img' height='75px' width='75px' />
+
+        <Media.Body
+          className='pl-2 w-100'
+          onClick={expandSearch}
+          style={{ height: "75px", overflow: "hidden", minWidth: "75px" }}
+        >
+          {item.name}
+        </Media.Body>
+      </Media>
     </Col>
   );
 }

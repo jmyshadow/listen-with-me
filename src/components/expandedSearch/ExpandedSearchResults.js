@@ -7,7 +7,6 @@ import ExpandedShow from "./ExpandedShow";
 export default function ExpandedSearchResults({
   expanded,
   setExpanded,
-  accessToken,
   index,
   setIndex,
 }) {
@@ -26,7 +25,6 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedAlbum
-            accessToken={accessToken}
             track={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
@@ -39,7 +37,6 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedAlbum
-            accessToken={accessToken}
             album={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
@@ -53,7 +50,6 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedArtist
-            accessToken={accessToken}
             artist={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
@@ -67,7 +63,6 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedPlaylist
-            accessToken={accessToken}
             playlist={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
@@ -81,7 +76,6 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedShow
-            accessToken={accessToken}
             episode={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
@@ -95,7 +89,6 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedShow
-            accessToken={accessToken}
             show={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}

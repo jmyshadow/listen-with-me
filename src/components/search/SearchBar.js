@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Button, FormControl, InputGroup } from "react-bootstrap";
+import { TokenContext } from "../context/SpotifyContext";
 import axios from "axios";
 
 export default function SearchBar({
   setSearchResult,
-  accessToken,
   setSearching,
   expanded,
   setExpanded,
@@ -21,7 +21,7 @@ export default function SearchBar({
   //     setExpanded = mine.setExpanded,
   //     index = mine.index,
   //     setIndex = mine.setIndex;
-
+  const accessToken = useContext(TokenContext);
   const host = "http://localhost:3001/";
 
   let [search, setSearch] = useState("");
@@ -57,7 +57,16 @@ export default function SearchBar({
     }
     setSearching(true);
     axios
-      .post(`${host}search`, { accessToken, search, types, options })
+      // .post(`${host}search`, { accessToken, search, types, options })
+      .get(
+        `https://api.spotify.com/v1/search?q=${search.replaceAll(
+          " ",
+          "%20"
+        )}&type=artist%2Ctrack%2Calbum%2Cplaylist%2Cshow%2Cepisode&limit=6`,
+        {
+          headers: { Authorization: "Bearer " + accessToken },
+        }
+      )
       .then((res) => {
         setSearchResult({
           tracks: res.data.tracks.items,

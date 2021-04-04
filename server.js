@@ -94,26 +94,26 @@ app.post("/refresh", (req, res) => {
 // spotify API requests:
 
 // basic search on spotify
-app.post("/search", (req, res) => {
-  const spotifyApi = new SpotifyWebApi({
-    accessToken: req.body.accessToken,
-  });
+// app.post("/search", (req, res) => {
+//   const spotifyApi = new SpotifyWebApi({
+//     accessToken: req.body.accessToken,
+//   });
 
-  const search = req.body.search;
-  const types = req.body.types;
-  const options = req.body.options;
+//   const search = req.body.search;
+//   const types = req.body.types;
+//   const options = req.body.options;
 
-  // Get tracks in a playlist
-  spotifyApi
-    .search(search, types, options)
-    .then((data) => {
-      res.json(data.body);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.json("error in search");
-    });
-});
+//   // Get tracks in a playlist
+//   spotifyApi
+//     .search(search, types, options)
+//     .then((data) => {
+//       res.json(data.body);
+//     })
+//     .catch((err) => {
+//       console.log(err);
+//       res.json("error in search");
+//     });
+// });
 
 //grabs artists top tracks
 app.post("/artisttoptracks", (req, res) => {
