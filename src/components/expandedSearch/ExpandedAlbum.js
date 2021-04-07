@@ -40,16 +40,17 @@ export default function ExpandedAlbum({
   }, [track]);
 
   function queueSong(track) {
-    const queue = playQueue;
-    queue.push({
-      song: track.name,
-      artist: track.artists,
-      album: albumData.name,
-      duration: track.duration_ms,
-      uri: track.uri,
-      id: track.id,
-    });
-    setPlayQueue(playQueue);
+    setPlayQueue([
+      ...playQueue,
+      {
+        song: track.name,
+        artist: track.artists,
+        album: albumData.name,
+        duration: track.duration_ms,
+        uri: track.uri,
+        id: track.id,
+      },
+    ]);
   }
   /**
       format for song queue

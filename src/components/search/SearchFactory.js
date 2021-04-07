@@ -2,14 +2,7 @@ import React from "react";
 import { Col, Row } from "react-bootstrap";
 import SearchItem from "./SearchItem";
 
-export default function SearchFactory({
-  title,
-  list,
-  expanded,
-  setExpanded,
-  spotifyQueue,
-  setSpotifyQueue,
-}) {
+export default function SearchFactory({ title, list, expanded, setExpanded }) {
   let order = 12;
   switch (title) {
     default:
@@ -45,12 +38,10 @@ export default function SearchFactory({
           ? null
           : list.map((item) => (
               <SearchItem
-                key={item.id}
+                key={item.id + Math.random()}
                 item={item}
                 expanded={expanded}
                 setExpanded={setExpanded}
-                spotifyQueue={spotifyQueue}
-                setSpotifyQueue={setSpotifyQueue}
               />
             ))}
       </Row>

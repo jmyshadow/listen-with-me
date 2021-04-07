@@ -10,12 +10,9 @@ export default function SearchResults({
   setExpanded,
   index,
   setIndex,
-  spotifyQueue,
-  setSpotifyQueue,
 }) {
   //  breadcrumbs of uris
   console.log("search result rendered");
-  console.log(searchResult);
   return (
     <Container className='bg-primary playlist' fluid>
       {expanded.length === 0 ? (
@@ -29,8 +26,6 @@ export default function SearchResults({
                   list={value}
                   expanded={expanded}
                   setExpanded={setExpanded}
-                  spotifyQueue={spotifyQueue}
-                  setSpotifyQueue={setSpotifyQueue}
                 />
               ))}
         </Row>
@@ -40,8 +35,6 @@ export default function SearchResults({
           setExpanded={setExpanded}
           index={index}
           setIndex={setIndex}
-          spotifyQueue={spotifyQueue}
-          setSpotifyQueue={setSpotifyQueue}
         />
       )}
     </Container>

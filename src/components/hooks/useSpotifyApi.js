@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { TokenContext } from "../context/SpotifyContext";
 
-export default function useSpotifyApi(endPoint, id, accessToken) {
+export default function useSpotifyApi(endPoint, id) {
   const [episodeData, setEpisodeData] = useState([]);
   const [showName, setShowName] = useState("");
   const [showDesc, setShowDesc] = useState("");
@@ -13,6 +14,10 @@ export default function useSpotifyApi(endPoint, id, accessToken) {
   const [albumUri, setAlbumUri] = useState("");
   const [playlistTracks, setPlaylistTracks] = useState([]);
   const [playlistData, setPlaylistData] = useState({});
+
+  const accessToken = useContext(TokenContext);
+
+  console.log(id);
 
   // // returns information about shows/podcasts
   // useEffect(() => {

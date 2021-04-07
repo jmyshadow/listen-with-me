@@ -1,17 +1,12 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Col, Media } from "react-bootstrap";
-import axios from "axios";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
+import * as spotifyFetch from "../utilities/spotifyFetch.js";
 
-export default function SearchItem({
-  item,
-  expanded,
-  setExpanded,
-  spotifyQueue,
-  setSpotifyQueue,
-}) {
-  const accessToken = useContext(TokenContext);
+export default function SearchItem({ item, expanded, setExpanded }) {
   const { playQueue, setPlayQueue } = useContext(QueueContext);
+  const accessToken = useContext(TokenContext);
+
   const defaultImg = "../images/qmark.jpg";
   let imgUrl =
     item.type === "track"
@@ -22,199 +17,99 @@ export default function SearchItem({
       ? item.images[0].url
       : defaultImg;
 
-  // write functions to deal with promises and setting up track uri in one function
-
-  async function getTrackUris(track) {
-    const artist = track.artists.map((artist) => [artist.name, artist.uri]);
-    return [
-      {
+  function addToBeginning(array) {
+    array.forEach((track, index) => {
+      console.log(track.artist);
+      array[index] = {
         song: track.name,
-        artist: artist,
+        artist: track.artists,
         album: track.album.name,
         duration: track.duration_ms,
         uri: track.uri,
         id: track.id,
-      },
-      ...playQueue,
-    ];
-  }
-
-  async function getArtistUris(artist) {
-    // look up artist and grab top 10 songs, then return array of track objects
-    const id = artist.id;
-    const tracks = await axios
-      .get(
-        `https://api.spotify.com/v1/artists/${id}/top-tracks?market=from_token`,
-        {
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      )
-      .then((res) => {
-        const tracks = res.data.tracks.map((track) => {
-          return {
-            song: track.name,
-            artist: artist,
-            album: track.album.name,
-            duration: track.duration_ms,
-            uri: track.uri,
-            id: track.id,
-          };
-        });
-        return tracks;
-      })
-      .catch((err) => {
-        console.log(err);
-        return [];
-      });
-    console.log(tracks);
-    return tracks;
-  }
-
-  async function getAlbumUris(album) {
-    const artist = album.artists.map((artist) => [artist.name, artist.uri]);
-    const id = album.id;
-    const tracks = await axios
-      .get(`https://api.spotify.com/v1/albums/${id}`, {
-        headers: { Authorization: "Bearer " + accessToken },
-      })
-      .then((res) => {
-        const tracks = res.data.tracks.items.map((track) => {
-          return {
-            song: track.name,
-            artist: artist,
-            album: album.name,
-            duration: track.duration_ms,
-            uri: track.uri,
-            id: track.id,
-          };
-        });
-        return tracks;
-      })
-      .catch((err) => {
-        console.log(err);
-        return [];
-      });
-    return tracks;
-  }
-
-  async function getPlaylistUris(playlist) {
-    const id = playlist.id;
-    const tracks = await axios
-      .get(`https://api.spotify.com/v1/playlists/${id}`, {
-        headers: { Authorization: "Bearer " + accessToken },
-      })
-      .then((res) => {
-        const tracks = res.data.tracks.items.map((track) => {
-          return {
-            song: track.name,
-            artist: track.track.artists,
-            album: track.track.album.name,
-            duration: track.track.duration_ms,
-            uri: track.uri,
-            id: track.id,
-          };
-        });
-        return tracks;
-      })
-      .catch((err) => {
-        console.log(err);
-        return [];
-      });
-    return tracks;
-  }
-
-  async function getEpisodeUris(episode) {
-    return [
-      {
-        song: episode.name,
-        artist: [" ", " "],
-        album: episode.name,
-        duration: episode.duration_ms,
-        uri: episode.uri,
-        id: episode.id,
-      },
-    ];
-  }
-
-  async function getShowUris(show) {
-    const id = show.id;
-    const tracks = await axios
-      .get(`https://api.spotify.com/v1/shows/${id}/episodes`, {
-        headers: { Authorization: "Bearer " + accessToken },
-      })
-      .then((res) => {
-        const tracks = res.data.items.map((episode) => {
-          return {
-            song: episode.name,
-            artist: [" ", " "],
-            album: show.name,
-            duration: episode.duration_ms,
-            uri: episode.uri,
-            id: episode.id,
-          };
-        });
-        return tracks;
-      })
-      .catch((err) => {
-        console.log(err);
-        return [];
-      });
-    return tracks;
-  }
-
-  async function playImmediately() {
-    // get function to make appropriate call (if needed) back to spotify
-    const getUris = getUriFunction();
-    const tracks = await getUris(item);
-    const uris = tracks.map((track) => track.uri);
-    setPlayQueue([...tracks, ...playQueue]);
-    setSpotifyQueue([...uris, ...spotifyQueue]);
+      };
+    });
+    setPlayQueue([...array, ...playQueue]);
   }
 
   function expandSearch() {
     setExpanded([...expanded, item.uri]);
   }
 
-  function getUriFunction() {
+  async function playImmediately() {
     switch (item.type) {
       case "track":
-        return getTrackUris;
+        const track = item;
+        const addToQueue = {
+          song: track.name,
+          artist: track.artists,
+          album: track.album.name,
+          duration: track.duration_ms,
+          uri: track.uri,
+          id: track.id,
+        };
+        setPlayQueue([addToQueue, ...playQueue]);
+        break;
       case "artist":
-        return getArtistUris;
+        await spotifyFetch.artists(item.id, accessToken).then((res) => {
+          const addToQueue = res.artistTracks;
+          addToBeginning(addToQueue);
+        });
+        break;
       case "album":
-        return getAlbumUris;
+        await spotifyFetch.albums(item.id, accessToken).then((res) => {
+          const addToQueue = res.albumData.tracks.items;
+          const albumName = res.albumData.name;
+          addToQueue.forEach((track) => {
+            track.album = [albumName];
+            track.album.name = albumName;
+          });
+          addToBeginning(addToQueue);
+        });
+        break;
       case "playlist":
-        return getPlaylistUris;
+        await spotifyFetch.playlists(item.id, accessToken).then((res) => {
+          const addToQueue = res.playlistTracks;
+          addToQueue.forEach((item, index) => {
+            addToQueue[index] = item.track;
+          });
+          addToBeginning(addToQueue);
+        });
+        break;
       case "episode":
-        return getEpisodeUris;
+        await spotifyFetch.episodes(item.id, accessToken).then((res) => {
+          console.log(res);
+          const addToQueue = res.episodeData;
+          addToQueue.forEach((episode, index) => {
+            addToQueue[index].artists = [["", ""]];
+            addToQueue[index].album = episode.show;
+          });
+          addToBeginning(addToQueue);
+        });
+        break;
       case "show":
-        return getShowUris;
+        await spotifyFetch.shows(item.id, accessToken).then((res) => {
+          console.log(res);
+          const addToQueue = res.episodeData;
+          const showName = res.showName;
+          addToQueue.forEach((episode, index) => {
+            addToQueue[index].artists = [["", ""]];
+            addToQueue[index].album = [showName];
+            addToQueue[index].album.name = showName;
+          });
+          addToBeginning(addToQueue);
+        });
+        break;
       default:
+        break;
     }
   }
   console.log("searchitem rendered");
+
   return (
     <Col>
-      {/* <div className='d-flex flex-nowrap flex-row pb-1'>
-        <div
-          onClick={playImmediately}
-          style={{ width: "75px", height: "75px" }}
-        >
-          <img src={imgUrl} alt='no img' height='75px' width='75px' />
-        </div>
-        <div
-          className='pl-2 w-100'
-          onClick={expandSearch}
-          style={{ height: "75px", overflow: "hidden" }}
-        >
-          {item.name}
-        </div>
-      </div> */}
       <Media onClick={playImmediately}>
         <img src={imgUrl} alt='no img' height='75px' width='75px' />
-
         <Media.Body
           className='pl-2 w-100'
           onClick={expandSearch}

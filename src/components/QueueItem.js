@@ -2,6 +2,7 @@ import React from "react";
 import { Col } from "react-bootstrap";
 
 export default function QueueItem({ entry }) {
+  console.log(entry);
   function playSong() {
     "todo";
   }

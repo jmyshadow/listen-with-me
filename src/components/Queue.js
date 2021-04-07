@@ -25,7 +25,11 @@ export default function Queue() {
       </Row>
       {/** adding random number to entry id, in case same song queued more than once */}
       {playQueue.map((entry, index) => (
-        <Row key={entry.id + Math.random()} className='row-nowrap' noGutters>
+        <Row
+          key={entry.id + Math.floor(Math.random() * 100000)}
+          className='row-nowrap'
+          noGutters
+        >
           <Col sm='auto'>
             <button onClick={() => playNow(entry.id)}>&#9658;</button>
           </Col>
