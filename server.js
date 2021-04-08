@@ -9,11 +9,12 @@ const io = require("socket.io")(server, {
     origin: "*",
   },
 });
+const path = require("path");
 
 const port = process.env.PORT || 3001;
 
 app.use(cors({ credentials: true }));
-app.use(express.static("/public"));
+app.use(express.static(path.join(__dirname, "build")));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -45,8 +46,8 @@ const scopes = [
   "user-follow-modify",
 ];
 
-app.get("/", (req, res) => {
-  console.log("connected");
+app.get("/*", function (req, res) {
+  res.sendFile(path.join(__dirname, "build", "index.html"));
 });
 
 app.get("/login", (req, res) => {
