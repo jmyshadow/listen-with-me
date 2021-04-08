@@ -9,7 +9,7 @@ export default function Login() {
     //   window.location.href = authUrl;
 
     axios
-      .get("https://listenwme.herokuapp.com/login")
+      .get("/login")
       .then((res) => {
         window.location.href = res.data;
       })
