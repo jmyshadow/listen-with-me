@@ -55,6 +55,10 @@ app.get("/login", (req, res) => {
   res.json(authUrl);
 });
 
+app.get("/callback", function (req, res) {
+  res.redirect("/");
+});
+
 app.post("/getAuth", (req, res) => {
   const code = req.body.code;
 
