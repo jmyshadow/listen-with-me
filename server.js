@@ -10,6 +10,7 @@ const io = require("socket.io")(server, {
   },
 });
 const path = require("path");
+const axios = require("axios");
 
 const port = process.env.PORT || 3000;
 
@@ -49,15 +50,9 @@ const scopes = [
 app.get("/login", (req, res) => {
   const authUrl = spotifyApi.createAuthorizeURL(scopes);
   res.json(authUrl);
-  console.log(authUrl);
 });
 
 app.get("/callback", function (req, res) {
-  console.log(req.data);
-  console.log(res.data);
-  console.log(req.url);
-  console.log(res.url);
-  console.log("redirected");
   res.redirect("/?" + req.url.substr(10));
 });
 
@@ -100,6 +95,21 @@ app.post("/refresh", (req, res) => {
     .catch((err) => {
       console.log(err);
       res.sendStatus(400);
+    });
+});
+
+app.post("/me", (req, res) => {
+  axios
+    .get(`https://api.spotify.com/v1/me`, {
+      headers: {
+        Authorization: "Bearer " + req.body.accessToken,
+      },
+    })
+    .then((data) => {
+      res.json(data.data.id);
+    })
+    .catch((err) => {
+      console.log(err);
     });
 });
 
