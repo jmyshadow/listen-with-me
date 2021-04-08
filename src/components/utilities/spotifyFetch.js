@@ -148,3 +148,19 @@ export async function albums(id, accessToken) {
     });
   return { albumData, albumTracks };
 }
+
+export async function getMe(accessToken) {
+  const id = await axios
+    .get(`https://api.spotify.com/v1/me`, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res) => {
+      return res.data.id;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return id;
+}

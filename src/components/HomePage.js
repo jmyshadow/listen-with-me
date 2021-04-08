@@ -1,13 +1,22 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import MainApp from "./MainApp";
+import Chat from "./chat/Chat";
 
-export default function HomePage({ code }) {
+export default function HomePage({ code, socket }) {
+  const [user, setUser] = useState("");
+
+  useEffect(() => {
+    if (!user) return;
+    socket.user = user;
+    socket.emit("userJoined", user);
+  });
+
   console.log("homepage rendered");
   return (
     <div className='homepage d-flex h-100 w-100 pb-5'>
       <div className='side-bar bg-dark'>links</div>
-      <MainApp code={code} />
-      <div className='side-bar bg-dark'>chat</div>
+      <MainApp code={code} setUser={setUser} />
+      <Chat user={user} socket={socket} />
     </div>
   );
 }

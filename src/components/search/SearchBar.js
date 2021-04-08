@@ -11,18 +11,7 @@ export default function SearchBar({
   index,
   setIndex,
 }) {
-  // export default function SearchBar({ fun }) {
-  //   const mine = fun();
-  //   console.log(mine);
-  //   const setSearchResult = mine.setSearchResult,
-  //     accessToken = mine.accessToken,
-  //     setSearching = mine.setSearching,
-  //     expanded = mine.expanded,
-  //     setExpanded = mine.setExpanded,
-  //     index = mine.index,
-  //     setIndex = mine.setIndex;
   const accessToken = useContext(TokenContext);
-  const host = "http://localhost:3001/";
 
   let [search, setSearch] = useState("");
 

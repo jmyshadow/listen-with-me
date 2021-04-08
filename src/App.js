@@ -3,19 +3,16 @@ import Login from "./components/Login";
 import HomePage from "./components/HomePage";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-
-//
-// client specific urls in dev in:
-//  Login.js
-//  useAuth.js
-//
+import io from "socket.io-client";
 
 function App() {
   const code = window.location.search.split("=")[1];
+  //const socket = io.connect("http://localhost:3001");
+  const socket = io.connect("https://listenwme.herokuapp.com/");
 
   return (
     <div className='App bg-secondary h-100'>
-      {code ? <HomePage code={code} /> : <Login />}
+      {code ? <HomePage code={code} socket={socket} /> : <Login />}
     </div>
   );
 }

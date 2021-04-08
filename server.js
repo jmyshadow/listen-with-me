@@ -1,12 +1,17 @@
 require("dotenv").config();
-const express = require("express");
 const SpotifyWebApi = require("spotify-web-api-node");
 const cors = require("cors");
-const axios = require("axios");
+const express = require("express");
+const app = express();
+const server = require("http").createServer(app);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+});
 
 const port = process.env.PORT || 3001;
 
-const app = express();
 app.use(cors({ credentials: true }));
 app.use(express.static("/public"));
 app.use(express.json());
@@ -91,66 +96,22 @@ app.post("/refresh", (req, res) => {
     });
 });
 
-// spotify API requests:
+//////////////////////////////////////////////////////////////////////
 
-// basic search on spotify
-// app.post("/search", (req, res) => {
-//   const spotifyApi = new SpotifyWebApi({
-//     accessToken: req.body.accessToken,
-//   });
-
-//   const search = req.body.search;
-//   const types = req.body.types;
-//   const options = req.body.options;
-
-//   // Get tracks in a playlist
-//   spotifyApi
-//     .search(search, types, options)
-//     .then((data) => {
-//       res.json(data.body);
-//     })
-//     .catch((err) => {
-//       console.log(err);
-//       res.json("error in search");
-//     });
-// });
-
-//grabs artists top tracks
-app.post("/artisttoptracks", (req, res) => {
-  const spotifyApi = new SpotifyWebApi({
-    accessToken: req.body.accessToken,
+io.on("connection", (socket) => {
+  socket.on("userJoined", (user) => {
+    console.log(user + " joined");
+    socket.broadcast.emit("otherUserJoined", user);
   });
 
-  spotifyApi
-    .getArtistTopTracks(req.body.id, "from_token")
-    .then((data) => {
-      res.json(data.body);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.json("error grabbing artist's tracks");
-    });
-});
-
-// get album's tracks
-app.post("/albumTracks", (req, res) => {
-  const spotifyApi = new SpotifyWebApi({
-    accessToken: req.body.accessToken,
+  socket.on("newMsg", (user, msg) => {
+    console.log(user, msg);
+    socket.broadcast.emit("getNewMsg", user, msg);
   });
-
-  spotifyApi
-    .getAlbumTracks(req.body.id, "from_token")
-    .then((data) => {
-      res.json(data.body);
-    })
-    .catch((err) => {
-      console.log(err);
-      res.json("error grabbing albums's tracks");
-    });
 });
 
 /////////////////////////////////////////////////
 
-app.listen(port, () => {
+server.listen(port, () => {
   console.log(`Listening on port ${port}`);
 });
