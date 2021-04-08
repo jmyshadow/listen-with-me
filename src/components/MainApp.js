@@ -7,7 +7,7 @@ import * as spotifyFetch from "./utilities/spotifyFetch.js";
 
 export default function MainApp({ code, setUser }) {
   const accessToken = useAuth(code);
-
+  console.log(code);
   useEffect(() => {
     if (!accessToken) return;
     (async function () {

@@ -11,7 +11,7 @@ const io = require("socket.io")(server, {
 });
 const path = require("path");
 
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 
 app.use(cors({ credentials: true }));
 app.use(express.static(path.join(__dirname, "build")));
@@ -46,17 +46,19 @@ const scopes = [
   "user-follow-modify",
 ];
 
-app.get("/", function (req, res) {
-  res.sendFile(path.join(__dirname, "build", "index.html"));
-});
-
 app.get("/login", (req, res) => {
   const authUrl = spotifyApi.createAuthorizeURL(scopes);
   res.json(authUrl);
+  console.log(authUrl);
 });
 
 app.get("/callback", function (req, res) {
-  res.redirect("/");
+  console.log(req.data);
+  console.log(res.data);
+  console.log(req.url);
+  console.log(res.url);
+  console.log("redirected");
+  res.redirect("/?" + req.url.substr(10));
 });
 
 app.post("/getAuth", (req, res) => {
