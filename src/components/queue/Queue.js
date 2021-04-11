@@ -1,9 +1,10 @@
 import React, { useContext } from "react";
 import QueueItem from "./QueueItem";
 import { Container, Col, Row } from "react-bootstrap";
-import { QueueContext } from "./context/SpotifyContext";
+import { QueueContext } from "../context/SpotifyContext";
+import NowPlaying from "./NowPlaying";
 
-export default function Queue() {
+export default function Queue({ nowPlaying }) {
   const { playQueue, setPlayQueue } = useContext(QueueContext);
 
   console.log("queue rendered");
@@ -20,9 +21,7 @@ export default function Queue() {
 
   return (
     <Container fluid>
-      <Row noGutters>
-        Now Playing: <br />
-      </Row>
+      <NowPlaying nowPlaying={nowPlaying} />
       {/** adding random number to entry id, in case same song queued more than once */}
       {playQueue.map((entry, index) => (
         <Row

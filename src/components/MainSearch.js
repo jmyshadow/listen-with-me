@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import SearchBar from "./search/SearchBar";
 import SearchResults from "./search/SearchResults";
-import Queue from "./Queue";
+import Queue from "./queue/Queue";
 
-export default function MainSearch() {
+export default function MainSearch({ nowPlaying }) {
   const [searching, setSearching] = useState("");
   const [expanded, setExpanded] = useState([]);
   const [index, setIndex] = useState(0);
@@ -36,7 +36,7 @@ export default function MainSearch() {
             searchResult={searchResult}
           />
         ) : (
-          <Queue />
+          <Queue nowPlaying={nowPlaying} />
         )}
       </div>
     </div>

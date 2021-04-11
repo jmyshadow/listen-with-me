@@ -311,23 +311,6 @@ export default function useSpotifyApi(endPoint, id) {
     }
   }, [accessToken, id, endPoint]);
 
-  // async function doPromise() {
-  //   const result = await thePromise();
-  // }
-
-  // console.log(
-  //   episodeData,
-  //   showName,
-  //   showDesc,
-  //   playlistTracks,
-  //   playlistData,
-  //   artistAlbums,
-  //   artistTracks,
-  //   trackNum,
-  //   albumTracks,
-  //   albumData,
-  //   albumUri
-  // );
   return {
     episodeData,
     showName,

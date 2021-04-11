@@ -53,6 +53,7 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/callback", function (req, res) {
+  console.log(req.url);
   res.redirect("/?" + req.url.substr(10));
 });
 
@@ -83,7 +84,8 @@ app.post("/refresh", (req, res) => {
     clientSecret: process.env.CLIENT_SECRET,
     refreshToken,
   });*/
-
+  console.log("refreshed");
+  // spotifyApi.setRefreshToken(req.body.refreshToken);
   spotifyApi
     .refreshAccessToken()
     .then((data) => {

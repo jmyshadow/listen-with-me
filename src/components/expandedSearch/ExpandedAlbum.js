@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import TrackListing from "./TrackListing";
 import useSpotifyApi from "../hooks/useSpotifyApi";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
+import { Row, Col } from "react-bootstrap";
 
 export default function ExpandedAlbum({
   album,
@@ -11,12 +12,12 @@ export default function ExpandedAlbum({
   setIndex,
   track,
 }) {
-  // eslint-disable-next-line no-unused-vars
   const [id, setId] = useState("");
   const [endPoint, setEndpoint] = useState("");
   const accessToken = useContext(TokenContext);
   const { playQueue, setPlayQueue } = useContext(QueueContext);
 
+  // eslint-disable-next-line no-unused-vars
   const { trackNum, albumUri, albumTracks, albumData } = useSpotifyApi(
     endPoint,
     id,
@@ -40,6 +41,7 @@ export default function ExpandedAlbum({
   }, [track]);
 
   function queueSong(track) {
+    console.log(track);
     setPlayQueue([
       ...playQueue,
       {
@@ -52,31 +54,26 @@ export default function ExpandedAlbum({
       },
     ]);
   }
-  /**
-      format for song queue
-      {
-        song: track.name,
-        artist: artist,
-        album: track.album.name,
-        duration: track.duration_ms,
-        uri: track.uri,
-        id: track.id,
-      },
-   */
 
   console.log("ex album rendered");
   return (
     <>
-      <h1> {albumData.name} </h1>{" "}
-      <h4>{albumData.artists ? "by: " + albumData.artists[0].name : ""}</h4>
+      <Row>
+        <Col sm='auto'>
+          <h1> {albumData.name} </h1>{" "}
+          <h4>{albumData.artists ? "by: " + albumData.artists[0].name : ""}</h4>
+        </Col>
+      </Row>
       {albumTracks.map((track) => (
-        <>
-          <button
-            onClick={() => queueSong(track)}
-            key={track.id + Math.random() + "button"}
-          >
-            Q
-          </button>
+        <Row>
+          <Col sm='auto'>
+            <button
+              onClick={() => queueSong(track)}
+              key={track.id + Math.random() + "button"}
+            >
+              Q
+            </button>
+          </Col>
           <TrackListing
             key={track.id + Math.random()}
             name={track.name}
@@ -90,7 +87,7 @@ export default function ExpandedAlbum({
             setIndex={setIndex}
             accessToken={accessToken}
           />
-        </>
+        </Row>
       ))}
     </>
   );

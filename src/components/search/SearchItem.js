@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext } from "react";
 import { Col, Media } from "react-bootstrap";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
@@ -52,52 +52,27 @@ export default function SearchItem({ item, expanded, setExpanded }) {
         break;
       case "artist":
         await spotifyFetch.artists(item.id, accessToken).then((res) => {
-          const addToQueue = res.artistTracks;
-          addToBeginning(addToQueue);
+          addToBeginning(res.artistTracks);
         });
         break;
       case "album":
         await spotifyFetch.albums(item.id, accessToken).then((res) => {
-          const addToQueue = res.albumData.tracks.items;
-          const albumName = res.albumData.name;
-          addToQueue.forEach((track) => {
-            track.album = [albumName];
-            track.album.name = albumName;
-          });
-          addToBeginning(addToQueue);
+          addToBeginning(res);
         });
         break;
       case "playlist":
         await spotifyFetch.playlists(item.id, accessToken).then((res) => {
-          const addToQueue = res.playlistTracks;
-          addToQueue.forEach((item, index) => {
-            addToQueue[index] = item.track;
-          });
-          addToBeginning(addToQueue);
+          addToBeginning(res);
         });
         break;
       case "episode":
         await spotifyFetch.episodes(item.id, accessToken).then((res) => {
-          console.log(res);
-          const addToQueue = res.episodeData;
-          addToQueue.forEach((episode, index) => {
-            addToQueue[index].artists = [["", ""]];
-            addToQueue[index].album = episode.show;
-          });
-          addToBeginning(addToQueue);
+          addToBeginning(res);
         });
         break;
       case "show":
         await spotifyFetch.shows(item.id, accessToken).then((res) => {
-          console.log(res);
-          const addToQueue = res.episodeData;
-          const showName = res.showName;
-          addToQueue.forEach((episode, index) => {
-            addToQueue[index].artists = [["", ""]];
-            addToQueue[index].album = [showName];
-            addToQueue[index].album.name = showName;
-          });
-          addToBeginning(addToQueue);
+          addToBeginning(res);
         });
         break;
       default:
@@ -108,8 +83,14 @@ export default function SearchItem({ item, expanded, setExpanded }) {
 
   return (
     <Col>
-      <Media onClick={playImmediately}>
-        <img src={imgUrl} alt='no img' height='75px' width='75px' />
+      <Media>
+        <img
+          src={imgUrl}
+          alt='no img'
+          height='75px'
+          width='75px'
+          onClick={playImmediately}
+        />
         <Media.Body
           className='pl-2 w-100'
           onClick={expandSearch}

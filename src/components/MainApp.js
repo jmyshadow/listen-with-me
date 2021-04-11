@@ -1,31 +1,34 @@
 import React, { useState, useEffect } from "react";
 import MainSearch from "./MainSearch";
 import useAuth from "./hooks/useAuth";
-import Player from "./Player";
 import { TokenContext, QueueContext } from "./context/SpotifyContext";
 import * as spotifyFetch from "./utilities/spotifyFetch.js";
-import axios from "axios";
+import SPlayer from "./SPlayer";
+//import axios from "axios";
 
 export default function MainApp({ code, setUser }) {
   const accessToken = useAuth(code);
+  const [playQueue, setPlayQueue] = useState([]);
+
+  const [nowPlaying, setNowPlaying] = useState({});
+
   useEffect(() => {
     if (!accessToken) return;
-    // (async function () {
-    //   const id = await spotifyFetch.getMe(accessToken);
-    //   setUser(id);
-    // })();
-    axios.post("/me", { accessToken }).then((name) => {
-      setUser(name.data);
-    });
+    (async function () {
+      const id = await spotifyFetch.getMe(accessToken);
+      setUser(id);
+    })();
+    // axios.post("/me", { accessToken }).then((name) => {
+    //   setUser(name.data);
+    // });
   }, [accessToken, setUser]);
 
-  const [playQueue, setPlayQueue] = useState([]);
   return (
     <TokenContext.Provider value={accessToken}>
       <QueueContext.Provider value={{ playQueue, setPlayQueue }}>
-        <MainSearch />
+        <MainSearch nowPlaying={nowPlaying} />
       </QueueContext.Provider>
-      <Player playQueue={playQueue} setPlayQueue={setPlayQueue} />
+      <SPlayer accessToken={accessToken} setNowPlaying={setNowPlaying} />
     </TokenContext.Provider>
   );
 }

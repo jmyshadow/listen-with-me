@@ -29,7 +29,7 @@ export default function Chat({ user, socket }) {
   });
 
   return (
-    <div className='side-bar bg-dark d-flex flex-column'>
+    <div className='side-bar bg-dark d-flex flex-column w-25'>
       <ChatHistory chatHist={chatHist} />
       <InputGroup className='px-2 pb-3'>
         <FormControl

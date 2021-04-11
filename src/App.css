@@ -1,9 +1,13 @@
 .side-bar {
   height: 100%;
-  width: 30%;
 }
 
 .playlist {
   height: 100%;
+  overflow-y: auto;
+  position: relative;
+}
+
+.chatbox {
   overflow-y: auto;
 }

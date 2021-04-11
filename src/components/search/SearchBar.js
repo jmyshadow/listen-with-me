@@ -25,10 +25,10 @@ export default function SearchBar({
   }
 
   useEffect(() => {
-    const types = ["album", "artist", "track", "show", "playlist", "episode"];
-    //const types = ["album"];
-    const options = { limit: 6 };
+    setExpanded([]);
+  }, [search, setExpanded]);
 
+  useEffect(() => {
     if (!accessToken) return;
     if (!search) {
       setExpanded([]);

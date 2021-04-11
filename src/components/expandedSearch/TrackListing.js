@@ -1,6 +1,5 @@
 import React from "react";
-import { Row, Col } from "react-bootstrap";
-import axios from "axios";
+import { Col } from "react-bootstrap";
 
 export default function TrackListing({
   name,
@@ -26,27 +25,6 @@ export default function TrackListing({
         id: track.id,
       },
    */
-  function playSong() {
-    //to do
-    const url = id;
-    console.log(artists);
-    return url;
-  }
-
-  function queueSong(id) {
-    // axios
-    //   .post(
-    //     `https://api.spotify.com/v1/me/player/queue?uri=spotify%3Atrack%3A${id}`,
-    //     {},
-    //     { headers: { Authorization: "Bearer " + accessToken } }
-    //   )
-    //   .then(() => {
-    //     console.log("song queued");
-    //   })
-    //   .catch((err) => {
-    //     console.log(err);
-    //   });
-  }
 
   function milToMin(milli) {
     const min = Math.floor(milli / 60000);
@@ -74,32 +52,24 @@ export default function TrackListing({
   }
   if (playlist) {
     return (
-      <Row className='row-nowrap' noGutters>
-        <Col xs={5}>
-          <button className='btn-success'>P</button>
-          <button className='btn-warning' onClick={() => queueSong(id)}>
-            Q
-          </button>
-          {" " + name}
-        </Col>
-        <Col xs={3}> {setupArtist()} </Col>
-        <Col xs={3}>{album}</Col>
-        <Col xs={1}>{milToMin(ms)}</Col>
-      </Row>
+      <>
+        <Col>{name}</Col>
+        <Col> {setupArtist()} </Col>
+        <Col>{album}</Col>
+        <Col sm='auto'>{milToMin(ms)}</Col>
+      </>
     );
   } else {
     return (
-      <Row className='row-nowrap' noGutters>
-        <Col xs={11}>
-          <button className='btn-success'>P</button>
-          <button className='btn-warning'>Q</button>
+      <>
+        <Col>
           {" " + name}
           {artists.length > 1 ? " - " : ""}
           {artists.length > 1 ? setupArtist() : ""}
         </Col>
         {/**       <Col xs={4}>{album}</Col>  */}
-        <Col xs={1}>{milToMin(ms)}</Col>
-      </Row>
+        <Col sm='auto'>{milToMin(ms)}</Col>
+      </>
     );
   }
 }
