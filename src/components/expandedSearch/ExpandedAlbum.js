@@ -3,6 +3,7 @@ import TrackListing from "./TrackListing";
 import useSpotifyApi from "../hooks/useSpotifyApi";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
 import { Row, Col } from "react-bootstrap";
+import * as spotifyFetch from "../utilities/spotifyFetch.js";
 
 export default function ExpandedAlbum({
   album,
@@ -41,7 +42,6 @@ export default function ExpandedAlbum({
   }, [track]);
 
   function queueSong(track) {
-    console.log(track);
     setPlayQueue([
       ...playQueue,
       {
@@ -53,6 +53,7 @@ export default function ExpandedAlbum({
         id: track.id,
       },
     ]);
+    spotifyFetch.queueSong(track.uri, accessToken);
   }
 
   console.log("ex album rendered");

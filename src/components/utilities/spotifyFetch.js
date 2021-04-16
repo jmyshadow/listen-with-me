@@ -184,3 +184,31 @@ export async function getMe(accessToken) {
     });
   return id;
 }
+
+// utility functions
+
+export function playNow(uris, accessToken) {
+  axios({
+    method: "put",
+    url: `https://api.spotify.com/v1/me/player/play`,
+    data: {
+      uris: uris,
+    },
+    headers: {
+      Authorization: "Bearer " + accessToken,
+    },
+  });
+}
+
+export function queueSong(uri, accessToken) {
+  axios({
+    method: "post",
+    url: "https://api.spotify.com/v1/me/player/queue",
+    params: {
+      uri: uri,
+    },
+    headers: {
+      Authorization: "Bearer " + accessToken,
+    },
+  });
+}

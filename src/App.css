@@ -3,6 +3,7 @@
 }
 
 .playlist {
+  min-width: 500px;
   height: 100%;
   overflow-y: auto;
   position: relative;
@@ -10,4 +11,16 @@
 
 .chatbox {
   overflow-y: auto;
+}
+
+div.trackBar {
+  position: absolute;
+  bottom: 40px;
+  height: 8px;
+}
+
+div.progressBar {
+  transition: width 0.5s;
+  transition-timing-function: ease-in-out;
+  pointer-events: none;
 }

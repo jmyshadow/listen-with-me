@@ -19,7 +19,6 @@ export default function SearchItem({ item, expanded, setExpanded }) {
 
   function addToBeginning(array) {
     array.forEach((track, index) => {
-      console.log(track.artist);
       array[index] = {
         song: track.name,
         artist: track.artists,
@@ -29,7 +28,10 @@ export default function SearchItem({ item, expanded, setExpanded }) {
         id: track.id,
       };
     });
-    setPlayQueue([...array, ...playQueue]);
+    const add = [...array, ...playQueue];
+    setPlayQueue(add);
+    const newQueue = add.map((track) => track.uri);
+    spotifyFetch.playNow(newQueue, accessToken);
   }
 
   function expandSearch() {
@@ -49,6 +51,7 @@ export default function SearchItem({ item, expanded, setExpanded }) {
           id: track.id,
         };
         setPlayQueue([addToQueue, ...playQueue]);
+        spotifyFetch.playNow([track.uri], accessToken);
         break;
       case "artist":
         await spotifyFetch.artists(item.id, accessToken).then((res) => {

@@ -1,16 +1,26 @@
 import React, { useState, useEffect } from "react";
-import MainSearch from "./MainSearch";
 import useAuth from "./hooks/useAuth";
 import { TokenContext, QueueContext } from "./context/SpotifyContext";
+import SearchBar from "./search/SearchBar";
+import SearchResults from "./search/SearchResults";
+import Queue from "./queue/Queue";
 import * as spotifyFetch from "./utilities/spotifyFetch.js";
-import SPlayer from "./SPlayer";
-//import axios from "axios";
 
 export default function MainApp({ code, setUser }) {
   const accessToken = useAuth(code);
-  const [playQueue, setPlayQueue] = useState([]);
+  const [searching, setSearching] = useState("");
+  const [expanded, setExpanded] = useState([]);
+  const [index, setIndex] = useState(0);
+  const [searchResult, setSearchResult] = useState({
+    tracks: [],
+    albums: [],
+    playlists: [],
+    artists: [],
+    episodes: [],
+    shows: [],
+  });
 
-  const [nowPlaying, setNowPlaying] = useState({});
+  const [playQueue, setPlayQueue] = useState([]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -18,17 +28,56 @@ export default function MainApp({ code, setUser }) {
       const id = await spotifyFetch.getMe(accessToken);
       setUser(id);
     })();
-    // axios.post("/me", { accessToken }).then((name) => {
-    //   setUser(name.data);
-    // });
   }, [accessToken, setUser]);
 
+  console.log("main app rendered");
   return (
     <TokenContext.Provider value={accessToken}>
       <QueueContext.Provider value={{ playQueue, setPlayQueue }}>
-        <MainSearch nowPlaying={nowPlaying} />
+        <div className='d-flex flex-column bg-success h-100 w-100'>
+          <SearchBar
+            index={index}
+            setIndex={setIndex}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            setSearching={setSearching}
+            setSearchResult={setSearchResult}
+          />
+          <div className='bg-primary playlist'>
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                zIndex: 10,
+                height: "100%",
+                width: "100%",
+              }}
+            >
+              {searching ? (
+                <SearchResults
+                  index={index}
+                  setIndex={setIndex}
+                  expanded={expanded}
+                  setExpanded={setExpanded}
+                  searchResult={searchResult}
+                />
+              ) : null}
+            </div>
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                height: "100%",
+                width: "100%",
+              }}
+            >
+              <Queue />
+            </div>
+          </div>
+        </div>
       </QueueContext.Provider>
-      <SPlayer accessToken={accessToken} setNowPlaying={setNowPlaying} />
     </TokenContext.Provider>
   );
 }

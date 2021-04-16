@@ -16,6 +16,7 @@ const port = process.env.PORT || 3000;
 
 app.use(cors({ credentials: true }));
 app.use(express.static(path.join(__dirname, "build")));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -53,7 +54,6 @@ app.get("/login", (req, res) => {
 });
 
 app.get("/callback", function (req, res) {
-  console.log(req.url);
   res.redirect("/?" + req.url.substr(10));
 });
 
