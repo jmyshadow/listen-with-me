@@ -1,39 +1,73 @@
 import React, { useState, useEffect, useContext } from "react";
 import EpisodeListing from "./EpisodeListing";
-import useSpotifyApi from "../hooks/useSpotifyApi";
+// import useSpotifyApi from "../hooks/useSpotifyApi";
+import * as spotifyFetch from "../utilities/spotifyFetch.js";
 import { TokenContext } from "../context/SpotifyContext";
 
 export default function ExpandedShow({
-  show,
+  uri,
   expanded,
   setExpanded,
   index,
   setIndex,
-  episode,
 }) {
   const accessToken = useContext(TokenContext);
-  const [id, setId] = useState("");
-  const [endPoint, setEndPoint] = useState("");
-  const data = useSpotifyApi(endPoint, id, accessToken);
+  const [episodes, setEpisodes] = useState([]);
+  const [showName, setShowName] = useState("");
+  const [showDesc, setShowDesc] = useState("");
+  // const [id, setId] = useState("");
+  // const [endPoint, setEndPoint] = useState("");
+  // const data = useSpotifyApi(endPoint, id, accessToken);
+
+  // useEffect(() => {
+  //   if (!show) return;
+  //   setId(show.split(":")[2]);
+  //   setEndPoint("shows");
+  // }, [show]);
+
+  // useEffect(() => {
+  //   if (!episode) return;
+  //   setId(episode.split(":")[2]);
+  //   setEndPoint("episodes");
+  // }, [episode]);
 
   useEffect(() => {
-    if (!show) return;
-    setId(show.split(":")[2]);
-    setEndPoint("shows");
-  }, [show]);
-
-  useEffect(() => {
-    if (!episode) return;
-    setId(episode.split(":")[2]);
-    setEndPoint("episodes");
-  }, [episode]);
+    const splitUri = uri.split(":");
+    if (splitUri[1] === "show") {
+      (async function () {
+        const { episodes, showName, showDesc } = await spotifyFetch.shows(
+          splitUri[2],
+          accessToken
+        );
+        setEpisodes(episodes);
+        setShowName(showName);
+        setShowDesc(showDesc);
+      })();
+    } else if (splitUri[1] === "episode") {
+      (async function () {
+        const {
+          episodes,
+          showName,
+          showDesc,
+        } = await spotifyFetch
+          .expandedEpisodes(splitUri[2], accessToken)
+          .then((showId) => {
+            return spotifyFetch.shows(showId, accessToken);
+          });
+        setEpisodes(episodes);
+        setShowName(showName);
+        setShowDesc(showDesc);
+      })();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <>
       {/**have show link to show incase viewing episode only */}
-      <h1> {data.showName} </h1>
-      <h4>{data.showDesc}</h4>
-      {data.episodeData.map((episode) => (
+      <h1> {showName} </h1>
+      <h4>{showDesc}</h4>
+      {episodes.map((episode) => (
         <EpisodeListing
           key={episode.id + Math.random()}
           name={episode.name}

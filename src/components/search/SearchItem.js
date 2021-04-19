@@ -65,7 +65,7 @@ export default function SearchItem({ item, expanded, setExpanded }) {
         break;
       case "playlist":
         await spotifyFetch.playlists(item.id, accessToken).then((res) => {
-          addToBeginning(res);
+          addToBeginning(res.playlistTracks);
         });
         break;
       case "episode":
@@ -75,7 +75,7 @@ export default function SearchItem({ item, expanded, setExpanded }) {
         break;
       case "show":
         await spotifyFetch.shows(item.id, accessToken).then((res) => {
-          addToBeginning(res);
+          addToBeginning(res.episodes);
         });
         break;
       default:

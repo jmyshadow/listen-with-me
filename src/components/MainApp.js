@@ -30,7 +30,6 @@ export default function MainApp({ code, setUser }) {
     })();
   }, [accessToken, setUser]);
 
-  console.log("main app rendered");
   return (
     <TokenContext.Provider value={accessToken}>
       <QueueContext.Provider value={{ playQueue, setPlayQueue }}>
@@ -42,18 +41,10 @@ export default function MainApp({ code, setUser }) {
             setExpanded={setExpanded}
             setSearching={setSearching}
             setSearchResult={setSearchResult}
+            searching={searching}
           />
           <div className='bg-primary playlist'>
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                zIndex: 10,
-                height: "100%",
-                width: "100%",
-              }}
-            >
+            <div style={{ height: "100%", width: "100%" }}>
               {searching ? (
                 <SearchResults
                   index={index}
@@ -64,17 +55,12 @@ export default function MainApp({ code, setUser }) {
                 />
               ) : null}
             </div>
-            <div
-              style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                height: "100%",
-                width: "100%",
-              }}
-            >
-              <Queue />
-            </div>
+            <Queue
+              setExpanded={setExpanded}
+              setSearching={setSearching}
+              searching={searching}
+              expanded={expanded}
+            />
           </div>
         </div>
       </QueueContext.Provider>

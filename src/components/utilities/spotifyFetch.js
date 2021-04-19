@@ -2,7 +2,7 @@ import axios from "axios";
 
 // show info
 export async function shows(id, accessToken) {
-  const addToQueue = await axios
+  const { episodes, showName, showDesc } = await axios
     .get(`https://api.spotify.com/v1/shows/${id}`, {
       headers: {
         Authorization: "Bearer " + accessToken,
@@ -10,19 +10,19 @@ export async function shows(id, accessToken) {
     })
     .then((res) => {
       const showName = res.data.name;
-      // const showDesc = res.data.description;
-      const addToQueue = res.data.episodes.items;
-      addToQueue.forEach((episode, index) => {
-        addToQueue[index].artists = [["", ""]];
-        addToQueue[index].album = [showName];
-        addToQueue[index].album.name = showName;
+      const showDesc = res.data.description;
+      const episodes = res.data.episodes.items;
+      episodes.forEach((episode, index) => {
+        episodes[index].artists = [["", ""]];
+        episodes[index].album = [showName];
+        episodes[index].album.name = showName;
       });
-      return addToQueue;
+      return { episodes, showName, showDesc };
     })
     .catch((err) => {
       console.log(err);
     });
-  return addToQueue;
+  return { episodes, showName, showDesc };
 }
 
 //episode info
@@ -50,6 +50,23 @@ export async function episodes(id, accessToken) {
   return addToQueue;
 }
 
+export async function expandedEpisodes(id, accessToken) {
+  const showId = await axios
+    .get(`https://api.spotify.com/v1/episodes/${id}`, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res) => {
+      const showId = res.data.show.id;
+      return showId;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return showId;
+}
+
 // playlist info
 export async function playlists(id, accessToken) {
   const playlistTracks = await axios
@@ -71,19 +88,19 @@ export async function playlists(id, accessToken) {
     .catch((err) => {
       console.log(err);
     });
-  // const playlistData = await axios
-  //   .get(`https://api.spotify.com/v1/playlists/${id}`, {
-  //     headers: {
-  //       Authorization: "Bearer " + accessToken,
-  //     },
-  //   })
-  //   .then((res) => {
-  //     return res.data;
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
-  return playlistTracks;
+  const playlistData = await axios
+    .get(`https://api.spotify.com/v1/playlists/${id}`, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return { playlistTracks, playlistData };
 }
 
 export async function artists(id, accessToken) {
@@ -114,11 +131,11 @@ export async function artists(id, accessToken) {
     .catch((err) => {
       console.log(err);
     });
-  return await { artistTracks, artistAlbums };
+  return { artistTracks, artistAlbums };
 }
 
 export async function tracks(id, accessToken) {
-  const { trackNum, albumUri } = await axios
+  const { trackNum, albumId } = await axios
     .get(`https://api.spotify.com/v1/tracks/${id}`, {
       headers: {
         Authorization: "Bearer " + accessToken,
@@ -126,13 +143,32 @@ export async function tracks(id, accessToken) {
     })
     .then((res) => {
       const trackNum = res.data.track_number;
-      const albumUri = res.data.album.uri;
-      return { trackNum, albumUri };
+      const albumId = res.data.album.id;
+      return { trackNum, albumId };
     })
     .catch((err) => {
       console.log(err);
     });
-  return { trackNum, albumUri };
+
+  const albumTracks = await axios
+    .get(`https://api.spotify.com/v1/albums/${albumId}`, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res) => {
+      const addToQueue = res.data.tracks.items;
+      const albumName = res.data.name;
+      addToQueue.forEach((track) => {
+        track.album = [albumName];
+        track.album.name = albumName;
+      });
+      return addToQueue;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return { trackNum, albumTracks };
 }
 
 export async function albums(id, accessToken) {

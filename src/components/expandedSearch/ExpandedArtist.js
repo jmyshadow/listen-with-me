@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useContext } from "react";
 import TrackListing from "./TrackListing";
 import ExpandedAlbum from "./ExpandedAlbum";
-import useSpotifyApi from "../hooks/useSpotifyApi";
+// import useSpotifyApi from "../hooks/useSpotifyApi";
+import * as spotifyFetch from "../utilities/spotifyFetch.js";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
 import { Col, Row } from "react-bootstrap";
 
 export default function ExpandedArtist({
-  artist,
+  uri,
   expanded,
   setExpanded,
   index,
@@ -15,15 +16,29 @@ export default function ExpandedArtist({
   const accessToken = useContext(TokenContext);
   const [id, setId] = useState("");
   const { playQueue, setPlayQueue } = useContext(QueueContext);
-  const { artistAlbums, artistTracks } = useSpotifyApi(
-    "artists",
-    id,
-    accessToken
-  );
+  const [artistTracks, setArtistTracks] = useState([]);
+  const [artistAlbums, setArtistAlbums] = useState([]);
+  // const { artistAlbums, artistTracks } = useSpotifyApi(
+  //   "artists",
+  //   id,
+  //   accessToken
+  // );
+
+  // useEffect(() => {
+  //   setId(artist.split(":")[2]);
+  // }, [artist]);
 
   useEffect(() => {
-    setId(artist.split(":")[2]);
-  }, [artist]);
+    (async function getArtist() {
+      const { artistTracks, artistAlbums } = await spotifyFetch.tracks(
+        uri.split(":")[2],
+        accessToken
+      );
+      setArtistTracks(artistTracks);
+      setArtistAlbums(artistAlbums);
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   function queueSong(track) {
     console.log(track);

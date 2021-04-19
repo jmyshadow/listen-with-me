@@ -1,9 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import { Col } from "react-bootstrap";
+import ExpandedSearchResults from "../expandedSearch/ExpandedSearchResults";
+import SongTime from "../utilities/SongTime";
 
-export default function QueueItem({ entry }) {
-  function uriClicked() {
-    console.log("clicked");
+export default function QueueItem({
+  entry,
+  setExpanded,
+  setSearching,
+  expanded,
+}) {
+  const [clicked, setClicked] = useState(false);
+  function uriClicked(uri) {
+    setSearching(true);
+    setExpanded([uri]);
+    setClicked(true);
   }
 
   function setupArtist(artist) {
@@ -18,20 +28,16 @@ export default function QueueItem({ entry }) {
       ));
   }
 
-  function milToMin(milli) {
-    const min = Math.floor(milli / 60000);
-    const sec = Math.ceil((milli / 60000 - min) * 60);
-
-    return `${min}:${sec.toString().length === 1 ? "0" + sec.toString() : sec}`;
-  }
-
-  console.log("queue item rendered");
-  return (
+  return clicked ? (
+    <ExpandedSearchResults expanded={expanded} setExpanded={setExpanded} />
+  ) : (
     <>
       <Col>{entry.song}</Col>
       <Col>{setupArtist(entry.artist)}</Col>
       <Col>{entry.album}</Col>
-      <Col sm='auto'>{milToMin(entry.duration)}</Col>
+      <Col sm='auto'>
+        <SongTime milli={entry.duration} />
+      </Col>
     </>
   );
 }

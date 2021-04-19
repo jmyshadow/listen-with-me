@@ -7,7 +7,12 @@ import SPlayer from "./SPlayer";
 import useSpotifyConnect from "../hooks/useSpotifyConnect";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 
-export default function Queue() {
+export default function Queue({
+  searching,
+  setSearching,
+  setExpanded,
+  expanded,
+}) {
   // song:
   // artist:
   // album:
@@ -18,47 +23,52 @@ export default function Queue() {
   const accessToken = useContext(TokenContext);
   const { playQueue, setPlayQueue } = useContext(QueueContext);
   const { player, nowPlaying, paused } = useSpotifyConnect(accessToken);
-  const [lastTrack, setLastTrack] = useState(null);
-  const [currentTrack, setCurrentTrack] = useState(null);
+  const [lastTrack, setLastTrack] = useState("");
+  const [currentTrack, setCurrentTrack] = useState("");
   const [needsUpdate, setNeedsUpdate] = useState(false);
 
   useEffect(() => {
     if (!nowPlaying) return;
-    if (!lastTrack) {
-      setLastTrack(nowPlaying.track_window.previous_tracks[1]);
-      setCurrentTrack(nowPlaying.track_window.current_track);
-      return;
-    }
-    const playingUri = nowPlaying.track_window.current_track.uri;
-    if (currentTrack.uri !== playingUri) {
-      if (playingUri === lastTrack.uri) {
-        const track = nowPlaying.track_window.current_track;
+    //   if (!lastTrack) {
+    //     setLastTrack(nowPlaying.track_window.previous_tracks[1]);
+    //     setCurrentTrack(nowPlaying.track_window.current_track);
+    //     return;
+    //   }
+    const playingTrack = nowPlaying.track_window.current_track;
+    if (playingTrack.uri !== currentTrack) {
+      if (playingTrack.uri === lastTrack) {
         setPlayQueue([
           {
-            song: track.name,
+            song: playingTrack.name,
             artist: [
-              { name: track.artists[0].name, uri: track.artists[0].uri },
+              {
+                name: playingTrack.artists[0].name,
+                uri: playingTrack.artists[0].uri,
+              },
             ],
-            album: track.album.name,
-            duration: track.duration_ms,
-            uri: track.uri,
-            id: track.id,
+            album: playingTrack.album.name,
+            duration: playingTrack.duration_ms,
+            uri: playingTrack.uri,
+            id: playingTrack.id,
           },
           ...playQueue,
         ]);
       } else {
         const newQueue = playQueue;
-        newQueue.shift();
-        setPlayQueue(newQueue);
         if (needsUpdate) {
+          setNeedsUpdate(false);
           const uris = newQueue.map((track) => track.uri);
           spotifyFetch.playNow(uris, accessToken);
-
-          setNeedsUpdate(false);
+          console.log("queued to spotify");
         }
+        newQueue.shift();
+        setPlayQueue(newQueue);
       }
-      setCurrentTrack(nowPlaying.track_window.current_track);
-      setLastTrack(nowPlaying.track_window.previous_tracks[1]);
+      console.log(nowPlaying.track_window);
+      setCurrentTrack(playingTrack.uri);
+      const thePreviousTracks = nowPlaying.track_window.previous_tracks;
+      if (thePreviousTracks.length > 0)
+        setLastTrack(thePreviousTracks[thePreviousTracks.length - 1].uri);
     }
   }, [
     accessToken,
@@ -66,6 +76,7 @@ export default function Queue() {
     lastTrack,
     needsUpdate,
     nowPlaying,
+    playQueue,
     setPlayQueue,
   ]);
 
@@ -76,7 +87,16 @@ export default function Queue() {
     setNeedsUpdate(true);
   }
 
+  // useEffect(() => {
+  // if(needsUpdate){
+
+  //   setNeedsUpdate(false)
+  // }
+
+  // },[needsUpdate]);
+
   function playItem(index) {
+    console.log("clicked the button");
     const playNow = playQueue[index];
     const newQueue = [...playQueue];
     newQueue.splice(index, 1);
@@ -86,10 +106,9 @@ export default function Queue() {
     spotifyFetch.playNow(uris, accessToken);
   }
 
-  console.log("queue rendered");
   return (
     <>
-      <Container fluid>
+      <Container className={searching ? "hideQueue" : "queue"} fluid>
         <NowPlaying nowPlaying={nowPlaying} />
         {/** adding random number to entry id, in case same song queued more than once */}
         <Row className='mx-4 px-4 py-2 border-bottom border-dark' noGutters>
@@ -104,9 +123,14 @@ export default function Queue() {
             noGutters
           >
             <Col sm='auto'>
-              <button onClick={playItem(index)}>&#9658;</button>
+              <button onClick={() => playItem(index)}>&#9658;</button>
             </Col>
-            <QueueItem entry={entry} />
+            <QueueItem
+              entry={entry}
+              setExpanded={setExpanded}
+              setSearching={setSearching}
+              expanded={expanded}
+            />
             <Col sm='auto'>
               <button
                 onClick={() => removeItem(index)}

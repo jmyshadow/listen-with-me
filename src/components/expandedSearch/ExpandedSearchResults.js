@@ -25,7 +25,7 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedAlbum
-            track={expanded[index]}
+            uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}
@@ -37,7 +37,7 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedAlbum
-            album={expanded[index]}
+            uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}
@@ -63,7 +63,7 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedPlaylist
-            playlist={expanded[index]}
+            uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}
@@ -76,7 +76,7 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedShow
-            episode={expanded[index]}
+            uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}
@@ -89,7 +89,7 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedShow
-            show={expanded[index]}
+            uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}

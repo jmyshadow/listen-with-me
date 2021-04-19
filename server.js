@@ -76,14 +76,14 @@ app.post("/getAuth", (req, res) => {
 });
 
 app.post("/refresh", (req, res) => {
-  // const refreshToken = req.body.refreshToken;
+  const refreshToken = req.body.refreshToken;
   //  spotifyApi.setRefreshToken(refreshToken)
-  /*  const spotifyApi = new SpotifyWebApi({
+  const spotifyApi = new SpotifyWebApi({
     redirectUri: process.env.REDIRECT_URI,
     clientId: process.env.CLIENT_ID,
     clientSecret: process.env.CLIENT_SECRET,
     refreshToken,
-  });*/
+  });
   console.log("refreshed");
   // spotifyApi.setRefreshToken(req.body.refreshToken);
   spotifyApi

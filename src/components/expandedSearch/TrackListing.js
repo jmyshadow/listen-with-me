@@ -1,5 +1,6 @@
 import React from "react";
 import { Col } from "react-bootstrap";
+import SongTime from "../utilities/SongTime";
 
 export default function TrackListing({
   name,
@@ -26,13 +27,6 @@ export default function TrackListing({
       },
    */
 
-  function milToMin(milli) {
-    const min = Math.floor(milli / 60000);
-    const sec = Math.ceil((milli / 60000 - min) * 60);
-
-    return `${min}:${sec.toString().length === 1 ? "0" + sec.toString() : sec}`;
-  }
-
   function uriClicked(uri) {
     setExpanded([...expanded, uri]);
     setIndex(index + 1);
@@ -56,7 +50,9 @@ export default function TrackListing({
         <Col>{name}</Col>
         <Col> {setupArtist()} </Col>
         <Col>{album}</Col>
-        <Col sm='auto'>{milToMin(ms)}</Col>
+        <Col sm='auto'>
+          <SongTime milli={ms} />
+        </Col>
       </>
     );
   } else {
@@ -68,7 +64,9 @@ export default function TrackListing({
           {artists.length > 1 ? setupArtist() : ""}
         </Col>
         {/**       <Col xs={4}>{album}</Col>  */}
-        <Col sm='auto'>{milToMin(ms)}</Col>
+        <Col sm='auto'>
+          <SongTime milli={ms} />
+        </Col>
       </>
     );
   }

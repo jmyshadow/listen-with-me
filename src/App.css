@@ -9,6 +9,23 @@
   position: relative;
 }
 
+.hideQueue {
+  display: none;
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.queue {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+}
+
 .chatbox {
   overflow-y: auto;
 }
@@ -21,6 +38,6 @@ div.trackBar {
 
 div.progressBar {
   transition: width 0.5s;
-  transition-timing-function: ease-in-out;
+  transition-timing-function: linear;
   pointer-events: none;
 }

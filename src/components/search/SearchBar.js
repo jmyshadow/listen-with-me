@@ -10,6 +10,7 @@ export default function SearchBar({
   setExpanded,
   index,
   setIndex,
+  searching,
 }) {
   const accessToken = useContext(TokenContext);
 
@@ -17,16 +18,26 @@ export default function SearchBar({
 
   function prevResult() {
     if (index > 0) setIndex(index - 1);
-    else setExpanded([]);
+    else {
+      setExpanded([]);
+      if (!search) setSearching(false);
+    }
   }
 
   function nextResult() {
     setIndex(index + 1);
   }
 
-  useEffect(() => {
+  function cleanupSearch() {
     setExpanded([]);
-  }, [search, setExpanded]);
+    setSearch("");
+    setIndex(0);
+    setSearching(false);
+  }
+
+  // useEffect(() => {
+  //   setExpanded([]);
+  // }, [search, setExpanded]);
 
   useEffect(() => {
     if (!accessToken) return;
@@ -91,7 +102,7 @@ export default function SearchBar({
         <InputGroup.Append>
           <Button
             variant='primary'
-            className={search ? "d-block" : "d-none"}
+            className={searching ? "d-block" : "d-none"}
             onClick={() => prevResult("")}
             disabled={expanded.length === 0}
           >
@@ -101,7 +112,7 @@ export default function SearchBar({
         <InputGroup.Append>
           <Button
             variant='primary'
-            className={search ? "d-block" : "d-none"}
+            className={searching ? "d-block" : "d-none"}
             onClick={() => nextResult("")}
             disabled={index >= expanded.length - 1}
           >
@@ -111,8 +122,8 @@ export default function SearchBar({
         <InputGroup.Append>
           <Button
             variant='primary'
-            className={search ? "d-block" : "d-none"}
-            onClick={() => setSearch("")}
+            className={searching ? "d-block" : "d-none"}
+            onClick={() => cleanupSearch()}
           >
             {"X"}
           </Button>
