@@ -134,9 +134,27 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("getNewMsg", user, msg);
   });
 
-  socket.on("returnPlaylist", (playlist) => {
+  socket.on("returnPlaylist", (playlist, position) => {
     const keys = Object.keys(users);
-    io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist);
+    io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist, position);
+  });
+
+  socket.on("next", () => {
+    socket.broadcast.emit("allNext");
+  });
+
+  socket.on("prev", () => {
+    socket.broadcast.emit("allPrev");
+  });
+
+  socket.on("seek", (seek) => {
+    socket.broadcast.emit("allSeek", seek);
+  });
+
+  socket.on("disconnect", () => {
+    delete users[socket.id];
+    const keys = Object.keys(users);
+    socket.broadcast.emit("isOnlyUser", keys.length > 1);
   });
 });
 

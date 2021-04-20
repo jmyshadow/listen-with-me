@@ -36,6 +36,7 @@ export default function Queue({
     //     setCurrentTrack(nowPlaying.track_window.current_track);
     //     return;
     //   }
+    console.log(nowPlaying);
     const playingTrack = nowPlaying.track_window.current_track;
     if (playingTrack.uri !== currentTrack) {
       if (playingTrack.uri === lastTrack) {
@@ -113,13 +114,47 @@ export default function Queue({
   });
 
   socket.on("getPlaylist", () => {
-    socket.emit("returnPlaylist", playQueue);
+    const playingTrack = nowPlaying.track_window.current_track;
+    const position = nowPlaying.position;
+    const syncQueue = [
+      {
+        song: playingTrack.name,
+        artist: [
+          {
+            name: playingTrack.artists[0].name,
+            uri: playingTrack.artists[0].uri,
+          },
+        ],
+        album: playingTrack.album.name,
+        duration: playingTrack.duration_ms,
+        uri: playingTrack.uri,
+        id: playingTrack.id,
+      },
+      ...playQueue,
+    ];
+    socket.emit("returnPlaylist", syncQueue, position);
   });
 
-  socket.on("updatePlaylist", (playlist) => {
+  socket.on("updatePlaylist", (playlist, position) => {
     console.log("playlist update through socket");
     setPlayQueue(playlist);
+    if (paused) player.togglePlay();
+    player.seek(position);
   });
+
+  socket.on("allNext", () => player.nextTrack());
+
+  function nextSong() {
+    player.nextTrack();
+    socket.emit("next");
+  }
+
+  socket.on("allPrev", () => player.previousTrack());
+
+  function prevSong() {
+    player.previousTrack();
+    socket.emit("prev");
+  }
 
   return (
     <>
@@ -158,12 +193,13 @@ export default function Queue({
         ))}
       </Container>
       <SPlayer
-        prev={() => player.previousTrack()}
+        prev={prevSong}
         play={() => player.togglePlay()}
-        next={() => player.nextTrack()}
+        next={nextSong}
         nowPlaying={nowPlaying}
         paused={paused}
         player={player}
+        socket={socket}
       />
     </>
   );

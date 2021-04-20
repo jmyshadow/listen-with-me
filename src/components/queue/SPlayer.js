@@ -8,10 +8,16 @@ export default function SPlayer({
   nowPlaying,
   paused,
   player,
+  socket,
 }) {
   return (
     <div className='fixed-bottom' style={{ height: "48px" }}>
-      <ProgressBar nowPlaying={nowPlaying} paused={paused} player={player} />
+      <ProgressBar
+        nowPlaying={nowPlaying}
+        paused={paused}
+        player={player}
+        socket={socket}
+      />
       <div
         className='d-flex justify-content-center'
         style={{

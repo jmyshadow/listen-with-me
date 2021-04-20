@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 
-export default function ProgressBar({ nowPlaying, paused, player }) {
+export default function ProgressBar({ nowPlaying, paused, player, socket }) {
   const [percent, setPercent] = useState(null);
 
   useEffect(() => {
@@ -28,7 +28,10 @@ export default function ProgressBar({ nowPlaying, paused, player }) {
     );
 
     player.seek(seek);
+    socket.emit("seek", seek);
   }
+
+  socket.on("allSeek", (seek) => player.seek(seek));
 
   return (
     <div onClick={(e) => seekTrack(e)} style={{ width: "100%", zIndex: 200 }}>
