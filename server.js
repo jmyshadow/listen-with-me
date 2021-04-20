@@ -116,16 +116,27 @@ app.post("/me", (req, res) => {
 });
 
 //////////////////////////////////////////////////////////////////////
-
+const users = {};
 io.on("connection", (socket) => {
   socket.on("userJoined", (user) => {
     console.log(user + " joined");
     socket.broadcast.emit("otherUserJoined", user);
+    users[socket.id] = user;
+
+    const keys = Object.keys(users);
+    socket.emit("isOnlyUser", keys.length > 1);
+
+    if (keys.length > 1) io.to(keys[0]).emit("getPlaylist");
   });
 
   socket.on("newMsg", (user, msg) => {
     console.log(user, msg);
     socket.broadcast.emit("getNewMsg", user, msg);
+  });
+
+  socket.on("returnPlaylist", (playlist) => {
+    const keys = Object.keys(users);
+    io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist);
   });
 });
 

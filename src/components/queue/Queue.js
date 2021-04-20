@@ -12,6 +12,7 @@ export default function Queue({
   setSearching,
   setExpanded,
   expanded,
+  socket,
 }) {
   // song:
   // artist:
@@ -26,6 +27,7 @@ export default function Queue({
   const [lastTrack, setLastTrack] = useState("");
   const [currentTrack, setCurrentTrack] = useState("");
   const [needsUpdate, setNeedsUpdate] = useState(false);
+  const [solo, setSolo] = useState(true);
 
   useEffect(() => {
     if (!nowPlaying) return;
@@ -105,6 +107,19 @@ export default function Queue({
     const uris = newQueue.map((track) => track.uri);
     spotifyFetch.playNow(uris, accessToken);
   }
+
+  socket.on("isOnlyUser", (solo) => {
+    setSolo(solo);
+  });
+
+  socket.on("getPlaylist", () => {
+    socket.emit("returnPlaylist", playQueue);
+  });
+
+  socket.on("updatePlaylist", (playlist) => {
+    console.log("playlist update through socket");
+    setPlayQueue(playlist);
+  });
 
   return (
     <>

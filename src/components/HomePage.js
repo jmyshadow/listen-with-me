@@ -15,7 +15,7 @@ export default function HomePage({ code, socket }) {
   return (
     <div className='homepage d-flex h-100 w-100 pb-5'>
       <div className='side-bar bg-dark w-25'>links</div>
-      <MainApp className='w-50' code={code} setUser={setUser} />
+      <MainApp className='w-50' code={code} setUser={setUser} socket={socket} />
       <Chat user={user} socket={socket} />
     </div>
   );

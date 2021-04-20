@@ -6,7 +6,7 @@ import SearchResults from "./search/SearchResults";
 import Queue from "./queue/Queue";
 import * as spotifyFetch from "./utilities/spotifyFetch.js";
 
-export default function MainApp({ code, setUser }) {
+export default function MainApp({ code, setUser, socket }) {
   const accessToken = useAuth(code);
   const [searching, setSearching] = useState("");
   const [expanded, setExpanded] = useState([]);
@@ -60,6 +60,7 @@ export default function MainApp({ code, setUser }) {
               setSearching={setSearching}
               searching={searching}
               expanded={expanded}
+              socket={socket}
             />
           </div>
         </div>

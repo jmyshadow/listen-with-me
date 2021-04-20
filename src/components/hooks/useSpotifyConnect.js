@@ -21,15 +21,17 @@ export default function useAuth(accessToken) {
     spotify.addListener("ready", ({ device_id }) => {
       console.log("Connected with Device ID", device_id);
 
-      axios.put(
-        `https://api.spotify.com/v1/me/player`,
-        { device_ids: [device_id] },
-        {
-          headers: {
-            Authorization: "Bearer " + accessToken,
-          },
-        }
-      );
+      axios
+        .put(
+          `https://api.spotify.com/v1/me/player`,
+          { device_ids: [device_id] },
+          {
+            headers: {
+              Authorization: "Bearer " + accessToken,
+            },
+          }
+        )
+        .catch(() => console.log("no song in queue"));
     });
 
     spotify.addListener(

@@ -204,6 +204,7 @@ export async function albums(id, accessToken) {
   //   });
   return addToQueue;
 }
+// utility functions
 
 export async function getMe(accessToken) {
   const id = await axios
@@ -220,8 +221,6 @@ export async function getMe(accessToken) {
     });
   return id;
 }
-
-// utility functions
 
 export function playNow(uris, accessToken) {
   axios({

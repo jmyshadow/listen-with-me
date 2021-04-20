@@ -14,7 +14,6 @@ export default function ExpandedArtist({
   setIndex,
 }) {
   const accessToken = useContext(TokenContext);
-  const [id, setId] = useState("");
   const { playQueue, setPlayQueue } = useContext(QueueContext);
   const [artistTracks, setArtistTracks] = useState([]);
   const [artistAlbums, setArtistAlbums] = useState([]);

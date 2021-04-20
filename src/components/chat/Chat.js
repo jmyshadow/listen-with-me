@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useRef } from "react";
 import ChatHistory from "./ChatHistory";
 import { InputGroup, FormControl, Button } from "react-bootstrap";
 
