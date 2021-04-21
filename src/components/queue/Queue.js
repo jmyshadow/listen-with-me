@@ -142,14 +142,18 @@ export default function Queue({
     player.seek(position);
   });
 
-  socket.on("allNext", () => player.nextTrack());
+  socket.on("allNext", () => {
+    player.nextTrack();
+  });
 
   function nextSong() {
     player.nextTrack();
     socket.emit("next");
   }
 
-  socket.on("allPrev", () => player.previousTrack());
+  socket.on("allPrev", () => {
+    player.previousTrack();
+  });
 
   function prevSong() {
     player.previousTrack();
