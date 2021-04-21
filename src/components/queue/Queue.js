@@ -114,8 +114,8 @@ export default function Queue({
   });
 
   socket.on("getPlaylist", () => {
-    const playingTrack = nowPlaying.track_window.current_track;
-    const position = nowPlaying.position;
+    // const playingTrack = nowPlaying.track_window.current_track;
+    // const position = nowPlaying.position;
     // const syncQueue = [...playQueue];
     //{
     //   song: playingTrack.name,
@@ -132,7 +132,7 @@ export default function Queue({
     // },
     //   ...playQueue,
     // ];
-    socket.emit("returnPlaylist", playQueue, position);
+    socket.emit("returnPlaylist", playQueue, 0);
     // socket.emit("returnPlaylist", playQueue, 0);
   });
 
