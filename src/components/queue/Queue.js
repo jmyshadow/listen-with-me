@@ -116,23 +116,24 @@ export default function Queue({
   socket.on("getPlaylist", () => {
     const playingTrack = nowPlaying.track_window.current_track;
     const position = nowPlaying.position;
-    const syncQueue = [
-      {
-        song: playingTrack.name,
-        artist: [
-          {
-            name: playingTrack.artists[0].name,
-            uri: playingTrack.artists[0].uri,
-          },
-        ],
-        album: playingTrack.album.name,
-        duration: playingTrack.duration_ms,
-        uri: playingTrack.uri,
-        id: playingTrack.id,
-      },
-      ...playQueue,
-    ];
-    socket.emit("returnPlaylist", syncQueue, position);
+    // const syncQueue = [...playQueue];
+    //{
+    //   song: playingTrack.name,
+    //   artist: [
+    //     {
+    //       name: playingTrack.artists[0].name,
+    //       uri: playingTrack.artists[0].uri,
+    //     },
+    //   ],
+    //   album: playingTrack.album.name,
+    //   duration: playingTrack.duration_ms,
+    //   uri: playingTrack.uri,
+    //   id: playingTrack.id,
+    // },
+    //   ...playQueue,
+    // ];
+    socket.emit("returnPlaylist", playQueue, position);
+    // socket.emit("returnPlaylist", playQueue, 0);
   });
 
   socket.on("updatePlaylist", (playlist, position) => {
