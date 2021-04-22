@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 
-export default function useAuth(accessToken) {
+export default function useSpotifyConnect(accessToken) {
   const [player, setPlayer] = useState(null);
   const [nowPlaying, setNowPlaying] = useState(null);
   const [paused, setPaused] = useState(true);
 
   useEffect(() => {
     console.log("spotify useeffect running");
+    console.log(player);
     if (player) return;
     if (!accessToken) return;
     const spotify = new window.Spotify.Player({
@@ -36,9 +37,17 @@ export default function useAuth(accessToken) {
 
     spotify.addListener(
       "player_state_changed",
-      ({ position, duration, track_window, paused, context }) => {
-        setPaused(paused);
-        setNowPlaying({ position, duration, track_window });
+      //  ({ position, duration, track_window, paused }) => {
+      (state) => {
+        if (state) {
+          console.log(state);
+          setPaused(state.paused);
+          setNowPlaying({
+            position: state.position,
+            duration: state.duration,
+            track_window: state.track_window,
+          });
+        }
       }
     );
 

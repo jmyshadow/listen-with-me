@@ -3,15 +3,13 @@ import Login from "./components/Login";
 import HomePage from "./components/HomePage";
 
 import "bootstrap/dist/css/bootstrap.min.css";
-import io from "socket.io-client";
 
 function App() {
   const code = window.location.search.split("=")[1];
-  const socket = io.connect("/");
 
   return (
     <div className='App bg-secondary h-100'>
-      {code ? <HomePage code={code} socket={socket} /> : <Login />}
+      {code ? <HomePage code={code} /> : <Login />}
     </div>
   );
 }

@@ -121,21 +121,27 @@ io.on("connection", (socket) => {
   socket.on("userJoined", (user) => {
     console.log(user + " joined");
     socket.broadcast.emit("otherUserJoined", user);
+    console.log("connect: ", users);
     users[socket.id] = user;
+    console.log(users);
 
     const keys = Object.keys(users);
-    socket.emit("isOnlyUser", keys.length > 1);
-
-    if (keys.length > 1) io.to(keys[0]).emit("getPlaylist");
+    socket.emit("isOnlyUser", keys.length < 2);
+    console.log(keys.length);
+    console.log(users);
   });
 
-  socket.on("newMsg", (user, msg) => {
-    console.log(user, msg);
-    socket.broadcast.emit("getNewMsg", user, msg);
+  // spotify functions
+
+  socket.on("needPlaylist", () => {
+    const keys = Object.keys(users);
+    console.log(socket.id + " needs playlist from " + keys[0]);
+    io.to(keys[0]).emit("getPlaylist");
   });
 
   socket.on("returnPlaylist", (playlist, position) => {
     const keys = Object.keys(users);
+    console.log("sending playlist to", keys[keys.length - 1]);
     io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist, position);
   });
 
@@ -151,10 +157,19 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("allSeek", seek);
   });
 
+  //chat functions
+  socket.on("newMsg", (user, msg) => {
+    console.log(user, msg);
+    socket.broadcast.emit("getNewMsg", user, msg);
+  });
+
   socket.on("disconnect", () => {
+    console.log(users);
+    console.log(users[socket.id] + " disconnected");
     delete users[socket.id];
+    console.log(users);
     const keys = Object.keys(users);
-    socket.broadcast.emit("isOnlyUser", keys.length > 1);
+    socket.broadcast.emit("isOnlyUser", keys.length < 2);
   });
 });
 

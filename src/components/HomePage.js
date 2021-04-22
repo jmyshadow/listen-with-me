@@ -1,13 +1,18 @@
 import React, { useState, useEffect } from "react";
 import MainApp from "./MainApp";
 import Chat from "./chat/Chat";
+import io from "socket.io-client";
 
-export default function HomePage({ code, socket }) {
+export default function HomePage({ code }) {
   const [user, setUser] = useState("");
+
+  console.log("socket connecting");
+  const socket = io.connect("/");
 
   useEffect(() => {
     if (!user) return;
     socket.user = user;
+    console.log("joined");
     socket.emit("userJoined", user);
   });
 
