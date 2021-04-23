@@ -76,16 +76,16 @@ app.post("/getAuth", (req, res) => {
 });
 
 app.post("/refresh", (req, res) => {
-  const refreshToken = req.body.refreshToken;
-  //  spotifyApi.setRefreshToken(refreshToken)
-  const spotifyApi = new SpotifyWebApi({
-    redirectUri: process.env.REDIRECT_URI,
-    clientId: process.env.CLIENT_ID,
-    clientSecret: process.env.CLIENT_SECRET,
-    refreshToken,
-  });
+  // const refreshToken = req.body.refreshToken;
+  // //  spotifyApi.setRefreshToken(refreshToken)
+  // const spotifyApi = new SpotifyWebApi({
+  //   redirectUri: process.env.REDIRECT_URI,
+  //   clientId: process.env.CLIENT_ID,
+  //   clientSecret: process.env.CLIENT_SECRET,
+  //   refreshToken,
+  // });
   console.log("refreshed");
-  // spotifyApi.setRefreshToken(req.body.refreshToken);
+  spotifyApi.setRefreshToken(req.body.refreshToken);
   spotifyApi
     .refreshAccessToken()
     .then((data) => {
@@ -100,62 +100,41 @@ app.post("/refresh", (req, res) => {
     });
 });
 
-app.post("/me", (req, res) => {
-  axios
-    .get(`https://api.spotify.com/v1/me`, {
-      headers: {
-        Authorization: "Bearer " + req.body.accessToken,
-      },
-    })
-    .then((data) => {
-      res.json(data.data.id);
-    })
-    .catch((err) => {
-      console.log(err);
-    });
-});
-
 //////////////////////////////////////////////////////////////////////
 const users = {};
 io.on("connection", (socket) => {
   socket.on("userJoined", (user) => {
-    console.log(user + " joined");
     socket.broadcast.emit("otherUserJoined", user);
-    console.log("connect: ", users);
     users[socket.id] = user;
-    console.log(users);
 
-    const keys = Object.keys(users);
-    socket.emit("isOnlyUser", keys.length < 2);
-    console.log(keys.length);
-    console.log(users);
+    // const keys = Object.keys(users);
+    // socket.emit("isOnlyUser", keys.length < 2);
   });
 
-  // spotify functions
+  // // spotify functions
 
-  socket.on("needPlaylist", () => {
-    const keys = Object.keys(users);
-    console.log(socket.id + " needs playlist from " + keys[0]);
-    io.to(keys[0]).emit("getPlaylist");
-  });
+  // socket.on("needPlaylist", () => {
+  //   const keys = Object.keys(users);
+  //   io.to(keys[0]).emit("getPlaylist");
+  // });
 
-  socket.on("returnPlaylist", (playlist, position) => {
-    const keys = Object.keys(users);
-    console.log("sending playlist to", keys[keys.length - 1]);
-    io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist, position);
-  });
+  // socket.on("returnPlaylist", (playlist, position) => {
+  //   const keys = Object.keys(users);
+  //   console.log("sending playlist to", keys[keys.length - 1]);
+  //   io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist, position);
+  // });
 
-  socket.on("next", () => {
-    socket.broadcast.emit("allNext");
-  });
+  // socket.on("next", () => {
+  //   socket.broadcast.emit("allNext");
+  // });
 
-  socket.on("prev", () => {
-    socket.broadcast.emit("allPrev");
-  });
+  // socket.on("prev", () => {
+  //   socket.broadcast.emit("allPrev");
+  // });
 
-  socket.on("seek", (seek) => {
-    socket.broadcast.emit("allSeek", seek);
-  });
+  // socket.on("seek", (seek) => {
+  //   socket.broadcast.emit("allSeek", seek);
+  // });
 
   //chat functions
   socket.on("newMsg", (user, msg) => {
@@ -164,12 +143,9 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log(users);
-    console.log(users[socket.id] + " disconnected");
     delete users[socket.id];
-    console.log(users);
-    const keys = Object.keys(users);
-    socket.broadcast.emit("isOnlyUser", keys.length < 2);
+    // const keys = Object.keys(users);
+    // socket.broadcast.emit("isOnlyUser", keys.length < 2);
   });
 });
 

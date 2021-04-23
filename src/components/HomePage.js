@@ -3,11 +3,12 @@ import MainApp from "./MainApp";
 import Chat from "./chat/Chat";
 import io from "socket.io-client";
 
+const socket = io.connect("/");
+
 export default function HomePage({ code }) {
   const [user, setUser] = useState("");
 
   console.log("socket connecting");
-  const socket = io.connect("/");
 
   useEffect(() => {
     if (!user) return;

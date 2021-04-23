@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import ChatHistory from "./ChatHistory";
 import { InputGroup, FormControl, Button } from "react-bootstrap";
 
@@ -16,18 +16,27 @@ export default function Chat({ user, socket }) {
 
   function handleText(e) {
     if (e.key === "Enter" || e.keyCode === 13) {
+      console.log(chatHist);
+      console.log([...chatHist]);
       sendMessage();
     }
   }
+  useEffect(() => {
+    socket.on("getNewMsg", (otherUser, msg) => {
+      console.log(chatHist);
+      setChatHist([...chatHist, `${otherUser}: ${msg}`]);
+    });
 
-  socket.on("getNewMsg", (otherUser, msg) => {
-    setChatHist([...chatHist, `${otherUser}: ${msg}`]);
+    socket.on("otherUserJoined", (otherUser) => {
+      setChatHist([...chatHist, `${otherUser} joined the session`]);
+    });
+
+    // return cleanUp = () => {
+
+    // }
   });
 
-  socket.on("otherUserJoined", (otherUser) => {
-    setChatHist([...chatHist, `${otherUser} joined the session`]);
-  });
-
+  console.log("chat rendered");
   return (
     <div className='side-bar bg-dark d-flex flex-column w-25'>
       <ChatHistory chatHist={chatHist} />
