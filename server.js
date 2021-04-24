@@ -107,45 +107,51 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("otherUserJoined", user);
     users[socket.id] = user;
 
-    // const keys = Object.keys(users);
-    // socket.emit("isOnlyUser", keys.length < 2);
+    const keys = Object.keys(users);
+    socket.emit("isOnlyUser", keys.length < 2);
   });
 
   // // spotify functions
 
-  // socket.on("needPlaylist", () => {
-  //   const keys = Object.keys(users);
-  //   io.to(keys[0]).emit("getPlaylist");
-  // });
+  socket.on("needPlaylist", () => {
+    console.log("need")
+    const keys = Object.keys(users);
+    io.to(keys[0]).emit("getPlaylist");
+  });
 
-  // socket.on("returnPlaylist", (playlist, position) => {
-  //   const keys = Object.keys(users);
-  //   console.log("sending playlist to", keys[keys.length - 1]);
-  //   io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist, position);
-  // });
+  socket.on("returnPlaylist", (playlist, position) => {
+    console.log("return")
+    const keys = Object.keys(users);
+    console.log("sending playlist to", keys[keys.length - 1]);
+    io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist, position);
+  });
 
-  // socket.on("next", () => {
-  //   socket.broadcast.emit("allNext");
-  // });
+  socket.on("next", () => {
+    console.log("next")
+    socket.broadcast.emit("allNext");
+  });
 
-  // socket.on("prev", () => {
-  //   socket.broadcast.emit("allPrev");
-  // });
+  socket.on("prev", () => {
+    console.log("prev")
+    socket.broadcast.emit("allPrev");
+  });
 
-  // socket.on("seek", (seek) => {
-  //   socket.broadcast.emit("allSeek", seek);
-  // });
+  socket.on("seek", (seek) => {
+    console.log("seek")
+    socket.broadcast.emit("allSeek", seek);
+  });
 
   //chat functions
   socket.on("newMsg", (user, msg) => {
-    console.log(user, msg);
+    console.log("msg");
     socket.broadcast.emit("getNewMsg", user, msg);
   });
 
   socket.on("disconnect", () => {
+    console.log("disconnect")
     delete users[socket.id];
-    // const keys = Object.keys(users);
-    // socket.broadcast.emit("isOnlyUser", keys.length < 2);
+    const keys = Object.keys(users);
+    socket.broadcast.emit("isOnlyUser", keys.length < 2);
   });
 });
 
