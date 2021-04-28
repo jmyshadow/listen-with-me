@@ -34,8 +34,6 @@ export default function ExpandedArtist({
         uri.split(":")[2],
         accessToken
       );
-      console.log(artistTracks);
-      console.log(artistAlbums);
       setArtistTracks(artistTracks);
       setArtistAlbums(artistAlbums);
     })();
@@ -43,7 +41,6 @@ export default function ExpandedArtist({
   }, []);
 
   function queueSong(track) {
-    console.log(track);
     setPlayQueue([
       ...playQueue,
       {
@@ -59,7 +56,6 @@ export default function ExpandedArtist({
     socket.emit("songQueued", track.uri);
   }
 
-  console.log("ex artist rendered");
   return (
     <>
       <Row>

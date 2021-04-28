@@ -94,7 +94,6 @@ export default function SearchBar({
     setIndex(0);
   }, [search, setExpanded, setIndex]);
 
-  console.log("searchbar rendered");
   return (
     <div>
       <InputGroup className='p-3'>

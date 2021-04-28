@@ -34,7 +34,6 @@ export default function Chat({ user, socket }) {
     };
   });
 
-  console.log("chat rendered");
   return (
     <div className='side-bar bg-dark d-flex flex-column w-25'>
       <ChatHistory chatHist={chatHist} />

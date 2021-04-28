@@ -82,7 +82,6 @@ export default function SearchItem({ item, expanded, setExpanded }) {
         break;
     }
   }
-  console.log("searchitem rendered");
 
   return (
     <Col>

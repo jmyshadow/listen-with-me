@@ -15,7 +15,6 @@ export default function NowPlaying({ nowPlaying }) {
     setArtist(nowPlaying.track_window.current_track.artists[0].name);
   }, [setImage, setTrack, setAlbum, nowPlaying]);
 
-  console.log(nowPlaying)
   return (
     <Row className='px-5 py-2' noGutters>
       <Col>

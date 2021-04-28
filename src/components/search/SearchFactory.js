@@ -27,7 +27,6 @@ export default function SearchFactory({ title, list, expanded, setExpanded }) {
       break;
   }
 
-  console.log(list);
   return (
     <Col className={`bg-primary order-${order}`}>
       <Row className='bg-light' noGutters>

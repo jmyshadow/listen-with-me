@@ -10,7 +10,6 @@ const io = require("socket.io")(server, {
   },
 });
 const path = require("path");
-const axios = require("axios");
 
 const port = process.env.PORT || 3000;
 
@@ -84,7 +83,6 @@ app.post("/refresh", (req, res) => {
   //   clientSecret: process.env.CLIENT_SECRET,
   //   refreshToken,
   // });
-  console.log("refreshed");
   spotifyApi.setRefreshToken(req.body.refreshToken);
   spotifyApi
     .refreshAccessToken()
@@ -120,7 +118,6 @@ io.on("connection", (socket) => {
 
   socket.on("returnPlaylist", (playlist, position) => {
     const keys = Object.keys(users);
-    console.log("sending playlist to", keys[keys.length - 1]);
     io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist, position);
   });
 
@@ -136,9 +133,16 @@ io.on("connection", (socket) => {
     socket.broadcast.emit("allSeek", seek);
   });
 
+  socket.on("playItem", (newQueue, uris) => {
+    socket.broadcast.emit("otherPlayItem", newQueue, uris);
+  });
+
+  socket.on("removedItem", (newQueue) => {
+    socket.broadcast.emit("otherRemovedItem", newQueue);
+  });
+
   //chat functions
   socket.on("newMsg", (user, msg) => {
-    console.log("msg");
     socket.broadcast.emit("getNewMsg", user, msg);
   });
 
@@ -147,7 +151,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
-    console.log("disconnect");
     delete users[socket.id];
     const keys = Object.keys(users);
     socket.broadcast.emit("isOnlyUser", keys.length < 2);

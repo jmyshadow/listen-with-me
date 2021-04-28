@@ -7,8 +7,6 @@ export default function useSpotifyConnect(accessToken) {
   const [paused, setPaused] = useState(true);
 
   useEffect(() => {
-    console.log("spotify useeffect running");
-    console.log(player);
     if (player) return;
     if (!accessToken) return;
     const spotify = new window.Spotify.Player({
@@ -37,7 +35,6 @@ export default function useSpotifyConnect(accessToken) {
 
     spotify.addListener("player_state_changed", (state) => {
       if (state) {
-        console.log(state);
         setPaused(state.paused);
         setNowPlaying({
           position: state.position,
@@ -50,7 +47,7 @@ export default function useSpotifyConnect(accessToken) {
     spotify
       .connect()
       .then((success) => {
-        if (success) console.log("connected");
+        if (success) console.log("connected to Spotify");
       })
       .catch((err) => {
         console.log(err);

@@ -65,12 +65,10 @@ export default function ExpandedAlbum({
     const splitUri = uri.split(":");
     if (splitUri[1] === "track") {
       (async function () {
-        console.log("getting track");
         const { trackNum, albumTracks } = await spotifyFetch.tracks(
           splitUri[2],
           accessToken
         );
-        console.log(albumTracks);
         setTrackNum(trackNum);
         setAlbumTracks(albumTracks);
         setAlbumName(albumTracks[0].album.name);
@@ -82,7 +80,6 @@ export default function ExpandedAlbum({
         setAlbumTracks(albumTracks);
         setAlbumName(albumTracks[0].album.name);
         setArtistName(albumTracks[0].artists[0].name);
-        console.log(albumTracks);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,7 +101,6 @@ export default function ExpandedAlbum({
     socket.emit("songQueued", track.uri);
   }
 
-  console.log("ex album rendered");
   return (
     <>
       <Row>

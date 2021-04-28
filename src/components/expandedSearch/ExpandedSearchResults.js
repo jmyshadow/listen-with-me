@@ -17,8 +17,6 @@ export default function ExpandedSearchResults({
     setType(expanded[index].split(":")[1]);
   }, [expanded, index]);
 
-  console.log("ex search results rendered");
-
   switch (type) {
     default:
       return null;

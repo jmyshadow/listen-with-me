@@ -59,7 +59,6 @@ export default function ExpandedPlaylist({
     ]);
   }
 
-  console.log("ex playlist rendered");
   return (
     <>
       <Row>

@@ -62,14 +62,16 @@ export default function Queue({
           setNeedsUpdate(false);
           const uris = newQueue.map((track) => track.uri);
           spotifyFetch.playNow(uris, accessToken);
+        } else {
+          newQueue.shift();
+          setPlayQueue(newQueue);
         }
-        newQueue.shift();
-        setPlayQueue(newQueue);
       }
       setCurrentTrack(playingTrack.uri);
       const thePreviousTracks = nowPlaying.track_window.previous_tracks;
       if (thePreviousTracks.length > 0)
-        setLastTrack(thePreviousTracks[thePreviousTracks.length - 1].uri);
+        // setLastTrack(thePreviousTracks[thePreviousTracks.length - 1].uri);
+        setLastTrack(thePreviousTracks[0].uri);
     }
   }, [
     accessToken,
@@ -86,10 +88,10 @@ export default function Queue({
     newQueue.splice(index, 1);
     setPlayQueue([...newQueue]);
     setNeedsUpdate(true);
+    socket.emit("removedItem", newQueue);
   }
 
   function playItem(index) {
-    console.log("clicked the button");
     const playNow = playQueue[index];
     const newQueue = [...playQueue];
     newQueue.splice(index, 1);
@@ -97,11 +99,10 @@ export default function Queue({
     setPlayQueue([...newQueue]);
     const uris = newQueue.map((track) => track.uri);
     spotifyFetch.playNow(uris, accessToken);
+    socket.emit("playItem", newQueue, uris);
   }
 
   useEffect(() => {
-    console.log("useeffect in queue running");
-    console.log(playQueue);
     socket.on("isOnlyUser", (isSolo) => {
       setSolo(isSolo);
     });
@@ -109,29 +110,53 @@ export default function Queue({
     if (!player || !nowPlaying) return;
 
     socket.on("getPlaylist", () => {
-      console.log("get playlist");
-      //maybe just use wepapi play, for nowPlaying song
-      //  console.log(nowPlaying);
+      player.getCurrentState().then((state) => {
+        if (!state) {
+          console.error(
+            "User is not playing music through the Web Playback SDK"
+          );
+          return;
+        }
+        const playingTrack = state.track_window.current_track;
+        const position = state.position;
+        const syncQueue = [
+          {
+            song: playingTrack.name,
+            artist: [
+              {
+                name: playingTrack.artists[0].name,
+                uri: playingTrack.artists[0].uri,
+              },
+            ],
+            album: playingTrack.album.name,
+            duration: playingTrack.duration_ms,
+            uri: playingTrack.uri,
+            id: playingTrack.id,
+          },
+          ...playQueue,
+        ];
+        socket.emit("returnPlaylist", syncQueue, position);
+      });
 
-      const playingTrack = nowPlaying.track_window.current_track;
-      const position = nowPlaying.position;
-      const syncQueue = [
-        {
-          song: playingTrack.name,
-          artist: [
-            {
-              name: playingTrack.artists[0].name,
-              uri: playingTrack.artists[0].uri,
-            },
-          ],
-          album: playingTrack.album.name,
-          duration: playingTrack.duration_ms,
-          uri: playingTrack.uri,
-          id: playingTrack.id,
-        },
-        ...playQueue,
-      ];
-      socket.emit("returnPlaylist", syncQueue, position);
+      // const playingTrack = nowPlaying.track_window.current_track;
+      // const position = nowPlaying.position;
+      // const syncQueue = [
+      //   {
+      //     song: playingTrack.name,
+      //     artist: [
+      //       {
+      //         name: playingTrack.artists[0].name,
+      //         uri: playingTrack.artists[0].uri,
+      //       },
+      //     ],
+      //     album: playingTrack.album.name,
+      //     duration: playingTrack.duration_ms,
+      //     uri: playingTrack.uri,
+      //     id: playingTrack.id,
+      //   },
+      //   ...playQueue,
+      // ];
+      // socket.emit("returnPlaylist", syncQueue, position);
     });
 
     // if (!solo && !synced) {
@@ -141,14 +166,12 @@ export default function Queue({
     // }
 
     socket.on("updatePlaylist", (playlist, position) => {
-      console.log("playlist update through socket");
       const uris = playlist.map((track) => track.uri);
       setPlayQueue(playlist);
       spotifyFetch.playNow(uris, accessToken, position);
     });
 
     socket.on("queueSong", (song) => {
-      console.log("song queued", song);
       spotifyFetch.queueSong(song, accessToken);
     });
 
@@ -157,6 +180,16 @@ export default function Queue({
     });
     socket.on("allPrev", () => {
       player.previousTrack();
+    });
+
+    socket.on("otherPlayItem", (newQueue, uris) => {
+      setPlayQueue([...newQueue]);
+      spotifyFetch.playNow(uris, accessToken);
+    });
+
+    socket.on("otherRemovedItem", (newQueue) => {
+      setPlayQueue([...newQueue]);
+      setNeedsUpdate(true);
     });
 
     return () => {
@@ -222,12 +255,7 @@ export default function Queue({
               expanded={expanded}
             />
             <Col sm='auto'>
-              <button
-                onClick={() => removeItem(index)}
-                key={Math.random() + "button"}
-              >
-                X
-              </button>
+              <button onClick={() => removeItem(index)}>X</button>
             </Col>
           </Row>
         ))}

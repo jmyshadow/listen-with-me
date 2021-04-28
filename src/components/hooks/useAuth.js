@@ -16,8 +16,6 @@ export default function useAuth(code) {
         setRefreshToken(res.data.refreshToken);
         setExpiresIn(res.data.expiresIn);
         window.history.pushState({}, document.title, "/");
-
-        console.log("access token received");
       })
       .catch(() => {
         window.location = "/";
@@ -34,11 +32,9 @@ export default function useAuth(code) {
         .then((res) => {
           setAccessToken(res.data.accessToken);
           setExpiresIn(res.data.expiresIn);
-
-          console.log("access token refreshed");
         })
         .catch((err) => {
-          console.log("token not refreshed: ", err);
+          console.log(err);
           window.location = "/";
         });
     }, (expiresIn - 60) * 1000);
