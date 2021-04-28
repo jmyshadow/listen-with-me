@@ -138,7 +138,7 @@ io.on("connection", (socket) => {
 
   //chat functions
   socket.on("newMsg", (user, msg) => {
-    console.log(user, msg);
+    console.log("msg");
     socket.broadcast.emit("getNewMsg", user, msg);
   });
 
@@ -147,6 +147,7 @@ io.on("connection", (socket) => {
   });
 
   socket.on("disconnect", () => {
+    console.log("disconnect");
     delete users[socket.id];
     const keys = Object.keys(users);
     socket.broadcast.emit("isOnlyUser", keys.length < 2);

@@ -37,7 +37,6 @@ export default function Queue({
     //     setCurrentTrack(nowPlaying.track_window.current_track);
     //     return;
     //   }
-    console.log(nowPlaying);
     const playingTrack = nowPlaying.track_window.current_track;
     if (playingTrack.uri !== currentTrack) {
       if (playingTrack.uri === lastTrack) {
@@ -63,12 +62,10 @@ export default function Queue({
           setNeedsUpdate(false);
           const uris = newQueue.map((track) => track.uri);
           spotifyFetch.playNow(uris, accessToken);
-          console.log("queued to spotify");
         }
         newQueue.shift();
         setPlayQueue(newQueue);
       }
-      console.log(nowPlaying.track_window);
       setCurrentTrack(playingTrack.uri);
       const thePreviousTracks = nowPlaying.track_window.previous_tracks;
       if (thePreviousTracks.length > 0)

@@ -16,14 +16,11 @@ export default function Chat({ user, socket }) {
 
   function handleText(e) {
     if (e.key === "Enter" || e.keyCode === 13) {
-      console.log(chatHist);
-      console.log([...chatHist]);
       sendMessage();
     }
   }
   useEffect(() => {
     socket.on("getNewMsg", (otherUser, msg) => {
-      console.log(chatHist);
       setChatHist([...chatHist, `${otherUser}: ${msg}`]);
     });
 
