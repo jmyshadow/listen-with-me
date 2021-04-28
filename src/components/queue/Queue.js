@@ -27,8 +27,8 @@ export default function Queue({
   const [lastTrack, setLastTrack] = useState("");
   const [currentTrack, setCurrentTrack] = useState("");
   const [needsUpdate, setNeedsUpdate] = useState(false);
-  // const [solo, setSolo] = useState(true);
-  // const [synced, setSynced] = useState(false);
+  const [solo, setSolo] = useState(true);
+  const [synced, setSynced] = useState(false);
 
   useEffect(() => {
     if (!nowPlaying) return;
@@ -91,14 +91,6 @@ export default function Queue({
     setNeedsUpdate(true);
   }
 
-  // useEffect(() => {
-  // if(needsUpdate){
-
-  //   setNeedsUpdate(false)
-  // }
-
-  // },[needsUpdate]);
-
   function playItem(index) {
     console.log("clicked the button");
     const playNow = playQueue[index];
@@ -109,75 +101,102 @@ export default function Queue({
     const uris = newQueue.map((track) => track.uri);
     spotifyFetch.playNow(uris, accessToken);
   }
-  // useEffect(() => {
-  //   console.log("useeffect in queue running");
-  //   console.log(playQueue);
-  //   socket.on("isOnlyUser", (solo) => {
-  //     console.log(solo);
-  //     setSolo(solo);
-  //   });
 
-  //   if (!player) return;
+  useEffect(() => {
+    console.log("useeffect in queue running");
+    console.log(playQueue);
+    socket.on("isOnlyUser", (isSolo) => {
+      setSolo(isSolo);
+    });
 
-  //   if (!solo && !synced) {
-  //     socket.emit("needPlaylist");
-  //     console.log("emitted needplaylist");
-  //     setSynced(true);
-  //   }
+    if (!player || !nowPlaying) return;
 
-  //   socket.on("getPlaylist", () => {
-  //     console.log("get playlist");
-  //     //maybe just use wepapi play, for nowPlaying song
-  //     //  console.log(nowPlaying);
-  //     // const playingTrack = nowPlaying.track_window.current_track;
-  //     // const position = nowPlaying.position;
-  //     // const syncQueue = [...playQueue];
-  //     //{
-  //     //   song: playingTrack.name,
-  //     //   artist: [
-  //     //     {
-  //     //       name: playingTrack.artists[0].name,
-  //     //       uri: playingTrack.artists[0].uri,
-  //     //     },
-  //     //   ],
-  //     //   album: playingTrack.album.name,
-  //     //   duration: playingTrack.duration_ms,
-  //     //   uri: playingTrack.uri,
-  //     //   id: playingTrack.id,
-  //     // },
-  //     //   ...playQueue,
-  //     // ];
-  //     socket.emit("returnPlaylist", playQueue, 0);
-  //     // socket.emit("returnPlaylist", playQueue, 0);
-  //   });
+    socket.on("getPlaylist", () => {
+      console.log("get playlist");
+      //maybe just use wepapi play, for nowPlaying song
+      //  console.log(nowPlaying);
 
-  //   socket.on("updatePlaylist", (playlist, position) => {
-  //     console.log("playlist update through socket");
-  //     setPlayQueue(playlist);
-  //     if (paused) player.togglePlay();
-  //     player.seek(position);
-  //   });
+      const playingTrack = nowPlaying.track_window.current_track;
+      const position = nowPlaying.position;
+      const syncQueue = [
+        {
+          song: playingTrack.name,
+          artist: [
+            {
+              name: playingTrack.artists[0].name,
+              uri: playingTrack.artists[0].uri,
+            },
+          ],
+          album: playingTrack.album.name,
+          duration: playingTrack.duration_ms,
+          uri: playingTrack.uri,
+          id: playingTrack.id,
+        },
+        ...playQueue,
+      ];
+      socket.emit("returnPlaylist", syncQueue, position);
+    });
 
-  //   socket.on("allNext", () => {
-  //     player.nextTrack();
-  //   });
-  //   socket.on("allPrev", () => {
-  //     player.previousTrack();
-  //   });
+    // if (!solo && !synced) {
+    //   socket.emit("needPlaylist");
+    //   console.log("emitted needplaylist");
+    //   setSynced(true);
+    // }
 
-  //   // return () => {
-  //   //   socket.disconnect();
-  //   // };
-  // }, [paused, playQueue, player, setPlayQueue, socket, solo, synced]);
+    socket.on("updatePlaylist", (playlist, position) => {
+      console.log("playlist update through socket");
+      const uris = playlist.map((track) => track.uri);
+      setPlayQueue(playlist);
+      spotifyFetch.playNow(uris, accessToken, position);
+    });
+
+    socket.on("queueSong", (song) => {
+      console.log("song queued", song);
+      spotifyFetch.queueSong(song, accessToken);
+    });
+
+    socket.on("allNext", () => {
+      player.nextTrack();
+    });
+    socket.on("allPrev", () => {
+      player.previousTrack();
+    });
+
+    return () => {
+      socket.off("allNext");
+      socket.off("allPrev");
+      socket.off("updatePlaylist");
+      socket.off("getPlaylist");
+      socket.off("isOnlyUser");
+    };
+  }, [
+    accessToken,
+    nowPlaying,
+    paused,
+    playQueue,
+    player,
+    setPlayQueue,
+    socket,
+    solo,
+    synced,
+  ]);
 
   function nextSong() {
     player.nextTrack();
-    // socket.emit("next");
+    socket.emit("next");
   }
 
   function prevSong() {
     player.previousTrack();
-    // socket.emit("prev");
+    socket.emit("prev");
+  }
+
+  function togglePlay() {
+    if (!solo && !synced) {
+      socket.emit("needPlaylist");
+      console.log("emitted needplaylist");
+      setSynced(true);
+    } else player.togglePlay();
   }
 
   return (
@@ -218,7 +237,7 @@ export default function Queue({
       </Container>
       <SPlayer
         prev={prevSong}
-        play={() => player.togglePlay()}
+        play={togglePlay}
         next={nextSong}
         nowPlaying={nowPlaying}
         paused={paused}

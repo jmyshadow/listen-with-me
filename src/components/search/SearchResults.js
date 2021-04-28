@@ -10,24 +10,25 @@ export default function SearchResults({
   setExpanded,
   index,
   setIndex,
+  socket,
 }) {
-  //  breadcrumbs of uris
-  console.log("search result rendered");
   return (
     <Container className='bg-primary playlist' fluid>
       {expanded.length === 0 ? (
         <Row xs={1} sm={2} noGutters>
           {Object.entries(searchResult) === []
             ? null
-            : Object.entries(searchResult).map(([key, value]) => (
-                <SearchFactory
-                  key={key}
-                  title={key}
-                  list={value}
-                  expanded={expanded}
-                  setExpanded={setExpanded}
-                />
-              ))}
+            : Object.entries(searchResult).map(([key, value]) =>
+                value ? (
+                  <SearchFactory
+                    key={key}
+                    title={key}
+                    list={value}
+                    expanded={expanded}
+                    setExpanded={setExpanded}
+                  />
+                ) : null
+              )}
         </Row>
       ) : (
         <ExpandedSearchResults
@@ -35,6 +36,7 @@ export default function SearchResults({
           setExpanded={setExpanded}
           index={index}
           setIndex={setIndex}
+          socket={socket}
         />
       )}
     </Container>

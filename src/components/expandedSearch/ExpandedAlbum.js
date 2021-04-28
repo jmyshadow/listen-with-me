@@ -11,6 +11,7 @@ export default function ExpandedAlbum({
   setExpanded,
   index,
   setIndex,
+  socket,
 }) {
   // const [id, setId] = useState("");
   // const [endPoint, setEndpoint] = useState("");
@@ -61,7 +62,6 @@ export default function ExpandedAlbum({
   // }
 
   useEffect(() => {
-    console.log(albumTracks);
     const splitUri = uri.split(":");
     if (splitUri[1] === "track") {
       (async function () {
@@ -101,6 +101,7 @@ export default function ExpandedAlbum({
       },
     ]);
     spotifyFetch.queueSong(track.uri, accessToken);
+    socket.emit("songQueued", track.uri);
   }
 
   console.log("ex album rendered");

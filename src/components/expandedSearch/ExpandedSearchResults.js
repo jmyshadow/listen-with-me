@@ -9,12 +9,13 @@ export default function ExpandedSearchResults({
   setExpanded,
   index,
   setIndex,
+  socket,
 }) {
   const [type, setType] = useState("");
 
   useEffect(() => {
     setType(expanded[index].split(":")[1]);
-  }, [index, type, expanded]);
+  }, [expanded, index]);
 
   console.log("ex search results rendered");
 
@@ -25,11 +26,13 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedAlbum
+            key={expanded[index].split(":")[2]}
             uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}
             setIndex={setIndex}
+            socket={socket}
           />
         </>
       );
@@ -37,11 +40,13 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedAlbum
+            key={expanded[index].split(":")[2]}
             uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}
             setIndex={setIndex}
+            socket={socket}
           />
         </>
       );
@@ -50,7 +55,8 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedArtist
-            artist={expanded[index]}
+            key={expanded[index].split(":")[2]}
+            uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}
@@ -63,6 +69,7 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedPlaylist
+            key={expanded[index].split(":")[2]}
             uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
@@ -76,6 +83,7 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedShow
+            key={expanded[index].split(":")[2]}
             uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}
@@ -89,6 +97,7 @@ export default function ExpandedSearchResults({
       return (
         <>
           <ExpandedShow
+            key={expanded[index].split(":")[2]}
             uri={expanded[index]}
             expanded={expanded}
             setExpanded={setExpanded}

@@ -52,6 +52,7 @@ export default function MainApp({ code, setUser, socket }) {
                   expanded={expanded}
                   setExpanded={setExpanded}
                   searchResult={searchResult}
+                  socket={socket}
                 />
               ) : null}
             </div>
@@ -60,7 +61,7 @@ export default function MainApp({ code, setUser, socket }) {
               setSearching={setSearching}
               searching={searching}
               expanded={expanded}
-              // socket={socket}
+              socket={socket}
             />
           </div>
         </div>

@@ -12,6 +12,7 @@ export default function ExpandedArtist({
   setExpanded,
   index,
   setIndex,
+  socket,
 }) {
   const accessToken = useContext(TokenContext);
   const { playQueue, setPlayQueue } = useContext(QueueContext);
@@ -28,11 +29,13 @@ export default function ExpandedArtist({
   // }, [artist]);
 
   useEffect(() => {
-    (async function getArtist() {
-      const { artistTracks, artistAlbums } = await spotifyFetch.tracks(
+    (async function () {
+      const { artistTracks, artistAlbums } = await spotifyFetch.artists(
         uri.split(":")[2],
         accessToken
       );
+      console.log(artistTracks);
+      console.log(artistAlbums);
       setArtistTracks(artistTracks);
       setArtistAlbums(artistAlbums);
     })();
@@ -52,6 +55,8 @@ export default function ExpandedArtist({
         id: track.id,
       },
     ]);
+
+    socket.emit("songQueued", track.uri);
   }
 
   console.log("ex artist rendered");
@@ -88,15 +93,12 @@ export default function ExpandedArtist({
       ))}
       {artistAlbums.map((album) => (
         <ExpandedAlbum
-          key={album.id + Math.random()}
-          type={"album"}
-          accessToken={accessToken}
-          album={album.uri}
+          uri={album.uri}
           expanded={expanded}
           setExpanded={setExpanded}
           index={index}
           setIndex={setIndex}
-          albumName={album.name}
+          socket={socket}
         />
       ))}
     </>

@@ -27,7 +27,7 @@ export default function SearchFactory({ title, list, expanded, setExpanded }) {
       break;
   }
 
-  console.log("search factory rendered");
+  console.log(list);
   return (
     <Col className={`bg-primary order-${order}`}>
       <Row className='bg-light' noGutters>
@@ -36,14 +36,16 @@ export default function SearchFactory({ title, list, expanded, setExpanded }) {
       <Row sm={1} lg={2} noGutters>
         {list === []
           ? null
-          : list.map((item) => (
-              <SearchItem
-                key={item.id + Math.random()}
-                item={item}
-                expanded={expanded}
-                setExpanded={setExpanded}
-              />
-            ))}
+          : list.map((item) =>
+              item ? (
+                <SearchItem
+                  key={item.id + Math.random()}
+                  item={item}
+                  expanded={expanded}
+                  setExpanded={setExpanded}
+                />
+              ) : null
+            )}
       </Row>
     </Col>
   );

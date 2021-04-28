@@ -28,8 +28,9 @@ export default function TrackListing({
    */
 
   function uriClicked(uri) {
+    const oldIndex = index;
     setExpanded([...expanded, uri]);
-    setIndex(index + 1);
+    setIndex(oldIndex + 1);
   }
 
   function setupArtist() {

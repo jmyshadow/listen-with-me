@@ -31,9 +31,10 @@ export default function Chat({ user, socket }) {
       setChatHist([...chatHist, `${otherUser} joined the session`]);
     });
 
-    // return cleanUp = () => {
-
-    // }
+    return () => {
+      socket.off("getNewMsg");
+      socket.off("otherUserJoined");
+    };
   });
 
   console.log("chat rendered");

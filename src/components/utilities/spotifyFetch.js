@@ -222,12 +222,13 @@ export async function getMe(accessToken) {
   return id;
 }
 
-export function playNow(uris, accessToken) {
+export function playNow(uris, accessToken, position = 0) {
   axios({
     method: "put",
     url: `https://api.spotify.com/v1/me/player/play`,
     data: {
       uris: uris,
+      position_ms: position,
     },
     headers: {
       Authorization: "Bearer " + accessToken,

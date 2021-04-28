@@ -89,6 +89,11 @@ export default function SearchBar({
     setIndex,
   ]);
 
+  useEffect(() => {
+    setExpanded([]);
+    setIndex(0);
+  }, [search, setExpanded, setIndex]);
+
   console.log("searchbar rendered");
   return (
     <div>
