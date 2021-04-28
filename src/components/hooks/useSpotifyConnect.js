@@ -22,34 +22,30 @@ export default function useSpotifyConnect(accessToken) {
     spotify.addListener("ready", ({ device_id }) => {
       console.log("Connected with Device ID", device_id);
 
-      // axios
-      //   .put(
-      //     `https://api.spotify.com/v1/me/player`,
-      //     { device_ids: [device_id] },
-      //     {
-      //       headers: {
-      //         Authorization: "Bearer " + accessToken,
-      //       },
-      //     }
-      //   )
-      //   .catch(() => console.log("no song in queue"));
+      axios
+        .put(
+          `https://api.spotify.com/v1/me/player`,
+          { device_ids: [device_id] },
+          {
+            headers: {
+              Authorization: "Bearer " + accessToken,
+            },
+          }
+        )
+        .catch(() => console.log("no song in queue"));
     });
 
-    spotify.addListener(
-      "player_state_changed",
-      //  ({ position, duration, track_window, paused }) => {
-      (state) => {
-        if (state) {
-          console.log(state);
-          setPaused(state.paused);
-          setNowPlaying({
-            position: state.position,
-            duration: state.duration,
-            track_window: state.track_window,
-          });
-        }
+    spotify.addListener("player_state_changed", (state) => {
+      if (state) {
+        console.log(state);
+        setPaused(state.paused);
+        setNowPlaying({
+          position: state.position,
+          duration: state.duration,
+          track_window: state.track_window,
+        });
       }
-    );
+    });
 
     spotify
       .connect()
