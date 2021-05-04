@@ -105,7 +105,7 @@ export default function SearchBar({
         />
         <InputGroup.Append>
           <Button
-            variant='primary'
+            variant='success'
             className={searching ? "d-block" : "d-none"}
             onClick={() => prevResult("")}
             disabled={expanded.length === 0}
@@ -115,7 +115,7 @@ export default function SearchBar({
         </InputGroup.Append>
         <InputGroup.Append>
           <Button
-            variant='primary'
+            variant='success'
             className={searching ? "d-block" : "d-none"}
             onClick={() => nextResult("")}
             disabled={index >= expanded.length - 1}
@@ -125,8 +125,8 @@ export default function SearchBar({
         </InputGroup.Append>
         <InputGroup.Append>
           <Button
-            variant='primary'
-            className={searching ? "d-block" : "d-none"}
+            variant='success'
+            disabled={!searching}
             onClick={() => cleanupSearch()}
           >
             {"X"}

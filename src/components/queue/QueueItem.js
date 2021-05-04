@@ -20,11 +20,11 @@ export default function QueueItem({
     // removes main artist in album view, keeps all artists in playlist view
     if (artist.length > 0)
       return artist.map((artist, index) => (
-        <button className='btn-success' onClick={() => uriClicked(artist.uri)}>
+        <span className='clickable' onClick={() => uriClicked(artist.uri)}>
           {" "}
           {artist.name}
           {index < artist.length - 1 ? ", " : null}
-        </button>
+        </span>
       ));
   }
 

@@ -6,6 +6,7 @@ export default function Chat({ user, socket }) {
   const [msg, setMsg] = useState("");
   const [chatHist, setChatHist] = useState([]);
   const chatInput = useRef(null);
+  const resize = useRef(null);
 
   function sendMessage() {
     setChatHist([...chatHist, ` ${user}: ${msg}`]);
@@ -34,27 +35,77 @@ export default function Chat({ user, socket }) {
     };
   });
 
+  const [origWidth, setOrigWidth] = useState(0);
+  const [width, setWidth] = useState(0);
+  const widthChange = useRef(0);
+
+  useEffect(() => {
+    setOrigWidth(resize.current.clientWidth);
+  }, []);
+
+  function handleMouseMove(e) {
+    do {
+      if (window.innerWidth - e.clientX >= resize.current.clientWidth) {
+        widthChange.current += 1;
+        setWidth(widthChange.current);
+      } else {
+        widthChange.current -= 1;
+        setWidth(widthChange.current);
+      }
+    } while (resize.current.clientWidth !== window.innerWidth - e.clientX);
+  }
+
+  function mouseDownHandler() {
+    widthChange.current = 0;
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", mouseUpHandler);
+  }
+
+  function mouseUpHandler() {
+    console.log("mouseup");
+    window.removeEventListener("mousemove", handleMouseMove);
+    window.removeEventListener("mouseup", mouseUpHandler);
+  }
+
   return (
-    <div className='side-bar bg-dark d-flex flex-column w-25'>
-      <ChatHistory chatHist={chatHist} />
-      <InputGroup className='px-2 pb-3'>
-        <FormControl
-          placeholder='Enter Message'
-          value={msg}
-          onChange={(e) => setMsg(e.target.value)}
-          onKeyDown={(e) => handleText(e)}
-          ref={chatInput}
-        />
-        <InputGroup.Append>
-          <Button
-            variant='primary'
-            onClick={(e) => sendMessage("")}
-            disabled={msg.length === 0}
-          >
-            {"Send"}
-          </Button>
-        </InputGroup.Append>
-      </InputGroup>
-    </div>
+    <>
+      <div style={{ position: "relative" }}>
+        <div
+          id='resizer'
+          style={{
+            position: "absolute",
+          }}
+          onMouseDown={mouseDownHandler}
+        ></div>
+      </div>
+      <div
+        ref={resize}
+        className='side-bar d-flex flex-column'
+        style={{
+          width: `${origWidth + width}px`,
+          flex: "1 0 auto",
+        }}
+      >
+        <ChatHistory chatHist={chatHist} />
+        <InputGroup className='px-2 pb-3'>
+          <FormControl
+            placeholder='Enter Message'
+            value={msg}
+            onChange={(e) => setMsg(e.target.value)}
+            onKeyDown={(e) => handleText(e)}
+            ref={chatInput}
+          />
+          <InputGroup.Append>
+            <Button
+              variant='success'
+              onClick={(e) => sendMessage("")}
+              disabled={msg.length === 0}
+            >
+              {"Send"}
+            </Button>
+          </InputGroup.Append>
+        </InputGroup>
+      </div>
+    </>
   );
 }

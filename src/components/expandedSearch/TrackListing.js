@@ -38,11 +38,11 @@ export default function TrackListing({
     const otherArtists = playlist ? artists : artists.slice(1);
     if (otherArtists.length > 0)
       return otherArtists.map((artist, index) => (
-        <button className='btn-success' onClick={() => uriClicked(artist.uri)}>
+        <span className='clickable' onClick={() => uriClicked(artist.uri)}>
           {" "}
           {artist.name}
           {index < otherArtists.length - 1 ? ", " : null}
-        </button>
+        </span>
       ));
   }
   if (playlist) {

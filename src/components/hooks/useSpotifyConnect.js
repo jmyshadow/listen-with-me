@@ -30,7 +30,23 @@ export default function useSpotifyConnect(accessToken) {
             },
           }
         )
-        .catch(() => console.log("no song in queue"));
+        .catch(() => {
+          return axios.put(
+            `https://api.spotify.com/v1/me/player/play`,
+            {},
+            {
+              headers: {
+                Authorization: "Bearer " + accessToken,
+              },
+              params: {
+                device_id: device_id,
+              },
+            }
+          );
+        })
+        .catch(() => {
+          alert("Spotify error: Transfer playback manually from Spotify");
+        });
     });
 
     spotify.addListener("player_state_changed", (state) => {

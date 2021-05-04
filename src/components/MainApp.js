@@ -33,7 +33,10 @@ export default function MainApp({ code, setUser, socket }) {
   return (
     <TokenContext.Provider value={accessToken}>
       <QueueContext.Provider value={{ playQueue, setPlayQueue }}>
-        <div className='d-flex flex-column bg-success h-100 w-100'>
+        <div
+          className='d-flex flex-column bg-dark text-light h-100'
+          style={{ flex: "1 1 50%" }}
+        >
           <SearchBar
             index={index}
             setIndex={setIndex}
@@ -43,7 +46,7 @@ export default function MainApp({ code, setUser, socket }) {
             setSearchResult={setSearchResult}
             searching={searching}
           />
-          <div className='bg-primary playlist'>
+          <div className='playlist'>
             <div style={{ height: "100%", width: "100%" }}>
               {searching ? (
                 <SearchResults
