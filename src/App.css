@@ -7,6 +7,22 @@
   height: 100%;
   overflow-y: auto;
   position: relative;
+  scrollbar-color: #5cb85c #343a40;
+}
+
+.playlist::-webkit-scrollbar {
+  width: 1em;
+}
+
+.playlist::-webkit-scrollbar-track {
+  background-color: #343a40;
+}
+
+.playlist::-webkit-scrollbar-thumb {
+  background-color: #5cb85c;
+}
+.playlist::-webkit-scrollbar-thumb:hover {
+  background-color: #2c8143;
 }
 
 .hideQueue {
@@ -28,6 +44,7 @@
 
 .chatbox {
   overflow-y: auto;
+  word-break: break-all;
 }
 
 div.trackBar {
@@ -68,4 +85,22 @@ div.nowPlaying {
 #resizer:hover {
   border-left: solid;
   border-color: #5cb85c;
+}
+
+.disable-scrollbars::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* Chrome/Safari/Webkit */
+}
+
+.disable-scrollbars {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+}
+
+.track-listing {
+  flex: 1;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

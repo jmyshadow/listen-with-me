@@ -38,6 +38,7 @@ export default function Queue({
     //     return;
     //   }
     const playingTrack = nowPlaying.track_window.current_track;
+    console.log(nowPlaying);
     if (playingTrack.uri !== currentTrack) {
       if (playingTrack.uri === lastTrack) {
         setPlayQueue([

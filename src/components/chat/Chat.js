@@ -38,31 +38,42 @@ export default function Chat({ user, socket }) {
   const [origWidth, setOrigWidth] = useState(0);
   const [width, setWidth] = useState(0);
   const widthChange = useRef(0);
+  const mousePos = useRef(0);
 
   useEffect(() => {
     setOrigWidth(resize.current.clientWidth);
   }, []);
 
   function handleMouseMove(e) {
-    do {
-      if (window.innerWidth - e.clientX >= resize.current.clientWidth) {
-        widthChange.current += 1;
-        setWidth(widthChange.current);
-      } else {
-        widthChange.current -= 1;
-        setWidth(widthChange.current);
-      }
-    } while (resize.current.clientWidth !== window.innerWidth - e.clientX);
+    mousePos.current = e.clientX;
   }
 
+  let interval;
+
   function mouseDownHandler() {
-    widthChange.current = 0;
+    interval = setInterval(() => {
+      if (
+        window.innerWidth - mousePos.current >=
+        resize.current.clientWidth + 10
+      ) {
+        widthChange.current += 10;
+        setWidth(widthChange.current);
+      } else if (
+        window.innerWidth - mousePos.current <=
+        resize.current.clientWidth - 10
+      ) {
+        widthChange.current -= 10;
+        setWidth(widthChange.current);
+      }
+    }, 10);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", mouseUpHandler);
   }
 
   function mouseUpHandler() {
     console.log("mouseup");
+    clearInterval(interval);
+
     window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("mouseup", mouseUpHandler);
   }

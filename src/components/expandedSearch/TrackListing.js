@@ -59,13 +59,13 @@ export default function TrackListing({
   } else {
     return (
       <>
-        <Col>
+        <Col className='track-listing col-xs-8 col-sm-10'>
           {" " + name}
           {artists.length > 1 ? " - " : ""}
           {artists.length > 1 ? setupArtist() : ""}
         </Col>
         {/**       <Col xs={4}>{album}</Col>  */}
-        <Col sm='auto'>
+        <Col className='col-xs-2 col-sm-1'>
           <SongTime milli={ms} />
         </Col>
       </>

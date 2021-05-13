@@ -28,8 +28,8 @@ export default function SearchFactory({ title, list, expanded, setExpanded }) {
   }
 
   return (
-    <Col className={`bg-primary order-${order}`}>
-      <Row className='bg-light' noGutters>
+    <Col className={`order-${order}`}>
+      <Row className='bg-dark justify-content-center py-2'>
         <h4>{title[0].toUpperCase() + title.substring(1)}</h4>
       </Row>
       <Row sm={1} lg={2} noGutters>

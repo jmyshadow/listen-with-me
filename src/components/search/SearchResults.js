@@ -13,7 +13,7 @@ export default function SearchResults({
   socket,
 }) {
   return (
-    <Container className='bg-primary playlist' fluid>
+    <Container className='nowPlaying playlist' style={{ padding: 0 }} fluid>
       {expanded.length === 0 ? (
         <Row xs={1} sm={2} noGutters>
           {Object.entries(searchResult) === []

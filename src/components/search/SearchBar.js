@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Button, FormControl, InputGroup } from "react-bootstrap";
 import { TokenContext } from "../context/SpotifyContext";
 import axios from "axios";
@@ -13,8 +13,8 @@ export default function SearchBar({
   searching,
 }) {
   const accessToken = useContext(TokenContext);
-
-  let [search, setSearch] = useState("");
+  const [search, setSearch] = useState("");
+  const throttledSearch = useRef("");
 
   function prevResult() {
     if (index > 0) setIndex(index - 1);
@@ -35,10 +35,6 @@ export default function SearchBar({
     setSearching(false);
   }
 
-  // useEffect(() => {
-  //   setExpanded([]);
-  // }, [search, setExpanded]);
-
   useEffect(() => {
     if (!accessToken) return;
     if (!search) {
@@ -56,30 +52,36 @@ export default function SearchBar({
       return;
     }
     setSearching(true);
-    axios
-      // .post(`${host}search`, { accessToken, search, types, options })
-      .get(
-        `https://api.spotify.com/v1/search?q=${search.replaceAll(
-          " ",
-          "%20"
-        )}&type=artist%2Ctrack%2Calbum%2Cplaylist%2Cshow%2Cepisode&limit=6`,
-        {
-          headers: { Authorization: "Bearer " + accessToken },
-        }
-      )
-      .then((res) => {
-        setSearchResult({
-          tracks: res.data.tracks.items,
-          albums: res.data.albums.items,
-          playlists: res.data.playlists.items,
-          artists: res.data.artists.items,
-          episodes: res.data.episodes.items,
-          shows: res.data.shows.items,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    throttledSearch.current = search;
+    setTimeout(() => {
+      if (throttledSearch.current === search) {
+        axios
+          // .post(`${host}search`, { accessToken, search, types, options })
+          .get(
+            `https://api.spotify.com/v1/search?q=${search.replaceAll(
+              " ",
+              "%20"
+            )}&type=artist%2Ctrack%2Calbum%2Cplaylist%2Cshow%2Cepisode&limit=6`,
+            {
+              headers: { Authorization: "Bearer " + accessToken },
+            }
+          )
+          .then((res) => {
+            console.log("result");
+            setSearchResult({
+              tracks: res.data.tracks.items,
+              albums: res.data.albums.items,
+              playlists: res.data.playlists.items,
+              artists: res.data.artists.items,
+              episodes: res.data.episodes.items,
+              shows: res.data.shows.items,
+            });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      }
+    }, 300);
   }, [
     accessToken,
     search,

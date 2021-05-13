@@ -103,20 +103,21 @@ export default function ExpandedAlbum({
 
   return (
     <>
-      <Row>
+      <Row className='bg-dark' noGutters>
         <Col sm='auto'>
           <h1> {albumName} </h1>{" "}
           <h4>{artistName ? "by: " + artistName : ""}</h4>
         </Col>
       </Row>
       {albumTracks.map((track) => (
-        <Row>
-          <Col sm='auto'>
+        <Row className='nowPlaying' style={{ height: "2rem" }} noGutters>
+          <Col className='col-xs-2 col-sm-1'>
             <button
               onClick={() => queueSong(track)}
               key={track.id + Math.random() + "button"}
+              className='font-weight-bold'
             >
-              Q
+              +
             </button>
           </Col>
           <TrackListing
