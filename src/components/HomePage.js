@@ -18,9 +18,6 @@ export default function HomePage({ code }) {
       className='homepage d-flex h-100 w-100 pb-5'
       style={{ backgroundColor: "black" }}
     >
-      <div className='side-bar' style={{ flex: "0 0 15%" }}>
-        links
-      </div>
       <MainApp code={code} setUser={setUser} socket={socket} />
       <Chat user={user} socket={socket} />
     </div>

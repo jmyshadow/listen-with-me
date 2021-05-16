@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from "react";
 
-export default function ChatHistory({ chatHist }) {
+export default function ChatHistory({ chatHist, user }) {
   const chatBox = useRef(null);
 
   useEffect(() => {
@@ -20,6 +20,7 @@ export default function ChatHistory({ chatHist }) {
     chatBox.current.addEventListener("scroll", scrollEffect);
 
     return () => {
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       chatBox.current.removeEventListener("scroll", scrollEffect);
     };
   });
@@ -27,10 +28,21 @@ export default function ChatHistory({ chatHist }) {
   return (
     <div
       ref={chatBox}
-      className='h-100 chatbox bg-white mx-2 my-2 rounded disable-scrollbars'
+      className='h-100 chatbox bg-secondary text-light mx-2 my-2 px-2 rounded disable-scrollbars'
     >
-      {chatHist.map((msg) => (
-        <div> {msg} </div>
+      {chatHist.map(([msgUser, msg]) => (
+        <div>
+          {msgUser === "join" ? (
+            <span> {msg} </span>
+          ) : (
+            <>
+              <span className={msgUser === user ? "myMsg" : "yourMsg"}>
+                {msgUser}
+              </span>{" "}
+              : <span className='msgText'>{msg}</span>
+            </>
+          )}
+        </div>
       ))}
     </div>
   );

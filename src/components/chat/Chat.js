@@ -9,7 +9,7 @@ export default function Chat({ user, socket }) {
   const resize = useRef(null);
 
   function sendMessage() {
-    setChatHist([...chatHist, ` ${user}: ${msg}`]);
+    setChatHist([...chatHist, [`${user}`, `${msg}`]]);
     setMsg("");
     chatInput.current.focus();
     socket.emit("newMsg", user, msg);
@@ -22,11 +22,11 @@ export default function Chat({ user, socket }) {
   }
   useEffect(() => {
     socket.on("getNewMsg", (otherUser, msg) => {
-      setChatHist([...chatHist, `${otherUser}: ${msg}`]);
+      setChatHist([...chatHist, [`${otherUser}`, `${msg}`]]);
     });
 
     socket.on("otherUserJoined", (otherUser) => {
-      setChatHist([...chatHist, `${otherUser} joined the session`]);
+      setChatHist([...chatHist, ["join", `${otherUser} joined the session`]]);
     });
 
     return () => {
@@ -35,69 +35,41 @@ export default function Chat({ user, socket }) {
     };
   });
 
-  const [origWidth, setOrigWidth] = useState(0);
-  const [width, setWidth] = useState(0);
-  const widthChange = useRef(0);
+  //resize functions
+  const [width, setWidth] = useState(window.innerWidth / 4);
   const mousePos = useRef(0);
 
-  useEffect(() => {
-    setOrigWidth(resize.current.clientWidth);
-  }, []);
-
   function handleMouseMove(e) {
+    setWidth(window.innerWidth - e.clientX - 8);
     mousePos.current = e.clientX;
   }
 
-  let interval;
-
   function mouseDownHandler() {
-    interval = setInterval(() => {
-      if (
-        window.innerWidth - mousePos.current >=
-        resize.current.clientWidth + 10
-      ) {
-        widthChange.current += 10;
-        setWidth(widthChange.current);
-      } else if (
-        window.innerWidth - mousePos.current <=
-        resize.current.clientWidth - 10
-      ) {
-        widthChange.current -= 10;
-        setWidth(widthChange.current);
-      }
-    }, 10);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", mouseUpHandler);
   }
 
   function mouseUpHandler() {
-    console.log("mouseup");
-    clearInterval(interval);
-
     window.removeEventListener("mousemove", handleMouseMove);
     window.removeEventListener("mouseup", mouseUpHandler);
   }
 
   return (
     <>
-      <div style={{ position: "relative" }}>
-        <div
-          id='resizer'
-          style={{
-            position: "absolute",
-          }}
-          onMouseDown={mouseDownHandler}
-        ></div>
-      </div>
+      <div
+        id='resizer'
+        onMouseDown={mouseDownHandler}
+        style={{ flex: "0 0 auto" }}
+      ></div>
+
       <div
         ref={resize}
         className='side-bar d-flex flex-column'
         style={{
-          width: `${origWidth + width}px`,
-          flex: "1 0 auto",
+          flex: `0 0 ${width}px`,
         }}
       >
-        <ChatHistory chatHist={chatHist} />
+        <ChatHistory chatHist={chatHist} user={user} />
         <InputGroup className='px-2 pb-3'>
           <FormControl
             placeholder='Enter Message'

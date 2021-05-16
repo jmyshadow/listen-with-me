@@ -21,9 +21,15 @@ export default function useSpotifyConnect(accessToken) {
       console.log("Connected with Device ID", device_id);
 
       axios
-        .put(`https://api.spotify.com/v1/me/player`, {
-          device_ids: [device_id],
-        })
+        .put(
+          `https://api.spotify.com/v1/me/player`,
+          { device_ids: [device_id] },
+          {
+            headers: {
+              Authorization: "Bearer " + accessToken,
+            },
+          }
+        )
         .catch(() => {
           return axios.put(
             `https://api.spotify.com/v1/me/player/play`,
@@ -45,7 +51,6 @@ export default function useSpotifyConnect(accessToken) {
 
     spotify.addListener("player_state_changed", (state) => {
       if (state) {
-        console.log(state);
         setPaused(state.paused);
         setNowPlaying({
           position: state.position,

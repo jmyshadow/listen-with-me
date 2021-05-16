@@ -35,7 +35,7 @@ export default function MainApp({ code, setUser, socket }) {
       <QueueContext.Provider value={{ playQueue, setPlayQueue }}>
         <div
           className='d-flex flex-column bg-dark text-light h-100'
-          style={{ flex: "1 1 50%" }}
+          style={{ flex: "1 1 auto" }}
         >
           <SearchBar
             index={index}

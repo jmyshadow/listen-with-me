@@ -237,7 +237,7 @@ export default function Queue({
         {/** adding random number to entry id, in case same song queued more than once */}
         <Row className='mx-4 px-4 py-2 border-bottom border-dark' noGutters>
           <Col>
-            <h1>Up Next: </h1>
+            <h1> {playQueue.length > 0 ? "Up Next:" : "Nothing Queued!"} </h1>
           </Col>
         </Row>
         {playQueue.map((entry, index) => (
