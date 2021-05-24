@@ -98,6 +98,11 @@ app.post("/refresh", (req, res) => {
     });
 });
 
+app.get("/room/:room", (req, res) => {
+  console.log("the room is", req.params.room);
+  res.sendStatus(200);
+});
+
 //////////////////////////////////////////////////////////////////////
 const users = {};
 io.on("connection", (socket) => {

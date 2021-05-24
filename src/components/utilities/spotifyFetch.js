@@ -120,18 +120,40 @@ export async function artists(id, accessToken) {
       console.log(err);
     });
   const artistAlbums = await axios
-    .get(`https://api.spotify.com/v1/artists/${id}/albums`, {
+    .get(`https://api.spotify.com/v1/artists/${id}/albums?market=from_token`, {
       headers: {
         Authorization: "Bearer " + accessToken,
       },
     })
     .then((res) => {
-      return res.data.items;
+      //sometimes spotify returns duplicate albums even with locale string
+      const names = [];
+      const albums = res.data.items.filter((item) => {
+        if (names.includes(item.name)) return 0;
+        else {
+          names.push(item.name);
+          return 1;
+        }
+      });
+
+      return albums;
     })
     .catch((err) => {
       console.log(err);
     });
-  return { artistTracks, artistAlbums };
+  const artistData = await axios
+    .get(`https://api.spotify.com/v1/artists/${id}`, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res) => {
+      return res.data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return { artistTracks, artistAlbums, artistData };
 }
 
 export async function tracks(id, accessToken) {
@@ -204,6 +226,20 @@ export async function albums(id, accessToken) {
   //   });
   return addToQueue;
 }
+
+export async function myPlaylists(accessToken) {
+  const playlists = await axios
+    .get("https://api.spotify.com/v1/me/playlists?limit=50", {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res) => res.data.items)
+    .catch((err) => console.log(err));
+
+  return playlists;
+}
+
 // utility functions
 
 export async function getMe(accessToken) {

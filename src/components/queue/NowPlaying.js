@@ -45,28 +45,25 @@ export default function NowPlaying({ nowPlaying }) {
               style={{ height: "200px" }}
             >
               <div
-                className='w-100 h-50 overflow-hidden py-1'
+                className='w-100 mh-50 overflow-hidden py-1'
                 style={{
-                  fontSize: `${calculateFontSize(1.7)}em`,
-                  flex: "2 1 auto",
+                  fontSize: `${calculateFontSize(1.4)}em`,
                 }}
               >
                 {track}
               </div>
               <div
-                className='w-100 h-25 overflow-hidden py-1'
+                className='w-100 mh-25 overflow-hidden py-1'
                 style={{
                   fontSize: `${calculateFontSize(0.7)}em`,
-                  flex: "1 2 auto",
                 }}
               >
                 {album}
               </div>
               <div
-                className='w-100 h-25 overflow-hidden py-1'
+                className='w-100 mh-25 overflow-hidden py-1'
                 style={{
                   fontSize: `${calculateFontSize(0.7)}em`,
-                  flex: "1 2 auto",
                 }}
               >
                 {artist}

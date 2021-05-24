@@ -4,6 +4,11 @@ export default function ChatHistory({ chatHist, user }) {
   const chatBox = useRef(null);
 
   useEffect(() => {
+    console.log(
+      chatBox.current.scrollHeight,
+      chatBox.current.scrollTop,
+      chatBox.current.clientHeight
+    );
     if (
       chatBox.current.scrollHeight >=
       chatBox.current.scrollTop + chatBox.current.clientHeight
@@ -28,7 +33,7 @@ export default function ChatHistory({ chatHist, user }) {
   return (
     <div
       ref={chatBox}
-      className='h-100 chatbox bg-secondary text-light mx-2 my-2 px-2 rounded disable-scrollbars'
+      className='h-100 chatbox text-light mx-2 my-2 px-2 rounded disable-scrollbars'
     >
       {chatHist.map(([msgUser, msg]) => (
         <div>

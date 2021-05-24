@@ -1,5 +1,6 @@
 import React from "react";
 import ProgressBar from "./ProgressBar";
+import SPlayerButton from "./SPlayerButton";
 
 export default function SPlayer({
   play,
@@ -11,7 +12,7 @@ export default function SPlayer({
   socket,
 }) {
   return (
-    <div className='fixed-bottom' style={{ height: "48px" }}>
+    <div className='fixed-bottom' style={{ height: "68px" }}>
       <ProgressBar
         nowPlaying={nowPlaying}
         paused={paused}
@@ -23,35 +24,21 @@ export default function SPlayer({
         style={{
           position: "absolute",
           top: "8px",
-          height: "40px",
+          height: "60px",
           width: "100%",
         }}
       >
-        {" "}
-        <button
-          className='btn btn-success'
-          style={{ borderRadius: "50px" }}
-          onClick={prev}
-        >
-          {" "}
-          Prev{" "}
-        </button>{" "}
-        <button
-          className='btn btn-success'
-          style={{ borderRadius: "50px" }}
-          onClick={play}
-        >
-          {" "}
-          play/pause{" "}
-        </button>
-        <button
-          className='btn btn-success'
-          style={{ borderRadius: "50px" }}
-          onClick={next}
-        >
-          {" "}
-          Next{" "}
-        </button>{" "}
+        <SPlayerButton icon={"fas fa-backward"} btnFunction={prev} />
+        {/* padding: "8px 4px 0 0" */}
+        <SPlayerButton
+          icon={paused ? "fas fa-play" : "fas fa-pause"}
+          btnFunction={play}
+          size={"55px"}
+          btnMargin={"2px 10px 0px"}
+        />
+        {/* padding: "13px 0 0 4px" */}
+        <SPlayerButton icon={"fas fa-forward"} btnFunction={next} />
+        {/* "padding: 8px 0 0 4px" */}
       </div>
     </div>
   );

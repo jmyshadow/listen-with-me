@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext } from "react";
-import TrackListing from "./TrackListing";
+import { Row, Col } from "react-bootstrap";
 // import useSpotifyApi from "../hooks/useSpotifyApi";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
-import { Row, Col } from "react-bootstrap";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
+import TrackListing from "./TrackListing";
+import FASIcon from "../FASIcon";
 
 export default function ExpandedAlbum({
   uri,
@@ -110,22 +111,14 @@ export default function ExpandedAlbum({
         </Col>
       </Row>
       {albumTracks.map((track) => (
-        <Row style={{ height: "2rem" }} noGutters>
-          <Col className='col-xs-2 col-sm-1'>
-            {/* <button
-              onClick={() => queueSong(track)}
+        <Row className='nowPlaying pt-1' style={{ height: "2rem" }} noGutters>
+          <Col className='col-xs-2 col-sm-1 text-center'>
+            <FASIcon
               key={track.id + Math.random() + "button"}
-              className='font-weight-bold'
-            >
-              +
-            </button> */}
-            <div className='text-center'>
-              <i
-                className='fas fa-plus-circle fa-lg clickable-button'
-                onClick={() => queueSong(track)}
-                key={track.id + Math.random() + "button"}
-              ></i>
-            </div>
+              iClass='fas fa-plus-circle fa-lg clickable-icon'
+              iFunction={() => queueSong(track)}
+              iStyle={{ marginRight: "10px" }}
+            />
           </Col>
           <TrackListing
             key={track.id + Math.random()}

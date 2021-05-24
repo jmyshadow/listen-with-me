@@ -6,7 +6,7 @@ import { TokenContext, QueueContext } from "../context/SpotifyContext";
 import { Row, Col } from "react-bootstrap";
 
 export default function ExpandedPlaylist({
-  playlist,
+  uri,
   expanded,
   setExpanded,
   index,
@@ -34,9 +34,11 @@ export default function ExpandedPlaylist({
   useEffect(() => {
     (async function () {
       const { playlistData, playlistTracks } = await spotifyFetch.playlists(
-        playlist.split(":")[2],
+        uri.split(":")[2],
         accessToken
       );
+      console.log(playlistData);
+      console.log(playlistTracks);
       setPlaylistTracks(playlistTracks);
       setPlaylistName(playlistData.name);
       setPlaylistDesc(playlistData.description);
@@ -67,23 +69,23 @@ export default function ExpandedPlaylist({
           <h4>{playlistDesc}</h4>
         </Col>
       </Row>
-      {playlistTracks.map((item) => (
+      {playlistTracks.map((track) => (
         <Row>
           <Col sm='auto'>
             <button
-              onClick={() => queueSong(item.track)}
-              key={item.track.id + Math.random() + "button"}
+              onClick={() => queueSong(track)}
+              key={track.id + Math.random() + "button"}
             >
               Q
             </button>
           </Col>
           <TrackListing
-            key={item.track.id + Math.random()}
-            name={item.track.name}
-            artists={item.track.artists}
-            album={item.track.album.name}
-            ms={item.track.duration_ms}
-            id={item.track.id}
+            key={track.id + Math.random()}
+            name={track.name}
+            artists={track.artists}
+            album={track.album.name}
+            ms={track.duration_ms}
+            id={track.id}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}

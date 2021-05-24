@@ -1,9 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import QueueItem from "./QueueItem";
 import { Container, Col, Row } from "react-bootstrap";
 import { QueueContext, TokenContext } from "../context/SpotifyContext";
 import NowPlaying from "./NowPlaying";
 import SPlayer from "./SPlayer";
+import QueueItem from "./QueueItem";
+import FASIcon from "../FASIcon";
 import useSpotifyConnect from "../hooks/useSpotifyConnect";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 
@@ -138,33 +139,7 @@ export default function Queue({
         ];
         socket.emit("returnPlaylist", syncQueue, position);
       });
-
-      // const playingTrack = nowPlaying.track_window.current_track;
-      // const position = nowPlaying.position;
-      // const syncQueue = [
-      //   {
-      //     song: playingTrack.name,
-      //     artist: [
-      //       {
-      //         name: playingTrack.artists[0].name,
-      //         uri: playingTrack.artists[0].uri,
-      //       },
-      //     ],
-      //     album: playingTrack.album.name,
-      //     duration: playingTrack.duration_ms,
-      //     uri: playingTrack.uri,
-      //     id: playingTrack.id,
-      //   },
-      //   ...playQueue,
-      // ];
-      // socket.emit("returnPlaylist", syncQueue, position);
     });
-
-    // if (!solo && !synced) {
-    //   socket.emit("needPlaylist");
-    //   console.log("emitted needplaylist");
-    //   setSynced(true);
-    // }
 
     socket.on("updatePlaylist", (playlist, position) => {
       const uris = playlist.map((track) => track.uri);
@@ -225,7 +200,6 @@ export default function Queue({
   function togglePlay() {
     if (!solo && !synced) {
       socket.emit("needPlaylist");
-      console.log("emitted needplaylist");
       setSynced(true);
     } else player.togglePlay();
   }
@@ -236,18 +210,23 @@ export default function Queue({
         <NowPlaying nowPlaying={nowPlaying} />
         {/** adding random number to entry id, in case same song queued more than once */}
         <Row className='mx-4 px-4 py-2 border-bottom border-dark' noGutters>
-          <Col>
+          <Col style={{ paddingTop: "1.25rem" }}>
             <h1> {playQueue.length > 0 ? "Up Next:" : "Nothing Queued!"} </h1>
           </Col>
         </Row>
         {playQueue.map((entry, index) => (
           <Row
             key={entry.id + Math.floor(Math.random() * 100000)}
-            className='row-nowrap'
+            className='row-nowrap nowPlaying pt-1'
+            style={{ height: "2rem" }}
             noGutters
           >
             <Col sm='auto'>
-              <button onClick={() => playItem(index)}>&#9658;</button>
+              <FASIcon
+                iClass='fas fa-play fa-lg clickable-icon rounded-circle'
+                iFunction={() => playItem(index)}
+                iStyle={{ marginRight: "10px" }}
+              />
             </Col>
             <QueueItem
               entry={entry}
@@ -256,7 +235,11 @@ export default function Queue({
               expanded={expanded}
             />
             <Col sm='auto'>
-              <button onClick={() => removeItem(index)}>X</button>
+              <FASIcon
+                iClass='fas fa-times-circle fa-lg clickable-icon rounded-circle'
+                iFunction={() => removeItem(index)}
+                iStyle={{ marginLeft: "10px" }}
+              />
             </Col>
           </Row>
         ))}

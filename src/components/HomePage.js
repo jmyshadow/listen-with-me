@@ -15,8 +15,8 @@ export default function HomePage({ code }) {
 
   return (
     <div
-      className='homepage d-flex h-100 w-100 pb-5'
-      style={{ backgroundColor: "black" }}
+      className='homepage d-flex h-100 w-100'
+      style={{ backgroundColor: "black", paddingBottom: "60px" }}
     >
       <MainApp code={code} setUser={setUser} socket={socket} />
       <Chat user={user} socket={socket} />

@@ -37,11 +37,13 @@ export default function Chat({ user, socket }) {
 
   //resize functions
   const [width, setWidth] = useState(window.innerWidth / 4);
-  const mousePos = useRef(0);
 
   function handleMouseMove(e) {
-    setWidth(window.innerWidth - e.clientX - 8);
-    mousePos.current = e.clientX;
+    const newWidth = window.innerWidth - e.clientX - 8;
+    const maxWidth = window.innerWidth / 2 - 20;
+    console.log(window.innerWidth);
+    console.log(newWidth, maxWidth);
+    setWidth(newWidth < maxWidth ? newWidth : maxWidth);
   }
 
   function mouseDownHandler() {
@@ -57,7 +59,7 @@ export default function Chat({ user, socket }) {
   return (
     <>
       <div
-        id='resizer'
+        className='resizer'
         onMouseDown={mouseDownHandler}
         style={{ flex: "0 0 auto" }}
       ></div>

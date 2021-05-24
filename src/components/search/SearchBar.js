@@ -11,16 +11,18 @@ export default function SearchBar({
   index,
   setIndex,
   searching,
+  search,
+  setSearch,
 }) {
   const accessToken = useContext(TokenContext);
-  const [search, setSearch] = useState("");
   const throttledSearch = useRef("");
 
   function prevResult() {
     if (index > 0) setIndex(index - 1);
-    else {
+    else if (!search) {
+      setSearching(false);
+      setIndex(0);
       setExpanded([]);
-      if (!search) setSearching(false);
     }
   }
 
@@ -35,9 +37,70 @@ export default function SearchBar({
     setSearching(false);
   }
 
-  useEffect(() => {
-    if (!accessToken) return;
-    if (!search) {
+  // useEffect(() => {
+  //   if (!accessToken) return;
+  // if (!search) {
+  //   setExpanded([]);
+  //   setIndex(0);
+  //   setSearchResult({
+  //     tracks: [],
+  //     artists: [],
+  //     albums: [],
+  //     playlists: [],
+  //     shows: [],
+  //     episodes: [],
+  //   });
+  //   setSearching(false);
+  //   return;
+  // }
+  // setSearching(true);
+  // throttledSearch.current = search;
+  // setTimeout(() => {
+  //   if (throttledSearch.current === search) {
+  //     axios
+  //       // .post(`${host}search`, { accessToken, search, types, options })
+  //       .get(
+  //         `https://api.spotify.com/v1/search?q=${search.replaceAll(
+  //           " ",
+  //           "%20"
+  //         )}&type=artist%2Ctrack%2Calbum%2Cplaylist%2Cshow%2Cepisode&limit=6`,
+  //         {
+  //           headers: { Authorization: "Bearer " + accessToken },
+  //         }
+  //       )
+  //       .then((res) => {
+  //         setSearchResult({
+  //           tracks: res.data.tracks.items,
+  //           albums: res.data.albums.items,
+  //           playlists: res.data.playlists.items,
+  //           artists: res.data.artists.items,
+  //           episodes: res.data.episodes.items,
+  //           shows: res.data.shows.items,
+  //         });
+  //       })
+  //       .catch((err) => {
+  //         console.log(err);
+  //       });
+  //   }
+  // }, 300);
+  // }, [
+  //   accessToken,
+  //   search,
+  //   setSearching,
+  //   setSearchResult,
+  //   setExpanded,
+  //   setIndex,
+  // ]);
+
+  // useEffect(() => {
+  //   setExpanded([]);
+  //   setIndex(0);
+  // }, [search, setExpanded, setIndex]);
+
+  function changeSearchString(val) {
+    console.log(val);
+    setSearch(val);
+    if (!val) {
       setExpanded([]);
       setIndex(0);
       setSearchResult({
@@ -49,52 +112,39 @@ export default function SearchBar({
         episodes: [],
       });
       setSearching(false);
-      return;
-    }
-    setSearching(true);
-    throttledSearch.current = search;
-    setTimeout(() => {
-      if (throttledSearch.current === search) {
-        axios
-          // .post(`${host}search`, { accessToken, search, types, options })
-          .get(
-            `https://api.spotify.com/v1/search?q=${search.replaceAll(
-              " ",
-              "%20"
-            )}&type=artist%2Ctrack%2Calbum%2Cplaylist%2Cshow%2Cepisode&limit=6`,
-            {
-              headers: { Authorization: "Bearer " + accessToken },
-            }
-          )
-          .then((res) => {
-            console.log("result");
-            setSearchResult({
-              tracks: res.data.tracks.items,
-              albums: res.data.albums.items,
-              playlists: res.data.playlists.items,
-              artists: res.data.artists.items,
-              episodes: res.data.episodes.items,
-              shows: res.data.shows.items,
+    } else {
+      setSearching(true);
+      throttledSearch.current = val;
+      setTimeout(() => {
+        if (throttledSearch.current === val) {
+          axios
+            // .post(`${host}search`, { accessToken, search, types, options })
+            .get(
+              `https://api.spotify.com/v1/search?q=${val.replaceAll(
+                " ",
+                "%20"
+              )}&type=artist%2Ctrack%2Calbum%2Cplaylist%2Cshow%2Cepisode&limit=6`,
+              {
+                headers: { Authorization: "Bearer " + accessToken },
+              }
+            )
+            .then((res) => {
+              setSearchResult({
+                tracks: res.data.tracks.items,
+                albums: res.data.albums.items,
+                playlists: res.data.playlists.items,
+                artists: res.data.artists.items,
+                episodes: res.data.episodes.items,
+                shows: res.data.shows.items,
+              });
+            })
+            .catch((err) => {
+              console.log(err);
             });
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      }
-    }, 300);
-  }, [
-    accessToken,
-    search,
-    setSearching,
-    setSearchResult,
-    setExpanded,
-    setIndex,
-  ]);
-
-  useEffect(() => {
-    setExpanded([]);
-    setIndex(0);
-  }, [search, setExpanded, setIndex]);
+        }
+      }, 300);
+    }
+  }
 
   return (
     <div>
@@ -102,7 +152,7 @@ export default function SearchBar({
         <FormControl
           placeholder='Search Tracks, Artists, Albums, Podcasts...'
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => changeSearchString(e.target.value)}
           autoFocus
         />
         <InputGroup.Append>

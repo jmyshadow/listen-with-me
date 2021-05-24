@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
 import TrackListing from "./TrackListing";
-import ExpandedAlbum from "./ExpandedAlbum";
-// import useSpotifyApi from "../hooks/useSpotifyApi";
+import ExpandedArtistsAlbum from "./ExpandedArtistsAlbum";
+import ListingHeader from "./ListingHeader";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
 import { Col, Row } from "react-bootstrap";
@@ -18,24 +18,19 @@ export default function ExpandedArtist({
   const { playQueue, setPlayQueue } = useContext(QueueContext);
   const [artistTracks, setArtistTracks] = useState([]);
   const [artistAlbums, setArtistAlbums] = useState([]);
-  // const { artistAlbums, artistTracks } = useSpotifyApi(
-  //   "artists",
-  //   id,
-  //   accessToken
-  // );
-
-  // useEffect(() => {
-  //   setId(artist.split(":")[2]);
-  // }, [artist]);
+  const [artistName, setArtistName] = useState("");
+  const [artistImg, setArtistImg] = useState("");
 
   useEffect(() => {
     (async function () {
-      const { artistTracks, artistAlbums } = await spotifyFetch.artists(
-        uri.split(":")[2],
-        accessToken
-      );
+      const { artistTracks, artistAlbums, artistData } =
+        await spotifyFetch.artists(uri.split(":")[2], accessToken);
       setArtistTracks(artistTracks);
       setArtistAlbums(artistAlbums);
+      setArtistName(artistData.name);
+      setArtistImg(artistData.images[0].url);
+      console.log(uri);
+      console.log(artistAlbums);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -60,18 +55,17 @@ export default function ExpandedArtist({
     <>
       <Row>
         <Col>
-          <h1>Top Tracks:</h1>
+          <ListingHeader imgUrl={artistImg} artistName={artistName} />
         </Col>
       </Row>
       {artistTracks.map((track) => (
-        <Row>
-          <Col sm='auto'>
-            <button
+        <Row className='nowPlaying pt-1' style={{ height: "2rem" }} noGutters>
+          <Col className='col-xs-2 col-sm-1 text-center'>
+            <i
+              className='fas fa-plus-circle fa-lg clickable-icon'
               onClick={() => queueSong(track)}
               key={track.id + Math.random() + "button"}
-            >
-              Q
-            </button>
+            ></i>
           </Col>
           <TrackListing
             key={track.id + Math.random()}
@@ -87,16 +81,27 @@ export default function ExpandedArtist({
           />
         </Row>
       ))}
-      {artistAlbums.map((album) => (
-        <ExpandedAlbum
-          uri={album.uri}
-          expanded={expanded}
-          setExpanded={setExpanded}
-          index={index}
-          setIndex={setIndex}
-          socket={socket}
-        />
-      ))}
+      <div className='d-flex flex-wrap'>
+        {artistAlbums.map((album) => (
+          // <ExpandedAlbum
+          //   uri={album.uri}
+          //   expanded={expanded}
+          //   setExpanded={setExpanded}
+          //   index={index}
+          //   setIndex={setIndex}
+          //   socket={socket}
+          // />
+
+          <ExpandedArtistsAlbum
+            album={album}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            index={index}
+            setIndex={setIndex}
+            socket={socket}
+          />
+        ))}
+      </div>
     </>
   );
 }

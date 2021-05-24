@@ -84,7 +84,7 @@ export default function SearchItem({ item, expanded, setExpanded }) {
   }
 
   return (
-    <Col>
+    <Col className='nowPlaying p-2 clickable-icon'>
       <Media>
         <img
           src={imgUrl}
