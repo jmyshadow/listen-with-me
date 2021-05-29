@@ -7,12 +7,16 @@ export default function Chat({ user, socket }) {
   const [chatHist, setChatHist] = useState([]);
   const chatInput = useRef(null);
   const resize = useRef(null);
+  // saving list of users for a 'see who is chatting ' button?
+  const [usersInSession, setUsersInSession] = useState([]);
 
   function sendMessage() {
-    setChatHist([...chatHist, [`${user}`, `${msg}`]]);
+    //  setChatHist([...chatHist, [`${user}`, `${msg}`]]);
     setMsg("");
     chatInput.current.focus();
-    socket.emit("newMsg", user, msg);
+    usersInSession.length === 0
+      ? setChatHist([...chatHist, ["join", "No one hears you..."]])
+      : socket.emit("newMsg", msg);
   }
 
   function handleText(e) {
@@ -21,17 +25,32 @@ export default function Chat({ user, socket }) {
     }
   }
   useEffect(() => {
-    socket.on("getNewMsg", (otherUser, msg) => {
-      setChatHist([...chatHist, [`${otherUser}`, `${msg}`]]);
+    socket.on("getNewMsg", (user, msg) => {
+      setChatHist([...chatHist, [`${user}`, `${msg}`]]);
     });
 
-    socket.on("otherUserJoined", (otherUser) => {
+    socket.on("otherUserJoined", (id, otherUser) => {
+      socket.emit("imHereToo", id);
+      setUsersInSession([...usersInSession, otherUser]);
       setChatHist([...chatHist, ["join", `${otherUser} joined the session`]]);
+    });
+
+    socket.on("otherUserLeft", (otherUser) => {
+      const newList = usersInSession.filter((user) => user !== otherUser);
+      setUsersInSession(newList);
+      setChatHist([...chatHist, ["join", `${otherUser} left the session`]]);
+    });
+
+    socket.on("currentUsers", (otherUser) => {
+      setUsersInSession([...usersInSession, otherUser]);
+      setChatHist([...chatHist, ["join", `${otherUser} is listening`]]);
     });
 
     return () => {
       socket.off("getNewMsg");
       socket.off("otherUserJoined");
+      socket.off("otherUserLeft");
+      socket.off("currentUsers");
     };
   });
 
@@ -69,10 +88,14 @@ export default function Chat({ user, socket }) {
         className='side-bar d-flex flex-column'
         style={{
           flex: `0 0 ${width}px`,
+          paddingBottom: "8px",
         }}
       >
         <ChatHistory chatHist={chatHist} user={user} />
-        <InputGroup className='px-2 pb-3'>
+        <InputGroup
+          className='px-2'
+          style={{ position: "relative", paddingBottom: "8px" }}
+        >
           <FormControl
             placeholder='Enter Message'
             value={msg}
@@ -83,7 +106,7 @@ export default function Chat({ user, socket }) {
           <InputGroup.Append>
             <Button
               variant='success'
-              onClick={(e) => sendMessage("")}
+              onClick={() => sendMessage()}
               disabled={msg.length === 0}
             >
               {"Send"}

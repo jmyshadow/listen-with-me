@@ -20,9 +20,9 @@ export default function Login() {
   };
 
   return (
-    <div className='pt-4'>
-      <Button variant='success' onClick={redirectAuth}>
-        Login
+    <div className='p-5 text-light font-weight-bold'>
+      <Button variant='success' className='p-4 m-5' onClick={redirectAuth}>
+        Login to Spotify
       </Button>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext } from "react";
-import EpisodeListing from "./EpisodeListing";
+import EpisodeListing from "../generic/EpisodeListing";
 // import useSpotifyApi from "../hooks/useSpotifyApi";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 import { TokenContext } from "../context/SpotifyContext";
@@ -45,11 +45,7 @@ export default function ExpandedShow({
       })();
     } else if (splitUri[1] === "episode") {
       (async function () {
-        const {
-          episodes,
-          showName,
-          showDesc,
-        } = await spotifyFetch
+        const { episodes, showName, showDesc } = await spotifyFetch
           .expandedEpisodes(splitUri[2], accessToken)
           .then((showId) => {
             return spotifyFetch.shows(showId, accessToken);

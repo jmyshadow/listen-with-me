@@ -3,17 +3,12 @@ import { Col } from "react-bootstrap";
 import SongTime from "../utilities/SongTime";
 
 export default function TrackListing({
-  name,
-  artists,
-  album,
-  ms,
-  id,
+  track,
   expanded,
   setExpanded,
   index,
   setIndex,
   playlist,
-  accessToken,
 }) {
   /**
       format for song queue
@@ -35,7 +30,7 @@ export default function TrackListing({
 
   function setupArtist() {
     // removes main artist in album view, keeps all artists in playlist view
-    const otherArtists = playlist ? artists : artists.slice(1);
+    const otherArtists = playlist ? track.artists : track.artists.slice(1);
     if (otherArtists.length > 0)
       return otherArtists.map((artist, index) => (
         <span className='clickable' onClick={() => uriClicked(artist.uri)}>
@@ -48,11 +43,11 @@ export default function TrackListing({
   if (playlist) {
     return (
       <>
-        <Col>{name}</Col>
+        <Col>{track.name}</Col>
         <Col> {setupArtist()} </Col>
-        <Col>{album}</Col>
+        <Col>{track.album.name}</Col>
         <Col sm='auto'>
-          <SongTime milli={ms} />
+          <SongTime milli={track.duration_ms} />
         </Col>
       </>
     );
@@ -60,13 +55,13 @@ export default function TrackListing({
     return (
       <>
         <Col className='track-listing col-xs-8 col-sm-10'>
-          {" " + name}
-          {artists.length > 1 ? " - " : ""}
-          {artists.length > 1 ? setupArtist() : ""}
+          {" " + track.name}
+          {track.artists.length > 1 ? " - " : ""}
+          {track.artists.length > 1 ? setupArtist() : ""}
         </Col>
         {/**       <Col xs={4}>{album}</Col>  */}
         <Col className='col-xs-2 col-sm-1'>
-          <SongTime milli={ms} />
+          <SongTime milli={track.duration_ms} />
         </Col>
       </>
     );

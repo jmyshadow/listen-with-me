@@ -22,7 +22,7 @@ export default function SearchBar({
     else if (!search) {
       setSearching(false);
       setIndex(0);
-      setExpanded([]);
+      setExpanded(["search:home:page"]);
     }
   }
 
@@ -31,7 +31,7 @@ export default function SearchBar({
   }
 
   function cleanupSearch() {
-    setExpanded([]);
+    setExpanded(["search:home:page"]);
     setSearch("");
     setIndex(0);
     setSearching(false);
@@ -40,7 +40,7 @@ export default function SearchBar({
   // useEffect(() => {
   //   if (!accessToken) return;
   // if (!search) {
-  //   setExpanded([]);
+  //   setExpanded(["search:home:page"]);
   //   setIndex(0);
   //   setSearchResult({
   //     tracks: [],
@@ -93,16 +93,15 @@ export default function SearchBar({
   // ]);
 
   // useEffect(() => {
-  //   setExpanded([]);
+  //   setExpanded(["search:home:page"]);
   //   setIndex(0);
   // }, [search, setExpanded, setIndex]);
 
   function changeSearchString(val) {
-    console.log(val);
     setSearch(val);
+    setIndex(0);
     if (!val) {
-      setExpanded([]);
-      setIndex(0);
+      setExpanded(["search:home:page"]);
       setSearchResult({
         tracks: [],
         artists: [],
@@ -145,10 +144,10 @@ export default function SearchBar({
       }, 300);
     }
   }
-
+  //#1e2124
   return (
-    <div>
-      <InputGroup className='p-3'>
+    <div style={{ backgroundImage: "linear-gradient(black,#343a40" }}>
+      <InputGroup className='px-3 py-4'>
         <FormControl
           placeholder='Search Tracks, Artists, Albums, Podcasts...'
           value={search}

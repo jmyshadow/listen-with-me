@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from "react";
-import TrackListing from "./TrackListing";
+import TrackListing from "../generic/TrackListing";
 import ExpandedArtistsAlbum from "./ExpandedArtistsAlbum";
-import ListingHeader from "./ListingHeader";
+import ArtistListingHeader from "../generic/ArtistListingHeader";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
 import { Col, Row } from "react-bootstrap";
@@ -55,11 +55,15 @@ export default function ExpandedArtist({
     <>
       <Row>
         <Col>
-          <ListingHeader imgUrl={artistImg} artistName={artistName} />
+          <ArtistListingHeader imgUrl={artistImg} artistName={artistName} />
         </Col>
       </Row>
       {artistTracks.map((track) => (
-        <Row className='nowPlaying pt-1' style={{ height: "2rem" }} noGutters>
+        <Row
+          className='nowPlaying pt-1 position-relative'
+          style={{ height: "2rem", zIndex: "5" }}
+          noGutters
+        >
           <Col className='col-xs-2 col-sm-1 text-center'>
             <i
               className='fas fa-plus-circle fa-lg clickable-icon'
@@ -69,11 +73,7 @@ export default function ExpandedArtist({
           </Col>
           <TrackListing
             key={track.id + Math.random()}
-            name={track.name}
-            artists={track.artists}
-            album={track.album.name}
-            ms={track.duration_ms}
-            id={track.id}
+            track={track}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}

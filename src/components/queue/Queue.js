@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Container, Col, Row } from "react-bootstrap";
 import { QueueContext, TokenContext } from "../context/SpotifyContext";
 import NowPlaying from "./NowPlaying";
 import SPlayer from "./SPlayer";
 import QueueItem from "./QueueItem";
-import FASIcon from "../FASIcon";
+import FASIcon from "../generic/FASIcon";
 import useSpotifyConnect from "../hooks/useSpotifyConnect";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 
@@ -29,7 +29,8 @@ export default function Queue({
   const [currentTrack, setCurrentTrack] = useState("");
   const [needsUpdate, setNeedsUpdate] = useState(false);
   const [solo, setSolo] = useState(true);
-  const [synced, setSynced] = useState(false);
+  const oldVol = useRef(null);
+  // const [synced, setSynced] = useState(false);
 
   useEffect(() => {
     if (!nowPlaying) return;
@@ -111,7 +112,7 @@ export default function Queue({
 
     if (!player || !nowPlaying) return;
 
-    socket.on("getPlaylist", () => {
+    socket.on("getPlaylist", (reqUser) => {
       player.getCurrentState().then((state) => {
         if (!state) {
           console.error(
@@ -137,7 +138,7 @@ export default function Queue({
           },
           ...playQueue,
         ];
-        socket.emit("returnPlaylist", syncQueue, position);
+        socket.emit("returnPlaylist", reqUser, syncQueue, position);
       });
     });
 
@@ -184,7 +185,6 @@ export default function Queue({
     setPlayQueue,
     socket,
     solo,
-    synced,
   ]);
 
   function nextSong() {
@@ -198,10 +198,15 @@ export default function Queue({
   }
 
   function togglePlay() {
-    if (!solo && !synced) {
-      socket.emit("needPlaylist");
-      setSynced(true);
-    } else player.togglePlay();
+    if (solo) {
+      player.togglePlay();
+    } else if (oldVol.current) {
+      player.setVolume(oldVol.current);
+    } else {
+      player.getVolume().then((vol) => (oldVol.current = vol));
+      //temporary, need to actually figure out mute situation
+      player.setVolume(0.1);
+    }
   }
 
   return (

@@ -3,7 +3,7 @@ import { Col, Media } from "react-bootstrap";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 
-export default function SearchItem({ item, expanded, setExpanded }) {
+export default function SearchItem({ setIndex, item, expanded, setExpanded }) {
   const { playQueue, setPlayQueue } = useContext(QueueContext);
   const accessToken = useContext(TokenContext);
 
@@ -35,7 +35,8 @@ export default function SearchItem({ item, expanded, setExpanded }) {
   }
 
   function expandSearch() {
-    setExpanded([...expanded, item.uri]);
+    setIndex(1);
+    setExpanded(["search:home:page", item.uri]);
   }
 
   async function playImmediately() {
@@ -60,7 +61,7 @@ export default function SearchItem({ item, expanded, setExpanded }) {
         break;
       case "album":
         await spotifyFetch.albums(item.id, accessToken).then((res) => {
-          addToBeginning(res);
+          addToBeginning(res.albumTracks);
         });
         break;
       case "playlist":

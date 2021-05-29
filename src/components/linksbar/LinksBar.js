@@ -11,9 +11,15 @@ export default function LinksBar({
   setExpanded,
   setSearching,
   setSearch,
+  socket,
+  user,
 }) {
   const resize = useRef(null);
+  const room = useRef(null);
+  const roomField = useRef(null);
   const [playlists, setPlaylists] = useState([]);
+  const [joiningRoom, setJoiningRoom] = useState(false);
+  const [tInput, setTInput] = useState("");
 
   useEffect(() => {
     if (!accessToken) return;
@@ -25,13 +31,11 @@ export default function LinksBar({
   }, [accessToken]);
 
   //resize functions
-  const [width, setWidth] = useState(window.innerWidth / 4);
+  const [width, setWidth] = useState(window.innerWidth / 6);
 
   function handleMouseMove(e) {
     const newWidth = e.clientX - 8;
     const maxWidth = window.innerWidth / 3 - 20;
-    console.log(window.innerWidth);
-    console.log(newWidth, maxWidth);
     setWidth(newWidth < maxWidth ? newWidth : maxWidth);
   }
 
@@ -45,30 +49,53 @@ export default function LinksBar({
     window.removeEventListener("mouseup", mouseUpHandler);
   }
 
-  function joinRoom() {}
+  function updateRoom() {
+    room.current = tInput;
+    socket.emit("joinRoom", room.current);
+    console.log("joining room", room.current);
+    setJoiningRoom(false);
+  }
+
+  useEffect(() => {
+    if (joiningRoom) {
+      roomField.current.focus();
+      roomField.current.select();
+    }
+  }, [joiningRoom]);
 
   return (
     <>
       <div
         ref={resize}
-        className='side-bar d-flex flex-column'
+        className='side-bar d-flex flex-column align-items-center'
         style={{
           flex: `0 0 ${width}px`,
           backgroundColor: "black",
         }}
       >
-        <div className='p-3'>
-          <h2>You're listening in: "ROOM"</h2>
+        <div className='p-3 d-flex flex-column align-items-center'>
+          <h3>Listening in: </h3>
+          <h2>{room.current ? room.current : "The Void"}</h2>
         </div>
-        <div className='p-3 clickable' onClick={joinRoom}>
-          <div className='d-flex'>
+        <div className='p-3 clickable'>
+          <div
+            className={joiningRoom ? "d-none" : "d-flex"}
+            onClick={() =>
+              joiningRoom ? setJoiningRoom(false) : setJoiningRoom(true)
+            }
+          >
             <h4>Join new room</h4>
           </div>
-          <div className='d-none'>
-            <InputGroup className='px-2 pb-3'>
-              <FormControl placeholder='Enter Room Name' value={"msg"} />
+          <div className={joiningRoom ? "d-flex" : "d-none"}>
+            <InputGroup>
+              <FormControl
+                ref={roomField}
+                placeholder='Enter Room Name'
+                value={tInput}
+                onChange={(e) => setTInput(e.target.value)}
+              />
               <InputGroup.Append>
-                <Button variant='success' onClick={""}>
+                <Button variant='success' onClick={updateRoom}>
                   {"Join"}
                 </Button>
               </InputGroup.Append>
@@ -76,6 +103,7 @@ export default function LinksBar({
           </div>
         </div>
         <div className='my-playlists h-100 p-3'>
+          <h4>Playlists:</h4>
           {playlists.map((playlist) => (
             <LinksBarPlaylist
               key={playlist.id}

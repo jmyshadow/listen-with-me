@@ -172,42 +172,44 @@ export async function tracks(id, accessToken) {
       console.log(err);
     });
 
-  const albumTracks = await axios
+  const { albumTracks, albumImage } = await axios
     .get(`https://api.spotify.com/v1/albums/${albumId}`, {
       headers: {
         Authorization: "Bearer " + accessToken,
       },
     })
     .then((res) => {
-      const addToQueue = res.data.tracks.items;
+      const albumTracks = res.data.tracks.items;
       const albumName = res.data.name;
-      addToQueue.forEach((track) => {
+      const albumImage = res.data.images[0].url;
+      albumTracks.forEach((track) => {
         track.album = [albumName];
         track.album.name = albumName;
       });
-      return addToQueue;
+      return { albumTracks, albumImage };
     })
     .catch((err) => {
       console.log(err);
     });
-  return { trackNum, albumTracks };
+  return { trackNum, albumTracks, albumImage };
 }
 
 export async function albums(id, accessToken) {
-  const addToQueue = await axios
+  const { albumTracks, albumImage } = await axios
     .get(`https://api.spotify.com/v1/albums/${id}`, {
       headers: {
         Authorization: "Bearer " + accessToken,
       },
     })
     .then((res) => {
-      const addToQueue = res.data.tracks.items;
+      const albumTracks = res.data.tracks.items;
       const albumName = res.data.name;
-      addToQueue.forEach((track) => {
+      const albumImage = res.data.images[0].url;
+      albumTracks.forEach((track) => {
         track.album = [albumName];
         track.album.name = albumName;
       });
-      return addToQueue;
+      return { albumTracks, albumImage };
     })
     .catch((err) => {
       console.log(err);
@@ -224,7 +226,7 @@ export async function albums(id, accessToken) {
   //   .catch((err) => {
   //     console.log(err);
   //   });
-  return addToQueue;
+  return { albumTracks, albumImage };
 }
 
 export async function myPlaylists(accessToken) {

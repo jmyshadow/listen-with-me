@@ -4,11 +4,6 @@ export default function ChatHistory({ chatHist, user }) {
   const chatBox = useRef(null);
 
   useEffect(() => {
-    console.log(
-      chatBox.current.scrollHeight,
-      chatBox.current.scrollTop,
-      chatBox.current.clientHeight
-    );
     if (
       chatBox.current.scrollHeight >=
       chatBox.current.scrollTop + chatBox.current.clientHeight
@@ -38,7 +33,7 @@ export default function ChatHistory({ chatHist, user }) {
       {chatHist.map(([msgUser, msg]) => (
         <div>
           {msgUser === "join" ? (
-            <span> {msg} </span>
+            <span style={{ fontStyle: "italic" }}> {msg} </span>
           ) : (
             <>
               <span className={msgUser === user ? "myMsg" : "yourMsg"}>

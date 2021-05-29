@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 // import useSpotifyApi from "../hooks/useSpotifyApi";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
-import TrackListing from "./TrackListing";
-import FASIcon from "../FASIcon";
+import TrackListing from "../generic/TrackListing";
+import FASIcon from "../generic/FASIcon";
+import ListingHeader from "../generic/ListingHeader";
 
 export default function ExpandedAlbum({
   uri,
@@ -21,66 +22,49 @@ export default function ExpandedAlbum({
   const [albumTracks, setAlbumTracks] = useState([]);
   const [albumName, setAlbumName] = useState("");
   const [artistName, setArtistName] = useState("");
+  const [albumImage, setAlbumImage] = useState("");
   const accessToken = useContext(TokenContext);
   const { playQueue, setPlayQueue } = useContext(QueueContext);
+  const albumRow = useRef(null);
+  const [rowWidth, setRowWidth] = useState("");
 
-  // eslint-disable-next-line no-unused-vars
-  // const { trackNum, albumUri, albumTracks, albumTracks } = useSpotifyApi(
-  //   endPoint,
-  //   id,
-  //   accessToken
-  // );
+  console.log(uri);
 
-  // useEffect(() => {
-  //   console.log(album, albumUri);
-  //   if (album && albumUri) return;
-  //   if (album || albumUri) {
-  //     const uri = album ? album : albumUri;
-  //     setId(uri.split(":")[2]);
-  //     setEndpoint("albums");
-  //   }
-  // }, [albumUri, album]);
-
-  // useEffect(() => {
-  //   if (!track) return;
-  //   setId(track.split(":")[2]);
-  //   setEndpoint("tracks");
-  // }, [track]);
-
-  // function queueSong(track) {
-  //   setPlayQueue([
-  //     ...playQueue,
-  //     {
-  //       song: track.name,
-  //       artist: track.artists,
-  //       album: albumTracks.name,
-  //       duration: track.duration_ms,
-  //       uri: track.uri,
-  //       id: track.id,
-  //     },
-  //   ]);
-  //   spotifyFetch.queueSong(track.uri, accessToken);
-  // }
+  useEffect(() => {
+    setRowWidth(albumRow.current.clientWidth);
+  });
 
   useEffect(() => {
     const splitUri = uri.split(":");
+    console.log(splitUri);
     if (splitUri[1] === "track") {
       (async function () {
-        const { trackNum, albumTracks } = await spotifyFetch.tracks(
+        const { trackNum, albumTracks, albumImage } = await spotifyFetch.tracks(
           splitUri[2],
           accessToken
         );
+        console.log(trackNum);
+        console.log(albumTracks);
+        console.log(albumImage);
         setTrackNum(trackNum);
         setAlbumTracks(albumTracks);
         setAlbumName(albumTracks[0].album.name);
         setArtistName(albumTracks[0].artists[0].name);
+        setAlbumImage(albumImage);
       })();
     } else if (splitUri[1] === "album") {
       (async function () {
-        const albumTracks = await spotifyFetch.albums(splitUri[2], accessToken);
+        const { albumTracks, albumImage } = await spotifyFetch.albums(
+          splitUri[2],
+          accessToken
+        );
         setAlbumTracks(albumTracks);
         setAlbumName(albumTracks[0].album.name);
         setArtistName(albumTracks[0].artists[0].name);
+        setAlbumImage(albumImage);
+        console.log(trackNum);
+        console.log(albumTracks);
+        console.log(albumImage);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,14 +88,26 @@ export default function ExpandedAlbum({
 
   return (
     <>
-      <Row className='bg-dark' noGutters>
+      <Row className='bg-dark' ref={albumRow} noGutters>
         <Col sm='auto'>
-          <h1> {albumName} </h1>{" "}
-          <h4>{artistName ? "by: " + artistName : ""}</h4>
+          <ListingHeader
+            width={rowWidth}
+            image={albumImage}
+            data1={albumName}
+            data2={artistName}
+          />
         </Col>
       </Row>
-      {albumTracks.map((track) => (
-        <Row className='nowPlaying pt-1' style={{ height: "2rem" }} noGutters>
+      {albumTracks.map((track, index) => (
+        <Row
+          className={`${
+            trackNum && trackNum - 1 === index
+              ? "nowPlayingTrack"
+              : "nowPlaying"
+          } pt-1 position-relative`}
+          style={{ height: "2rem", zIndex: "5" }}
+          noGutters
+        >
           <Col className='col-xs-2 col-sm-1 text-center'>
             <FASIcon
               key={track.id + Math.random() + "button"}
@@ -122,11 +118,7 @@ export default function ExpandedAlbum({
           </Col>
           <TrackListing
             key={track.id + Math.random()}
-            name={track.name}
-            artists={track.artists}
-            album={albumTracks.name}
-            ms={track.duration_ms}
-            id={track.id}
+            track={track}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}

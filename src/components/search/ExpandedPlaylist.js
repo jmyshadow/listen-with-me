@@ -1,7 +1,8 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 // import useSpotifyApi from "../hooks/useSpotifyApi";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
-import TrackListing from "./TrackListing";
+import TrackListing from "../generic/TrackListing";
+import ListingHeader from "../generic/ListingHeader";
 import { TokenContext, QueueContext } from "../context/SpotifyContext";
 import { Row, Col } from "react-bootstrap";
 
@@ -20,6 +21,13 @@ export default function ExpandedPlaylist({
   const [playlistName, setPlaylistName] = useState("");
   const [playlistDesc, setPlaylistDesc] = useState("");
   const [playlistTracks, setPlaylistTracks] = useState([]);
+  const [playlistImage, setPlaylistImage] = useState("");
+  const theRow = useRef(null);
+  const [rowWidth, setRowWidth] = useState("");
+
+  useEffect(() => {
+    setRowWidth(theRow.current.clientWidth);
+  });
   // const { playlistData, playlistTracks } = useSpotifyApi(
   //   "playlist",
   //   id,
@@ -37,11 +45,10 @@ export default function ExpandedPlaylist({
         uri.split(":")[2],
         accessToken
       );
-      console.log(playlistData);
-      console.log(playlistTracks);
       setPlaylistTracks(playlistTracks);
       setPlaylistName(playlistData.name);
       setPlaylistDesc(playlistData.description);
+      setPlaylistImage(playlistData.images[0].url);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -63,10 +70,14 @@ export default function ExpandedPlaylist({
 
   return (
     <>
-      <Row>
-        <Col>
-          <h1> {playlistName} </h1>
-          <h4>{playlistDesc}</h4>
+      <Row className='bg-dark' ref={theRow} noGutters>
+        <Col sm='auto'>
+          <ListingHeader
+            width={rowWidth}
+            image={playlistImage}
+            data1={playlistName}
+            data2={playlistDesc}
+          />
         </Col>
       </Row>
       {playlistTracks.map((track) => (
@@ -81,11 +92,7 @@ export default function ExpandedPlaylist({
           </Col>
           <TrackListing
             key={track.id + Math.random()}
-            name={track.name}
-            artists={track.artists}
-            album={track.album.name}
-            ms={track.duration_ms}
-            id={track.id}
+            track={track}
             expanded={expanded}
             setExpanded={setExpanded}
             index={index}

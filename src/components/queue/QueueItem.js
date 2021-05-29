@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Col } from "react-bootstrap";
-import ExpandedSearchResults from "../expandedSearch/ExpandedSearchResults";
+import SearchResults from "../search/SearchResults";
 import SongTime from "../utilities/SongTime";
 
 export default function QueueItem({
@@ -29,7 +29,7 @@ export default function QueueItem({
   }
 
   return clicked ? (
-    <ExpandedSearchResults expanded={expanded} setExpanded={setExpanded} />
+    <SearchResults expanded={expanded} setExpanded={setExpanded} />
   ) : (
     <>
       <Col>{entry.song}</Col>

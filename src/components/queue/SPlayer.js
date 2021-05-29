@@ -1,6 +1,6 @@
 import React from "react";
 import ProgressBar from "./ProgressBar";
-import SPlayerButton from "./SPlayerButton";
+import FASIcon from "../generic/FASIcon";
 
 export default function SPlayer({
   play,
@@ -28,17 +28,38 @@ export default function SPlayer({
           width: "100%",
         }}
       >
-        <SPlayerButton icon={"fas fa-backward"} btnFunction={prev} />
-        {/* padding: "8px 4px 0 0" */}
-        <SPlayerButton
-          icon={paused ? "fas fa-play" : "fas fa-pause"}
-          btnFunction={play}
-          size={"55px"}
-          btnMargin={"2px 10px 0px"}
+        <FASIcon
+          iClass={"rounded-circle text-center player-button fas fa-backward"}
+          iFunction={prev}
+          iStyle={{
+            padding: "7px 4px 0 0",
+            height: "45px",
+            width: "45px",
+            margin: "7px 10px 0",
+          }}
         />
-        {/* padding: "13px 0 0 4px" */}
-        <SPlayerButton icon={"fas fa-forward"} btnFunction={next} />
-        {/* "padding: 8px 0 0 4px" */}
+        <FASIcon
+          iClass={`rounded-circle text-center player-button ${
+            paused ? "fas fa-play" : "fas fa-pause"
+          }`}
+          iFunction={play}
+          iStyle={{
+            padding: "12px 0 0 4px",
+            margin: "2px 10px 0px",
+            height: "55px",
+            width: "55px",
+          }}
+        />
+        <FASIcon
+          iClass={"rounded-circle text-center player-button fas fa-forward"}
+          iFunction={next}
+          iStyle={{
+            padding: "7px 0 0 4px",
+            height: "45px",
+            width: "45px",
+            margin: "7px 10px 0",
+          }}
+        />
       </div>
     </div>
   );

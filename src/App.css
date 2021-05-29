@@ -72,6 +72,7 @@ div.progressBar {
   cursor: pointer;
   transform: scale(1.1);
   box-shadow: 0px 0px 25px 2px #7b8793;
+  z-index: 1000;
 }
 
 .form-control:focus {
@@ -79,12 +80,18 @@ div.progressBar {
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px #5cb85c;
 }
 
-div.nowPlaying {
+.nowPlaying {
   border-radius: 10px;
   background-image: radial-gradient(#343a40, #1e2124 80%);
 }
 
+.nowPlayingTrack {
+  border-radius: 10px;
+  background-color: black;
+}
+
 .resizer {
+  background-color: black;
   width: 5px;
   height: 100%;
   padding: 0;
@@ -120,7 +127,7 @@ div.nowPlaying {
 
 .yourMsg {
   font-weight: bold;
-  color: #1e2124;
+  color: #6c757d;
 }
 
 .msgText {

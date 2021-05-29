@@ -104,61 +104,105 @@ app.get("/room/:room", (req, res) => {
 });
 
 //////////////////////////////////////////////////////////////////////
-const users = {};
+//const users = {};
+//const rooms = {};
 io.on("connection", (socket) => {
-  socket.on("userJoined", (user) => {
-    socket.broadcast.emit("otherUserJoined", user);
-    users[socket.id] = user;
+  socket.on("setUser", (user) => {
+    console.log(user, "joined");
+    socket.user = user;
+  });
 
-    const keys = Object.keys(users);
-    socket.emit("isOnlyUser", keys.length < 2);
+  socket.on("joinRoom", (room) => {
+    //if (!socket.user) socket.user = user;
+    // if room does not exist, initialize it
+    // if (!rooms[room]) {
+    //   rooms[room] = [];
+    // }
+
+    // if user is changing rooms, need to clean up other rooms
+    //   if (socket.room && socket.room !== room) {
+    // const oldRoom = socket.room;
+    // rooms[oldRoom].splice(rooms[oldRoom].indexOf(socket.user), 1);
+    //  socket.leave(oldRoom);
+    //  }
+    //
+    // leave old room if already in a room
+    if (socket.room) {
+      const oldRoom = socket.room;
+      socket.leave(oldRoom);
+      socket.to(oldRoom).emit("otherUserLeft", socket.user);
+    }
+    // then join new room
+    socket.room = room;
+    socket.join(room);
+    socket.to(room).emit("otherUserJoined", socket.id, socket.user);
+
+    //  rooms[room].push(user);
+    //  console.log(socket);
+    const clients = io.sockets.adapter.rooms.get(room);
+    console.log(clients);
+
+    const isOnlyUser = clients.size < 2;
+    io.in(room).emit("isOnlyUser", isOnlyUser);
+    if (!isOnlyUser) {
+      const firstUser = clients.entries().next().value[0];
+      io.to(firstUser).emit("getPlaylist", socket.id);
+    }
+  });
+
+  socket.on("imHereToo", (id) => {
+    socket.to(id).emit("currentUsers", socket.user);
   });
 
   // // spotify functions
 
-  socket.on("needPlaylist", () => {
-    const keys = Object.keys(users);
-    io.to(keys[0]).emit("getPlaylist");
-  });
+  // socket.on("needPlaylist", () => {
+  //   const clients = io.sockets.adapter.rooms.get(socket.room);
+  //   const firstUser = clients.entries().next().value[0];
+  //   // const keys = Object.keys(users);
+  //   io.to(firstUser).emit("getPlaylist", socket.id);
+  // });
 
-  socket.on("returnPlaylist", (playlist, position) => {
-    const keys = Object.keys(users);
-    io.to(keys[keys.length - 1]).emit("updatePlaylist", playlist, position);
+  socket.on("returnPlaylist", (reqUser, playlist, position) => {
+    //  const keys = Object.keys(users);
+    io.to(reqUser).emit("updatePlaylist", playlist, position);
   });
 
   socket.on("next", () => {
-    socket.broadcast.emit("allNext");
+    socket.to(socket.room).emit("allNext");
   });
 
   socket.on("prev", () => {
-    socket.broadcast.emit("allPrev");
+    socket.to(socket.room).emit("allPrev");
   });
 
   socket.on("seek", (seek) => {
-    socket.broadcast.emit("allSeek", seek);
+    socket.to(socket.room).emit("allSeek", seek);
   });
 
   socket.on("playItem", (newQueue, uris) => {
-    socket.broadcast.emit("otherPlayItem", newQueue, uris);
+    socket.to(socket.room).emit("otherPlayItem", newQueue, uris);
   });
 
   socket.on("removedItem", (newQueue) => {
-    socket.broadcast.emit("otherRemovedItem", newQueue);
+    socket.to(socket.room).emit("otherRemovedItem", newQueue);
   });
 
   //chat functions
-  socket.on("newMsg", (user, msg) => {
-    socket.broadcast.emit("getNewMsg", user, msg);
+  socket.on("newMsg", (msg) => {
+    console.log(socket.user, msg);
+    io.to(socket.room).emit("getNewMsg", socket.user, msg);
   });
 
   socket.on("songQueued", (song) => {
-    socket.broadcast.emit("queueSong", song);
+    socket.to(socket.room).emit("queueSong", song);
   });
 
   socket.on("disconnect", () => {
-    delete users[socket.id];
-    const keys = Object.keys(users);
-    socket.broadcast.emit("isOnlyUser", keys.length < 2);
+    if (socket.room) {
+      socket.leave(socket.room);
+      socket.to(socket.room).emit("otherUserLeft", socket.user);
+    }
   });
 });
 
