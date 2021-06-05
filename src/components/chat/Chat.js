@@ -10,8 +10,9 @@ export default function Chat({ user, socket }) {
   // saving list of users for a 'see who is chatting ' button?
   const [usersInSession, setUsersInSession] = useState([]);
 
+  const [width, setWidth] = useState(window.innerWidth / 4);
+
   function sendMessage() {
-    //  setChatHist([...chatHist, [`${user}`, `${msg}`]]);
     setMsg("");
     chatInput.current.focus();
     usersInSession.length === 0
@@ -54,35 +55,44 @@ export default function Chat({ user, socket }) {
     };
   });
 
-  //resize functions
-  const [width, setWidth] = useState(window.innerWidth / 4);
+  useEffect(() => {
+    //resize functions
 
-  function handleMouseMove(e) {
-    const newWidth = window.innerWidth - e.clientX - 8;
-    const maxWidth = window.innerWidth / 2 - 20;
-    console.log(window.innerWidth);
-    console.log(newWidth, maxWidth);
-    setWidth(newWidth < maxWidth ? newWidth : maxWidth);
-  }
+    function handleMouseMove(e) {
+      const newWidth = window.innerWidth - e.clientX - 8;
+      const maxWidth = window.innerWidth / 2 - 20;
+      setWidth(newWidth < maxWidth ? newWidth : maxWidth);
+    }
 
-  function mouseDownHandler() {
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", mouseUpHandler);
-  }
+    function mousedownHandler(e) {
+      if (e.target.id === "resizer") {
+        window.addEventListener("mousemove", handleMouseMove);
+        window.addEventListener("mouseup", mouseUpHandler);
+      }
+    }
 
-  function mouseUpHandler() {
-    window.removeEventListener("mousemove", handleMouseMove);
-    window.removeEventListener("mouseup", mouseUpHandler);
-  }
+    function mouseUpHandler() {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", mouseUpHandler);
+    }
+
+    function resizeHandler() {
+      const maxWidth = window.innerWidth / 2 - 20;
+      if (maxWidth < width) setWidth(maxWidth);
+    }
+
+    window.addEventListener("mousedown", mousedownHandler);
+    window.addEventListener("resize", resizeHandler);
+
+    return () => {
+      window.removeEventListener("mousedown", mousedownHandler);
+      window.removeEventListener("resize", resizeHandler);
+    };
+  });
 
   return (
     <>
-      <div
-        className='resizer'
-        onMouseDown={mouseDownHandler}
-        style={{ flex: "0 0 auto" }}
-      ></div>
-
+      <div id='resizer' className='resizer' style={{ flex: "0 0 auto" }}></div>
       <div
         ref={resize}
         className='side-bar d-flex flex-column'

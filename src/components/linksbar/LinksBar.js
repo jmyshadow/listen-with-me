@@ -25,19 +25,12 @@ export default function LinksBar({
     if (!accessToken) return;
     (async () => {
       const fetchedPlaylists = await spotifyFetch.myPlaylists(accessToken);
-      console.log(fetchedPlaylists);
       setPlaylists(fetchedPlaylists);
     })();
   }, [accessToken]);
 
   //resize functions
   const [width, setWidth] = useState(window.innerWidth / 6);
-
-  function handleMouseMove(e) {
-    const newWidth = e.clientX - 8;
-    const maxWidth = window.innerWidth / 3 - 20;
-    setWidth(newWidth < maxWidth ? newWidth : maxWidth);
-  }
 
   function mouseDownHandler() {
     window.addEventListener("mousemove", handleMouseMove);
@@ -52,8 +45,19 @@ export default function LinksBar({
   function updateRoom() {
     room.current = tInput;
     socket.emit("joinRoom", room.current);
-    console.log("joining room", room.current);
     setJoiningRoom(false);
+  }
+
+  function handleText(e) {
+    if (e.key === "Enter" || e.keyCode === 13) {
+      updateRoom();
+    }
+  }
+
+  function handleMouseMove(e) {
+    const newWidth = e.clientX - 8;
+    const maxWidth = window.innerWidth / 3 - 20;
+    setWidth(newWidth < maxWidth ? newWidth : maxWidth);
   }
 
   useEffect(() => {
@@ -73,18 +77,29 @@ export default function LinksBar({
           backgroundColor: "black",
         }}
       >
-        <div className='p-3 d-flex flex-column align-items-center'>
-          <h3>Listening in: </h3>
-          <h2>{room.current ? room.current : "The Void"}</h2>
+        <div
+          className='p-3 d-flex flex-column align-items-center nowPlaying'
+          style={{ marginTop: "1rem", padding: ".5rem", width: "90%" }}
+        >
+          <h2>Listening in: </h2>
+          <h3 style={{ fontWeight: "bold" }}>
+            {room.current ? room.current : "The Void"}
+          </h3>
         </div>
         <div className='p-3 clickable'>
           <div
-            className={joiningRoom ? "d-none" : "d-flex"}
+            className={
+              joiningRoom
+                ? "d-none"
+                : `d-flex justify-content-center ${
+                    !room.current ? "attention-text" : ""
+                  }`
+            }
             onClick={() =>
               joiningRoom ? setJoiningRoom(false) : setJoiningRoom(true)
             }
           >
-            <h4>Join new room</h4>
+            <h5>Join new room</h5>
           </div>
           <div className={joiningRoom ? "d-flex" : "d-none"}>
             <InputGroup>
@@ -93,6 +108,7 @@ export default function LinksBar({
                 placeholder='Enter Room Name'
                 value={tInput}
                 onChange={(e) => setTInput(e.target.value)}
+                onKeyDown={(e) => handleText(e)}
               />
               <InputGroup.Append>
                 <Button variant='success' onClick={updateRoom}>

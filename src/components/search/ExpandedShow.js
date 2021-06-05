@@ -10,26 +10,15 @@ export default function ExpandedShow({
   setExpanded,
   index,
   setIndex,
+  queueQueue,
+  setQueueQueue,
+  immediateQueue,
+  setImmediateQueue,
 }) {
   const accessToken = useContext(TokenContext);
   const [episodes, setEpisodes] = useState([]);
   const [showName, setShowName] = useState("");
   const [showDesc, setShowDesc] = useState("");
-  // const [id, setId] = useState("");
-  // const [endPoint, setEndPoint] = useState("");
-  // const data = useSpotifyApi(endPoint, id, accessToken);
-
-  // useEffect(() => {
-  //   if (!show) return;
-  //   setId(show.split(":")[2]);
-  //   setEndPoint("shows");
-  // }, [show]);
-
-  // useEffect(() => {
-  //   if (!episode) return;
-  //   setId(episode.split(":")[2]);
-  //   setEndPoint("episodes");
-  // }, [episode]);
 
   useEffect(() => {
     const splitUri = uri.split(":");

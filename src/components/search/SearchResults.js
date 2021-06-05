@@ -8,6 +8,21 @@ import ExpandedShow from "./ExpandedShow";
 import SearchItem from "./SearchItem";
 // import SearchFactory from "./SearchFactory";
 
+const order = {
+  tracks: 0,
+  artists: 1,
+  albums: 2,
+  playlists: 3,
+  episodes: 4,
+  shows: 5,
+};
+
+function calcWidth(w) {
+  if (w >= 750) return { titleCol: "50%", itemCol: "50%" };
+  if (w >= 400) return { titleCol: "100%", itemCol: "50%" };
+  return { titleCol: "100%", itemCol: "100%" };
+}
+
 export default function SearchResults({
   searchResult,
   expanded,
@@ -15,30 +30,28 @@ export default function SearchResults({
   index,
   setIndex,
   socket,
+  queueQueue,
+  setQueueQueue,
+  immediateQueue,
+  setImmediateQueue,
+  width,
 }) {
   const type = expanded[index].split(":")[1];
 
-  const order = {
-    tracks: 0,
-    artists: 1,
-    albums: 2,
-    playlists: 3,
-    episodes: 4,
-    shows: 5,
-  };
-
-  Object.entries(searchResult).map(([key, value]) => {
-    console.log(key);
-    console.log(value);
-  });
+  const { titleCol, itemCol } = width
+    ? calcWidth(width)
+    : { titleCol: "50%", itemCol: "50%" };
 
   switch (type) {
     default:
       return (
-        <Row xs={1} sm={2} noGutters>
+        <Row noGutters>
           {Object.entries(searchResult).map(([key, value]) =>
             value.length > 0 ? (
-              <Col className={`order-${order[key]}`}>
+              <Col
+                className={`order-${order[key]}`}
+                style={{ minWidth: titleCol }}
+              >
                 <Row
                   className='bg-dark justify-content-center py-2'
                   style={{
@@ -49,7 +62,7 @@ export default function SearchResults({
                     <h4>{key[0].toUpperCase() + key.substring(1)}</h4>
                   </Col>
                 </Row>
-                <Row sm={1} lg={2} noGutters>
+                <Row noGutters>
                   {value.map((item) =>
                     // check for item since Spotify returned null values in middle of some arrays
                     item ? (
@@ -59,6 +72,11 @@ export default function SearchResults({
                         expanded={expanded}
                         setExpanded={setExpanded}
                         setIndex={setIndex}
+                        queueQueue={queueQueue}
+                        setQueueQueue={setQueueQueue}
+                        immediateQueue={immediateQueue}
+                        setImmediateQueue={setImmediateQueue}
+                        width={itemCol}
                       />
                     ) : null
                   )}
@@ -78,6 +96,10 @@ export default function SearchResults({
           index={index}
           setIndex={setIndex}
           socket={socket}
+          queueQueue={queueQueue}
+          setQueueQueue={setQueueQueue}
+          immediateQueue={immediateQueue}
+          setImmediateQueue={setImmediateQueue}
         />
       );
     case "album":
@@ -90,6 +112,10 @@ export default function SearchResults({
           index={index}
           setIndex={setIndex}
           socket={socket}
+          queueQueue={queueQueue}
+          setQueueQueue={setQueueQueue}
+          immediateQueue={immediateQueue}
+          setImmediateQueue={setImmediateQueue}
         />
       );
 
@@ -102,6 +128,10 @@ export default function SearchResults({
           setExpanded={setExpanded}
           index={index}
           setIndex={setIndex}
+          queueQueue={queueQueue}
+          setQueueQueue={setQueueQueue}
+          immediateQueue={immediateQueue}
+          setImmediateQueue={setImmediateQueue}
         />
       );
 
@@ -114,6 +144,10 @@ export default function SearchResults({
           setExpanded={setExpanded}
           index={index}
           setIndex={setIndex}
+          queueQueue={queueQueue}
+          setQueueQueue={setQueueQueue}
+          immediateQueue={immediateQueue}
+          setImmediateQueue={setImmediateQueue}
         />
       );
 
@@ -126,6 +160,10 @@ export default function SearchResults({
           setExpanded={setExpanded}
           index={index}
           setIndex={setIndex}
+          queueQueue={queueQueue}
+          setQueueQueue={setQueueQueue}
+          immediateQueue={immediateQueue}
+          setImmediateQueue={setImmediateQueue}
         />
       );
 
@@ -138,6 +176,10 @@ export default function SearchResults({
           setExpanded={setExpanded}
           index={index}
           setIndex={setIndex}
+          queueQueue={queueQueue}
+          setQueueQueue={setQueueQueue}
+          immediateQueue={immediateQueue}
+          setImmediateQueue={setImmediateQueue}
         />
       );
   }

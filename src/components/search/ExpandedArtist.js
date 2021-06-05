@@ -13,9 +13,12 @@ export default function ExpandedArtist({
   index,
   setIndex,
   socket,
+  queueQueue,
+  setQueueQueue,
+  immediateQueue,
+  setImmediateQueue,
 }) {
   const accessToken = useContext(TokenContext);
-  const { playQueue, setPlayQueue } = useContext(QueueContext);
   const [artistTracks, setArtistTracks] = useState([]);
   const [artistAlbums, setArtistAlbums] = useState([]);
   const [artistName, setArtistName] = useState("");
@@ -36,8 +39,9 @@ export default function ExpandedArtist({
   }, []);
 
   function queueSong(track) {
-    setPlayQueue([
-      ...playQueue,
+    console.log(track);
+    setQueueQueue([
+      ...queueQueue,
       {
         song: track.name,
         artist: track.artists,
@@ -47,8 +51,6 @@ export default function ExpandedArtist({
         id: track.id,
       },
     ]);
-
-    socket.emit("songQueued", track.uri);
   }
 
   return (

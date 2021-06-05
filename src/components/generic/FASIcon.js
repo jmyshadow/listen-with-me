@@ -5,6 +5,5 @@ export default function FASIcon({
   iStyle = "",
   iFunction = null,
 }) {
-  // also replace SPlayerButton
   return <i className={iClass} style={iStyle} onClick={iFunction}></i>;
 }

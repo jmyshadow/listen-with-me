@@ -59,7 +59,6 @@ export default function TrackListing({
           {track.artists.length > 1 ? " - " : ""}
           {track.artists.length > 1 ? setupArtist() : ""}
         </Col>
-        {/**       <Col xs={4}>{album}</Col>  */}
         <Col className='col-xs-2 col-sm-1'>
           <SongTime milli={track.duration_ms} />
         </Col>

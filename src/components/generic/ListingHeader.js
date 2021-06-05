@@ -28,7 +28,7 @@ export default function ListingHeader({
         <div
           className='w-100 mh-50 overflow-hidden py-1'
           style={{
-            fontSize: `${calculateFontSize(5)}em`,
+            fontSize: `${calculateFontSize(4)}em`,
           }}
         >
           {data1}

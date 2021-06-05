@@ -2,12 +2,8 @@ import React, { useState, useEffect } from "react";
 
 export default function LinksBarPlaylist({
   playlist,
-  index,
-  setIndex,
-  expanded,
   setExpanded,
   setSearching,
-  setSearch,
 }) {
   const [playlistName, setPlaylistName] = useState("");
 
@@ -16,11 +12,7 @@ export default function LinksBarPlaylist({
   }, [playlist]);
 
   function expandPlaylist() {
-    //setSearch(playlist.name);
-    //   setTimeout(() => {
     setExpanded([playlist.uri]);
-    //   setIndex(index + 1);
-    //   }, 3000);
     setSearching(true);
   }
 

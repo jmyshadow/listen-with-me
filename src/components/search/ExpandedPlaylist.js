@@ -13,6 +13,10 @@ export default function ExpandedPlaylist({
   index,
   setIndex,
   track,
+  queueQueue,
+  setQueueQueue,
+  immediateQueue,
+  setImmediateQueue,
 }) {
   const accessToken = useContext(TokenContext);
   // eslint-disable-next-line no-unused-vars
@@ -27,7 +31,7 @@ export default function ExpandedPlaylist({
 
   useEffect(() => {
     setRowWidth(theRow.current.clientWidth);
-  });
+  }, []);
   // const { playlistData, playlistTracks } = useSpotifyApi(
   //   "playlist",
   //   id,
@@ -54,9 +58,8 @@ export default function ExpandedPlaylist({
   }, []);
 
   function queueSong(track) {
-    console.log(track);
-    setPlayQueue([
-      ...playQueue,
+    setQueueQueue([
+      ...queueQueue,
       {
         song: track.name,
         artist: track.artists,

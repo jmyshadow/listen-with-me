@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import useAuth from "./hooks/useAuth";
-import { TokenContext, QueueContext } from "./context/SpotifyContext";
+import { TokenContext } from "./context/SpotifyContext";
 
 import { Container } from "react-bootstrap";
 import SearchBar from "./search/SearchBar";
@@ -24,7 +24,36 @@ export default function MainApp({ code, setUser, socket, user }) {
     shows: [],
   });
 
-  const [playQueue, setPlayQueue] = useState([]);
+  const [queueQueue, setQueueQueue] = useState([]);
+  const [immediateQueue, setImmediateQueue] = useState([]);
+
+  const searchContainer = useRef(null);
+  const [searchContainerWidth, setSearchContainerWidth] = useState("100%");
+
+  useEffect(() => {
+    const mousemoveHandler = (e) => {
+      console.log(e);
+      console.log(searchContainer.current.offsetWidth);
+      if (searchContainer.current.offsetWidth !== searchContainerWidth)
+        setSearchContainerWidth(searchContainer.current.offsetWidth);
+    };
+
+    const mouseupHandler = () => {
+      window.removeEventListener("mousemove", mousemoveHandler);
+      window.removeEventListener("mouseup", mouseupHandler);
+    };
+
+    const mousedownHandler = () => {
+      window.addEventListener("mousemove", mousemoveHandler);
+      window.addEventListener("mouseup", mouseupHandler);
+    };
+
+    window.addEventListener("mousedown", mousedownHandler);
+
+    return () => {
+      window.removeEventListener("mousedown", mousedownHandler);
+    };
+  });
 
   useEffect(() => {
     if (!accessToken) return;
@@ -42,66 +71,76 @@ export default function MainApp({ code, setUser, socket, user }) {
 
   return (
     <TokenContext.Provider value={accessToken}>
-      <QueueContext.Provider value={{ playQueue, setPlayQueue }}>
+      <div
+        className='d-flex bg-dark text-light h-100'
+        style={{
+          flex: "1 1 auto",
+          paddingBottom: "8px",
+        }}
+      >
+        <LinksBar
+          accessToken={accessToken}
+          index={index}
+          setIndex={setIndex}
+          expanded={expanded}
+          setExpanded={setExpanded}
+          setSearching={setSearching}
+          setSearch={setSearch}
+          user={user}
+          socket={socket}
+        />
         <div
-          className='d-flex bg-dark text-light h-100'
-          style={{
-            flex: "1 1 auto",
-            paddingBottom: "8px",
-          }}
+          className='d-flex flex-column bg-dark text-light h-100'
+          style={{ flex: "1 1 auto" }}
         >
-          <LinksBar
-            accessToken={accessToken}
+          <SearchBar
             index={index}
             setIndex={setIndex}
             expanded={expanded}
             setExpanded={setExpanded}
             setSearching={setSearching}
+            setSearchResult={setSearchResult}
+            searching={searching}
+            search={search}
             setSearch={setSearch}
-            user={user}
-            socket={socket}
           />
-          <div
-            className='d-flex flex-column bg-dark text-light h-100'
-            style={{ flex: "1 1 auto" }}
-          >
-            <SearchBar
-              index={index}
-              setIndex={setIndex}
-              expanded={expanded}
+          <div className='playlist'>
+            <div
+              ref={searchContainer}
+              style={{ height: "100%", width: "100%" }}
+            >
+              {searching ? (
+                <Container className='playlist' fluid>
+                  <SearchResults
+                    index={index}
+                    setIndex={setIndex}
+                    expanded={expanded}
+                    setExpanded={setExpanded}
+                    searchResult={searchResult}
+                    socket={socket}
+                    queueQueue={queueQueue}
+                    setQueueQueue={setQueueQueue}
+                    immediateQueue={immediateQueue}
+                    setImmediateQueue={setImmediateQueue}
+                    width={searchContainer.current.offsetWidth}
+                  />
+                </Container>
+              ) : null}
+            </div>
+            <Queue
+              queueQueue={queueQueue}
+              setQueueQueue={setQueueQueue}
+              immediateQueue={immediateQueue}
+              setImmediateQueue={setImmediateQueue}
               setExpanded={setExpanded}
               setSearching={setSearching}
-              setSearchResult={setSearchResult}
               searching={searching}
-              search={search}
-              setSearch={setSearch}
+              expanded={expanded}
+              socket={socket}
             />
-            <div className='playlist'>
-              <div style={{ height: "100%", width: "100%" }}>
-                {searching ? (
-                  <Container className='playlist' fluid>
-                    <SearchResults
-                      index={index}
-                      setIndex={setIndex}
-                      expanded={expanded}
-                      setExpanded={setExpanded}
-                      searchResult={searchResult}
-                      socket={socket}
-                    />
-                  </Container>
-                ) : null}
-              </div>
-              <Queue
-                setExpanded={setExpanded}
-                setSearching={setSearching}
-                searching={searching}
-                expanded={expanded}
-                socket={socket}
-              />
-            </div>
           </div>
         </div>
-      </QueueContext.Provider>
+      </div>
     </TokenContext.Provider>
   );
 }

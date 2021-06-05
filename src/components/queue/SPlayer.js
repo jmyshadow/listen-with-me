@@ -38,13 +38,14 @@ export default function SPlayer({
             margin: "7px 10px 0",
           }}
         />
+
         <FASIcon
-          iClass={`rounded-circle text-center player-button ${
-            paused ? "fas fa-play" : "fas fa-pause"
+          iClass={`rounded-circle text-center player-button fas ${
+            paused ? "fa-play" : "fa-pause"
           }`}
           iFunction={play}
           iStyle={{
-            padding: "12px 0 0 4px",
+            padding: `12px ${paused ? "0" : "5px"} 5px 0px 4px`,
             margin: "2px 10px 0px",
             height: "55px",
             width: "55px",

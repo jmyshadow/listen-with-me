@@ -1,10 +1,19 @@
 import React, { useContext } from "react";
 import { Col, Media } from "react-bootstrap";
-import { TokenContext, QueueContext } from "../context/SpotifyContext";
+import { TokenContext } from "../context/SpotifyContext";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 
-export default function SearchItem({ setIndex, item, expanded, setExpanded }) {
-  const { playQueue, setPlayQueue } = useContext(QueueContext);
+export default function SearchItem({
+  setIndex,
+  item,
+  expanded,
+  setExpanded,
+  queueQueue,
+  setQueueQueue,
+  immediateQueue,
+  setImmediateQueue,
+  width,
+}) {
   const accessToken = useContext(TokenContext);
 
   const defaultImg = "../images/qmark.jpg";
@@ -28,8 +37,8 @@ export default function SearchItem({ setIndex, item, expanded, setExpanded }) {
         id: track.id,
       };
     });
-    const add = [...array, ...playQueue];
-    setPlayQueue(add);
+    const add = [...array, ...immediateQueue];
+    setImmediateQueue(add);
     const newQueue = add.map((track) => track.uri);
     spotifyFetch.playNow(newQueue, accessToken);
   }
@@ -51,7 +60,7 @@ export default function SearchItem({ setIndex, item, expanded, setExpanded }) {
           uri: track.uri,
           id: track.id,
         };
-        setPlayQueue([addToQueue, ...playQueue]);
+        setImmediateQueue([addToQueue, ...immediateQueue]);
         spotifyFetch.playNow([track.uri], accessToken);
         break;
       case "artist":
@@ -85,7 +94,10 @@ export default function SearchItem({ setIndex, item, expanded, setExpanded }) {
   }
 
   return (
-    <Col className='nowPlaying p-2 clickable-icon'>
+    <Col
+      className='nowPlaying p-2 clickable-icon meeds w-100'
+      style={{ minWidth: width }}
+    >
       <Media>
         <img
           src={imgUrl}
@@ -97,7 +109,7 @@ export default function SearchItem({ setIndex, item, expanded, setExpanded }) {
         <Media.Body
           className='pl-2 w-100'
           onClick={expandSearch}
-          style={{ height: "75px", overflow: "hidden", minWidth: "75px" }}
+          style={{ height: "75px", overflow: "hidden" }}
         >
           {item.name}
         </Media.Body>

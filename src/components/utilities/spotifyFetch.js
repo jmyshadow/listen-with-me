@@ -156,6 +156,26 @@ export async function artists(id, accessToken) {
   return { artistTracks, artistAlbums, artistData };
 }
 
+export async function track(id, accessToken) {
+  const { image, track, album, artist } = await axios
+    .get(`https://api.spotify.com/v1/tracks/${id}`, {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res) => {
+      const image = res.data.album.images[0].url;
+      const track = res.data.name;
+      const album = res.data.album.name;
+      const artist = res.data.artists[0].name;
+      return { image, track, album, artist };
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return { image, track, album, artist };
+}
+
 export async function tracks(id, accessToken) {
   const { trackNum, albumId } = await axios
     .get(`https://api.spotify.com/v1/tracks/${id}`, {
@@ -260,12 +280,15 @@ export async function getMe(accessToken) {
   return id;
 }
 
-export function playNow(uris, accessToken, position = 0) {
+export function playNow(uris, accessToken, position = 0, offset = 0) {
   axios({
     method: "put",
     url: `https://api.spotify.com/v1/me/player/play`,
     data: {
       uris: uris,
+      offset: {
+        position: offset,
+      },
       position_ms: position,
     },
     headers: {
@@ -284,5 +307,22 @@ export function queueSong(uri, accessToken) {
     headers: {
       Authorization: "Bearer " + accessToken,
     },
-  });
+  })
+    .then((data) => {
+      console.log(data);
+      axios
+        .get(
+          `https://api.spotify.com/v1/me/player`,
+
+          {
+            headers: {
+              Authorization: "Bearer " + accessToken,
+            },
+          }
+        )
+        .then((data) => {
+          console.log(data);
+        });
+    })
+    .catch((err) => console.log(err));
 }

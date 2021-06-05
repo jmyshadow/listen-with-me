@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import { Row, Col } from "react-bootstrap";
 // import useSpotifyApi from "../hooks/useSpotifyApi";
-import { TokenContext, QueueContext } from "../context/SpotifyContext";
+import { TokenContext } from "../context/SpotifyContext";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 import TrackListing from "../generic/TrackListing";
 import FASIcon from "../generic/FASIcon";
@@ -14,38 +14,33 @@ export default function ExpandedAlbum({
   index,
   setIndex,
   socket,
+  queueQueue,
+  setQueueQueue,
+  immediateQueue,
+  setImmediateQueue,
 }) {
-  // const [id, setId] = useState("");
-  // const [endPoint, setEndpoint] = useState("");
-  // eslint-disable-next-line no-unused-vars
+  const accessToken = useContext(TokenContext);
+  const albumRow = useRef(null);
   const [trackNum, setTrackNum] = useState("");
   const [albumTracks, setAlbumTracks] = useState([]);
   const [albumName, setAlbumName] = useState("");
   const [artistName, setArtistName] = useState("");
   const [albumImage, setAlbumImage] = useState("");
-  const accessToken = useContext(TokenContext);
-  const { playQueue, setPlayQueue } = useContext(QueueContext);
-  const albumRow = useRef(null);
   const [rowWidth, setRowWidth] = useState("");
-
-  console.log(uri);
 
   useEffect(() => {
     setRowWidth(albumRow.current.clientWidth);
-  });
+  }, []);
 
   useEffect(() => {
     const splitUri = uri.split(":");
-    console.log(splitUri);
     if (splitUri[1] === "track") {
       (async function () {
         const { trackNum, albumTracks, albumImage } = await spotifyFetch.tracks(
           splitUri[2],
           accessToken
         );
-        console.log(trackNum);
-        console.log(albumTracks);
-        console.log(albumImage);
+
         setTrackNum(trackNum);
         setAlbumTracks(albumTracks);
         setAlbumName(albumTracks[0].album.name);
@@ -62,17 +57,14 @@ export default function ExpandedAlbum({
         setAlbumName(albumTracks[0].album.name);
         setArtistName(albumTracks[0].artists[0].name);
         setAlbumImage(albumImage);
-        console.log(trackNum);
-        console.log(albumTracks);
-        console.log(albumImage);
       })();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   function queueSong(track) {
-    setPlayQueue([
-      ...playQueue,
+    setQueueQueue([
+      ...queueQueue,
       {
         song: track.name,
         artist: track.artists,
@@ -82,8 +74,6 @@ export default function ExpandedAlbum({
         id: track.id,
       },
     ]);
-    spotifyFetch.queueSong(track.uri, accessToken);
-    socket.emit("songQueued", track.uri);
   }
 
   return (

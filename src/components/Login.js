@@ -4,10 +4,6 @@ import { Button } from "react-bootstrap";
 
 export default function Login() {
   const redirectAuth = () => {
-    //   let result = await fetch("http://localhost:3001/login");
-    //   let authUrl = await result.json();
-    //   window.location.href = authUrl;
-
     axios
       .get("/login")
       .then((res) => {
@@ -15,7 +11,7 @@ export default function Login() {
       })
       .catch((err) => {
         console.log(err);
-        //y  window.location.href = "/";
+        window.location.href = "/";
       });
   };
 

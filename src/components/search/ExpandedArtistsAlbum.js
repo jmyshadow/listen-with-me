@@ -8,6 +8,10 @@ export default function ExpandedArtistsAlbum({
   index,
   setIndex,
   socket,
+  queueQueue,
+  setQueueQueue,
+  immediateQueue,
+  setImmediateQueue,
 }) {
   const [albumImage, setAlbumImage] = useState("");
   const [albumName, setAlbumName] = useState("");

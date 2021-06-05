@@ -104,30 +104,16 @@ app.get("/room/:room", (req, res) => {
 });
 
 //////////////////////////////////////////////////////////////////////
-//const users = {};
-//const rooms = {};
 io.on("connection", (socket) => {
   socket.on("setUser", (user) => {
-    console.log(user, "joined");
+    console.log(user, "logged in");
     socket.user = user;
   });
 
   socket.on("joinRoom", (room) => {
-    //if (!socket.user) socket.user = user;
-    // if room does not exist, initialize it
-    // if (!rooms[room]) {
-    //   rooms[room] = [];
-    // }
-
-    // if user is changing rooms, need to clean up other rooms
-    //   if (socket.room && socket.room !== room) {
-    // const oldRoom = socket.room;
-    // rooms[oldRoom].splice(rooms[oldRoom].indexOf(socket.user), 1);
-    //  socket.leave(oldRoom);
-    //  }
-    //
     // leave old room if already in a room
     if (socket.room) {
+      console.log(socket.user, " left room ", room);
       const oldRoom = socket.room;
       socket.leave(oldRoom);
       socket.to(oldRoom).emit("otherUserLeft", socket.user);
@@ -136,16 +122,17 @@ io.on("connection", (socket) => {
     socket.room = room;
     socket.join(room);
     socket.to(room).emit("otherUserJoined", socket.id, socket.user);
+    console.log(socket.user, " joined");
 
-    //  rooms[room].push(user);
-    //  console.log(socket);
     const clients = io.sockets.adapter.rooms.get(room);
     console.log(clients);
 
     const isOnlyUser = clients.size < 2;
     io.in(room).emit("isOnlyUser", isOnlyUser);
+    console.log("isOnlyUser", isOnlyUser);
     if (!isOnlyUser) {
       const firstUser = clients.entries().next().value[0];
+      console.log(firstUser, socket.id);
       io.to(firstUser).emit("getPlaylist", socket.id);
     }
   });
@@ -156,16 +143,9 @@ io.on("connection", (socket) => {
 
   // // spotify functions
 
-  // socket.on("needPlaylist", () => {
-  //   const clients = io.sockets.adapter.rooms.get(socket.room);
-  //   const firstUser = clients.entries().next().value[0];
-  //   // const keys = Object.keys(users);
-  //   io.to(firstUser).emit("getPlaylist", socket.id);
-  // });
-
-  socket.on("returnPlaylist", (reqUser, playlist, position) => {
-    //  const keys = Object.keys(users);
-    io.to(reqUser).emit("updatePlaylist", playlist, position);
+  socket.on("returnPlaylist", (reqUser, playlist, position, offset) => {
+    console.log(playlist);
+    io.to(reqUser).emit("updatePlaylist", playlist, position, offset);
   });
 
   socket.on("next", () => {
@@ -181,21 +161,31 @@ io.on("connection", (socket) => {
   });
 
   socket.on("playItem", (newQueue, uris) => {
+    console.log("play item", newQueue, uris);
     socket.to(socket.room).emit("otherPlayItem", newQueue, uris);
   });
 
   socket.on("removedItem", (newQueue) => {
+    console.log("removed items");
     socket.to(socket.room).emit("otherRemovedItem", newQueue);
+  });
+
+  socket.on("needsUpdate", (uris, index) => {
+    socket.to(socket.room).emit("update", uris, index);
+  });
+
+  socket.on("addToQueue", (queue) => {
+    console.log("song queued");
+    socket.to(socket.room).emit("addToQueueRoom", queue);
+  });
+  socket.on("addToImmediateQueue", (queue, uris) => {
+    socket.to(socket.room).emit("addToImmediateQueueRoom", queue, uris);
   });
 
   //chat functions
   socket.on("newMsg", (msg) => {
     console.log(socket.user, msg);
     io.to(socket.room).emit("getNewMsg", socket.user, msg);
-  });
-
-  socket.on("songQueued", (song) => {
-    socket.to(socket.room).emit("queueSong", song);
   });
 
   socket.on("disconnect", () => {
