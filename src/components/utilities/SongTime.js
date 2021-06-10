@@ -8,5 +8,5 @@ export default function SongTime({ milli }) {
     return `${min}:${sec.toString().length === 1 ? "0" + sec.toString() : sec}`;
   }
 
-  return <span>{milToMin(milli)}</span>;
+  return <>{milToMin(milli)}</>;
 }

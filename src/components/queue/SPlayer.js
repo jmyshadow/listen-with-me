@@ -45,7 +45,7 @@ export default function SPlayer({
           }`}
           iFunction={play}
           iStyle={{
-            padding: `12px ${paused ? "0" : "5px"} 5px 0px 4px`,
+            padding: `12px ${paused ? "0" : "5px"} 0px 4px`,
             margin: "2px 10px 0px",
             height: "55px",
             width: "55px",

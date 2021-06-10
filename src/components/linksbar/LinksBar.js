@@ -81,10 +81,10 @@ export default function LinksBar({
           className='p-3 d-flex flex-column align-items-center nowPlaying'
           style={{ marginTop: "1rem", padding: ".5rem", width: "90%" }}
         >
-          <h2>Listening in: </h2>
-          <h3 style={{ fontWeight: "bold" }}>
+          <h3>Listening in: </h3>
+          <h2 style={{ fontWeight: "bold" }}>
             {room.current ? room.current : "The Void"}
-          </h3>
+          </h2>
         </div>
         <div className='p-3 clickable'>
           <div

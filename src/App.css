@@ -114,8 +114,10 @@
 }
 
 .track-listing {
+  height: 100%;
   flex: 1;
   white-space: nowrap;
+  word-break: break-all;
   overflow: hidden;
   text-overflow: ellipsis;
 }
@@ -167,6 +169,7 @@
   animation-iteration-count: 10;
   animation-direction: alternate;
   animation-timing-function: linear;
+  animation-delay: 5s;
 }
 
 @keyframes wiggle {

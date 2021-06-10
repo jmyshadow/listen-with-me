@@ -48,10 +48,16 @@ export default function MainApp({ code, setUser, socket, user }) {
       window.addEventListener("mouseup", mouseupHandler);
     };
 
+    const resizeHandler = () => {
+      setSearchContainerWidth(searchContainer.current.offsetWidth);
+    };
+
     window.addEventListener("mousedown", mousedownHandler);
+    window.addEventListener("resize", resizeHandler);
 
     return () => {
       window.removeEventListener("mousedown", mousedownHandler);
+      window.removeEventListener("resize", resizeHandler);
     };
   });
 
@@ -76,6 +82,7 @@ export default function MainApp({ code, setUser, socket, user }) {
         style={{
           flex: "1 1 auto",
           paddingBottom: "8px",
+          minWidth: "0",
         }}
       >
         <LinksBar
@@ -91,7 +98,7 @@ export default function MainApp({ code, setUser, socket, user }) {
         />
         <div
           className='d-flex flex-column bg-dark text-light h-100'
-          style={{ flex: "1 1 auto" }}
+          style={{ flex: "1 1 auto", minWidth: "0" }}
         >
           <SearchBar
             index={index}

@@ -62,11 +62,11 @@ export default function ExpandedArtist({
       </Row>
       {artistTracks.map((track) => (
         <Row
-          className='nowPlaying pt-1 position-relative'
+          className='nowPlaying pt-1 position-relative w-100'
           style={{ height: "2rem", zIndex: "5" }}
           noGutters
         >
-          <Col className='col-xs-2 col-sm-1 text-center'>
+          <Col sm={1} className='text-center'>
             <i
               className='fas fa-plus-circle fa-lg clickable-icon'
               onClick={() => queueSong(track)}
