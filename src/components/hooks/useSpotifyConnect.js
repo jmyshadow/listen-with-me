@@ -20,16 +20,16 @@ export default function useSpotifyConnect(accessToken) {
     spotify.addListener("ready", ({ device_id }) => {
       console.log("Connected with Device ID", device_id);
 
-      axios
-        .put(
-          `https://api.spotify.com/v1/me/player`,
-          { device_ids: [device_id] },
-          {
-            headers: {
-              Authorization: "Bearer " + accessToken,
-            },
-          }
-        )
+      axios({
+        method: "put",
+        url: `https://api.spotify.com/v1/me/player`,
+        data: {
+          device_ids: [device_id],
+        },
+        headers: {
+          Authorization: "Bearer " + accessToken,
+        },
+      })
         .catch(() => {
           return axios.put(
             `https://api.spotify.com/v1/me/player/play`,

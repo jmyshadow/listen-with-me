@@ -1,3 +1,7 @@
+.clickable:hover {
+  cursor: pointer;
+}
+
 .side-bar {
   height: 100%;
 }
@@ -5,8 +9,18 @@
 .playlist {
   height: 100%;
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
   scrollbar-color: #5cb85c #343a40;
+  background-image: linear-gradient(
+    to bottom,
+    #343a40,
+    #2b3035,
+    #22262a,
+    #1a1d20,
+    #111315,
+    black
+  );
 }
 
 .playlist::-webkit-scrollbar {
@@ -124,7 +138,7 @@
 
 .myMsg {
   font-weight: bold;
-  color: #5cb85c;
+  color: #1db954;
 }
 
 .yourMsg {
@@ -137,7 +151,7 @@
 }
 
 .player-button {
-  background-color: #5cb85c;
+  background-color: #1db954;
   margin-top: 7px;
   font-size: 30px;
   transition: all 0.2s linear;
@@ -178,5 +192,61 @@
   }
   to {
     transform: rotate(0.01turn);
+  }
+}
+
+.vol-slider {
+  -webkit-appearance: none; /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 5px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  border-radius: 10px;
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.vol-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 15px; /* Set a specific slider handle width */
+  height: 15px; /* Slider handle height */
+  background: #1db954; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.vol-slider::-moz-range-thumb {
+  width: 15px; /* Set a specific slider handle width */
+  height: 15px; /* Slider handle height */
+  background: #1db954; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.search-item {
+  font-weight: 600;
+  background-color: black;
+  border-radius: 10px;
+  box-shadow: inset 0px 0px 4px rgb(52, 58, 64);
+}
+
+.search-item:hover {
+  animation: jiggle 0.2s linear 1;
+}
+
+@keyframes jiggle {
+  0% {
+    transform: rotate(0deg) scale(1);
+  }
+  25% {
+    transform: rotate(-1.5deg) scale(1.03);
+  }
+  50% {
+    transform: rotate(0deg) scale(1.05);
+  }
+  75% {
+    transform: rotate(1.5deg) scale(1.07);
+  }
+  100% {
+    transform: rotate(0deg) scale(1.1);
   }
 }

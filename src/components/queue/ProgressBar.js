@@ -44,7 +44,11 @@ export default function ProgressBar({ nowPlaying, paused, player, socket }) {
       </div>
       <div
         className='trackBar progressBar'
-        style={{ backgroundColor: "green", width: `${percent}%`, zIndex: 100 }}
+        style={{
+          backgroundColor: "#1db954",
+          width: `${percent}%`,
+          zIndex: 100,
+        }}
       >
         {" "}
       </div>

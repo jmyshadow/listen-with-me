@@ -32,8 +32,6 @@ export default function MainApp({ code, setUser, socket, user }) {
 
   useEffect(() => {
     const mousemoveHandler = (e) => {
-      console.log(e);
-      console.log(searchContainer.current.offsetWidth);
       if (searchContainer.current.offsetWidth !== searchContainerWidth)
         setSearchContainerWidth(searchContainer.current.offsetWidth);
     };
@@ -117,7 +115,7 @@ export default function MainApp({ code, setUser, socket, user }) {
               style={{ height: "100%", width: "100%" }}
             >
               {searching ? (
-                <Container className='playlist' fluid>
+                <Container fluid>
                   <SearchResults
                     index={index}
                     setIndex={setIndex}

@@ -60,7 +60,7 @@ export default function Chat({ user, socket }) {
 
     function handleMouseMove(e) {
       const newWidth = window.innerWidth - e.clientX - 8;
-      const maxWidth = window.innerWidth / 2 - 20;
+      const maxWidth = window.innerWidth / 2;
       setWidth(newWidth < maxWidth ? newWidth : maxWidth);
     }
 

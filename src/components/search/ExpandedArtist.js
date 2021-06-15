@@ -32,69 +32,32 @@ export default function ExpandedArtist({
       setArtistAlbums(artistAlbums);
       setArtistName(artistData.name);
       setArtistImg(artistData.images[0].url);
-      console.log(uri);
-      console.log(artistAlbums);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function queueSong(track) {
-    console.log(track);
-    setQueueQueue([
-      ...queueQueue,
-      {
-        song: track.name,
-        artist: track.artists,
-        album: track.album.name,
-        duration: track.duration_ms,
-        uri: track.uri,
-        id: track.id,
-      },
-    ]);
-  }
-
   return (
     <>
       <Row>
-        <Col>
+        <Col className='w-100'>
           <ArtistListingHeader imgUrl={artistImg} artistName={artistName} />
         </Col>
       </Row>
-      {artistTracks.map((track) => (
-        <Row
-          className='nowPlaying pt-1 position-relative w-100'
-          style={{ height: "2rem", zIndex: "5" }}
-          noGutters
-        >
-          <Col sm={1} className='text-center'>
-            <i
-              className='fas fa-plus-circle fa-lg clickable-icon'
-              onClick={() => queueSong(track)}
-              key={track.id + Math.random() + "button"}
-            ></i>
-          </Col>
-          <TrackListing
-            key={track.id + Math.random()}
-            track={track}
-            expanded={expanded}
-            setExpanded={setExpanded}
-            index={index}
-            setIndex={setIndex}
-          />
-        </Row>
+      {artistTracks.map((track, index) => (
+        <TrackListing
+          key={index}
+          track={track}
+          expanded={expanded}
+          setExpanded={setExpanded}
+          index={index}
+          setIndex={setIndex}
+          setQueueQueue={setQueueQueue}
+        />
       ))}
       <div className='d-flex flex-wrap'>
-        {artistAlbums.map((album) => (
-          // <ExpandedAlbum
-          //   uri={album.uri}
-          //   expanded={expanded}
-          //   setExpanded={setExpanded}
-          //   index={index}
-          //   setIndex={setIndex}
-          //   socket={socket}
-          // />
-
+        {artistAlbums.map((album, index) => (
           <ExpandedArtistsAlbum
+            key={index}
             album={album}
             expanded={expanded}
             setExpanded={setExpanded}

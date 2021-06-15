@@ -27,7 +27,7 @@ export async function shows(id, accessToken) {
 
 //episode info
 export async function episodes(id, accessToken) {
-  const addToQueue = await axios
+  const episodeData = await axios
     .get(`https://api.spotify.com/v1/episodes/${id}`, {
       headers: {
         Authorization: "Bearer " + accessToken,
@@ -35,19 +35,16 @@ export async function episodes(id, accessToken) {
     })
     .then((res) => {
       const episodeData = [res.data];
-      // const showName = res.data.show.name;
-      // const showDesc = res.data.show.description;
-      const addToQueue = episodeData;
-      addToQueue.forEach((episode, index) => {
-        addToQueue[index].artists = [["", ""]];
-        addToQueue[index].album = episode.show;
+      episodeData.forEach((episode, index) => {
+        episodeData[index].artists = [["", ""]];
+        episodeData[index].album = episode.show;
       });
       return episodeData;
     })
     .catch((err) => {
       console.log(err);
     });
-  return addToQueue;
+  return episodeData;
 }
 
 export async function expandedEpisodes(id, accessToken) {
@@ -199,12 +196,15 @@ export async function tracks(id, accessToken) {
       },
     })
     .then((res) => {
+      console.log(res.data);
       const albumTracks = res.data.tracks.items;
       const albumName = res.data.name;
       const albumImage = res.data.images[0].url;
+      const albumUri = res.data.uri;
       albumTracks.forEach((track) => {
         track.album = [albumName];
         track.album.name = albumName;
+        track.album.uri = albumUri;
       });
       return { albumTracks, albumImage };
     })
@@ -225,27 +225,17 @@ export async function albums(id, accessToken) {
       const albumTracks = res.data.tracks.items;
       const albumName = res.data.name;
       const albumImage = res.data.images[0].url;
+      const albumUri = res.data.uri;
       albumTracks.forEach((track) => {
         track.album = [albumName];
         track.album.name = albumName;
+        track.album.uri = albumUri;
       });
       return { albumTracks, albumImage };
     })
     .catch((err) => {
       console.log(err);
     });
-  // const albumTracks = await axios
-  //   .get(`https://api.spotify.com/v1/albums/${id}/tracks`, {
-  //     headers: {
-  //       Authorization: "Bearer " + accessToken,
-  //     },
-  //   })
-  //   .then((res) => {
-  //     return res.data.items;
-  //   })
-  //   .catch((err) => {
-  //     console.log(err);
-  //   });
   return { albumTracks, albumImage };
 }
 
@@ -325,4 +315,35 @@ export function queueSong(uri, accessToken) {
         });
     })
     .catch((err) => console.log(err));
+}
+
+export async function devices(accessToken) {
+  const devices = await axios
+    .get("https://api.spotify.com/v1/me/player/devices", {
+      headers: {
+        Authorization: "Bearer " + accessToken,
+      },
+    })
+    .then((res) => {
+      return res.data.devices;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+  return devices;
+}
+
+export function setDevice(deviceId, accessToken) {
+  axios({
+    method: "put",
+    url: `https://api.spotify.com/v1/me/player`,
+    data: {
+      device_ids: [deviceId],
+    },
+    headers: {
+      Authorization: "Bearer " + accessToken,
+    },
+  }).catch((err) => {
+    console.log(err);
+  });
 }

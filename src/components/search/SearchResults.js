@@ -6,6 +6,7 @@ import ExpandedArtist from "./ExpandedArtist";
 import ExpandedPlaylist from "./ExpandedPlaylist";
 import ExpandedShow from "./ExpandedShow";
 import SearchItem from "./SearchItem";
+import ExpandedEpisode from "./ExpandedEpisode";
 // import SearchFactory from "./SearchFactory";
 
 const order = {
@@ -53,7 +54,7 @@ export default function SearchResults({
                 style={{ minWidth: titleCol }}
               >
                 <Row
-                  className='bg-dark justify-content-center py-2'
+                  className='justify-content-center py-2'
                   style={{
                     textShadow: "-1px -1px 10px black, 1px 1px 20px black",
                   }}
@@ -153,7 +154,7 @@ export default function SearchResults({
 
     case "episode":
       return (
-        <ExpandedShow
+        <ExpandedEpisode
           key={expanded[index].split(":")[2]}
           uri={expanded[index]}
           expanded={expanded}

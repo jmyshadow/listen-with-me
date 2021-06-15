@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Col, Row } from "react-bootstrap";
 import ListingHeader from "../generic/ListingHeader";
+import MiniNowPlaying from "./MiniNowPlaying";
 
-export default function NowPlaying({ nowPlaying }) {
+export default function NowPlaying({ nowPlaying, mini = false }) {
   const [image, setImage] = useState("../images/qmark.jpg");
   const [track, setTrack] = useState("");
   const [artist, setArtist] = useState("");
   const [album, setAlbum] = useState("");
-  const [width, setWidth] = useState("900px");
-  const theRow = useRef(null);
 
   useEffect(() => {
     if (!nowPlaying) return;
@@ -20,21 +19,28 @@ export default function NowPlaying({ nowPlaying }) {
     })();
   }, [setImage, setTrack, setAlbum, nowPlaying]);
 
-  useEffect(() => {
-    setWidth(theRow.current.clientWidth);
-  }, []);
-
   return (
-    <Row ref={theRow} noGutters>
-      <Col>
-        <ListingHeader
+    <>
+      {" "}
+      {mini ? (
+        <MiniNowPlaying
           image={image}
-          width={width}
           data1={track}
           data2={album}
           data3={artist}
         />
-      </Col>
-    </Row>
+      ) : (
+        <Row noGutters>
+          <Col>
+            <ListingHeader
+              image={image}
+              data1={track}
+              data2={album}
+              data3={artist}
+            />
+          </Col>
+        </Row>
+      )}
+    </>
   );
 }

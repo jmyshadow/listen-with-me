@@ -95,10 +95,10 @@ export default function SearchItem({
 
   return (
     <Col
-      className='nowPlaying p-2 clickable-icon meeds w-100'
+      className='search-item p-2 clickable-icon w-100'
       style={{ minWidth: width }}
     >
-      <Media>
+      <Media className='px-2'>
         <img
           src={imgUrl}
           alt='no img'

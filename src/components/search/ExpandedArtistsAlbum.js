@@ -37,7 +37,11 @@ export default function ExpandedArtistsAlbum({
       }}
     >
       <Card.Img variant='top' src={albumImage} />
-      <Card.Body style={{ padding: "1rem .5rem" }} onClick={expandSearch}>
+      <Card.Body
+        className='clickable-icon'
+        style={{ padding: "1rem .5rem" }}
+        onClick={expandSearch}
+      >
         <Card.Text
           style={{
             display: "inline-block",

@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState, useRef } from "react";
 import { Container, Col, Row } from "react-bootstrap";
-import { QueueContext, TokenContext } from "../context/SpotifyContext";
+import { TokenContext } from "../context/SpotifyContext";
 import NowPlaying from "./NowPlaying";
 import SPlayer from "./SPlayer";
 import QueueItem from "./QueueItem";
@@ -30,9 +30,10 @@ export default function Queue({
   const { player, nowPlaying, paused } = useSpotifyConnect(accessToken);
   const currentTrackRef = useRef(null);
   const [solo, setSolo] = useState(true);
-  const oldVol = useRef(null);
   const needsUpdateRef = useRef(false);
   const [playQueue, setPlayQueue] = useState([]);
+  const [muted, setMuted] = useState(false);
+  const [devices, setDevices] = useState([]);
 
   useEffect(() => {
     socket.on("isOnlyUser", (isSolo) => {
@@ -228,15 +229,7 @@ export default function Queue({
   };
 
   const togglePlay = () => {
-    if (solo) {
-      player.togglePlay();
-    } else if (oldVol.current) {
-      player.setVolume(oldVol.current);
-      oldVol.current = 0;
-    } else {
-      player.getVolume().then((vol) => (oldVol.current = vol));
-      player.setVolume(0);
-    }
+    solo ? player.togglePlay() : setMuted(!muted);
   };
 
   const removeItem = (index) => {
@@ -258,6 +251,16 @@ export default function Queue({
     console.log(currentTrackRef.current);
     setPlayQueue([...newQueue]);
     socket.emit("playItem", newQueue, uris);
+  };
+
+  const connect = async () => {
+    if (devices.length > 0) {
+      // set timeout to allow div animation to complete
+      setDevices([]);
+    } else {
+      const getDevices = await spotifyFetch.devices(accessToken);
+      setDevices(getDevices);
+    }
   };
 
   return (
@@ -312,10 +315,16 @@ export default function Queue({
         prev={prevSong}
         play={togglePlay}
         next={nextSong}
+        connect={connect}
+        muted={muted}
+        setMuted={setMuted}
         nowPlaying={nowPlaying}
         paused={paused}
         player={player}
         socket={socket}
+        searching={searching}
+        devices={devices}
+        setDevices={setDevices}
       />
     </>
   );

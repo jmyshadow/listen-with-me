@@ -1,6 +1,7 @@
 import React, { useRef, useEffect } from "react";
-import { Col } from "react-bootstrap";
+import { Row, Col } from "react-bootstrap";
 import SongTime from "../utilities/SongTime";
+import FASIcon from "../generic/FASIcon";
 
 export default function TrackListing({
   track,
@@ -8,7 +9,9 @@ export default function TrackListing({
   setExpanded,
   index,
   setIndex,
-  playlist,
+  playlist = false,
+  highlight = false,
+  setQueueQueue,
 }) {
   /**
       format for song queue
@@ -21,11 +24,9 @@ export default function TrackListing({
         id: track.id,
       },
    */
-
   function uriClicked(uri) {
-    const oldIndex = index;
-    setExpanded([...expanded, uri]);
-    setIndex(oldIndex + 1);
+    setExpanded((i) => [...i, uri]);
+    setIndex((i) => i + 1);
   }
 
   const mouseIn = useRef(null);
@@ -38,7 +39,6 @@ export default function TrackListing({
         let accel = 0;
         const scrolling = setInterval(() => {
           accel += 1;
-          console.log(accel);
           if (e.target.scrollLeft >= e.target.scrollLeftMax - 5)
             e.target.style.textOverflow = "clip";
           if (!mouseIn.current) clearInterval(scrolling);
@@ -59,78 +59,111 @@ export default function TrackListing({
 
     return () => {
       trackMain.current.removeEventListener("mouseenter", mouseenterHandler);
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       trackMain.current.removeEventListener("mouseleave", mouseleaveHandler);
     };
   });
 
+  function queueSong(track) {
+    setQueueQueue((i) => [
+      ...i,
+      {
+        song: track.name,
+        artist: track.artists,
+        album: track.album.name,
+        duration: track.duration_ms,
+        uri: track.uri,
+        id: track.id,
+      },
+    ]);
+  }
+
+  // function setupArtist() {
+  //   // removes main artist in album view, keeps all artists in playlist view
+  //   if (track.artists.length > 1) {
+  //     const otherArtists = track.artists.slice(1);
+  //     console.log(otherArtists);
+  //     console.log(otherArtists[0].name);
+  //     return (
+  //       " - " +
+  //       otherArtists.map((artist, index) => (
+  //         <span className='clickable' onClick={() => uriClicked(artist.uri)}>
+  //           {`${artist.name}${index < otherArtists.length - 1 ? ", " : ""}`}
+  //         </span>
+  //       ))
+  //     );
+  //   }
+  // }
   function setupArtist() {
     // removes main artist in album view, keeps all artists in playlist view
-    const otherArtists = playlist ? track.artists : track.artists.slice(1);
+    const otherArtists = track.artists.slice(1);
     if (otherArtists.length > 0)
       return (
-        // <div
-        //   style={{
-        //     display: "flex",
-        //     overflow: "hidden",
-        //     textOverflow: "ellipsis",
-        //   }}
-        //
-        otherArtists.map((artist, index) => (
-          <span className='clickable' onClick={() => uriClicked(artist.uri)}>
-            {`${artist.name}${index < otherArtists.length - 1 ? ", " : ""}`}
-          </span>
-        ))
-        // </div>
+        <>
+          {" - "}
+          {otherArtists.map((artist, index) => (
+            <>
+              <span
+                className='clickable'
+                onClick={() => uriClicked(artist.uri)}
+              >
+                {`${artist.name}`}
+              </span>
+              {`${index < otherArtists.length - 1 ? ", " : ""}`}
+            </>
+          ))}
+        </>
       );
   }
-  if (playlist) {
+
+  function setupAlbum() {
     return (
       <>
-        <Col>{track.name}</Col>
-        <Col> {setupArtist()} </Col>
-        <Col>{track.album.name}</Col>
-        <Col sm='auto'>
-          <SongTime milli={track.duration_ms} />
-        </Col>
-      </>
-    );
-  } else {
-    return (
-      <>
-        <Col
-          sm={10}
-          className='h-100 w-100 position-relative d-flex'
-          style={{
-            whiteSpace: "nowrap",
-          }}
-        >
-          {/* <div
-            className='h-100 d-flex flex-nowrap'
-            style={{
-              flex: 1,
-              whiteSpace: "nowrap",
-              wordBreak: "break-all",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-            }}
-          > */}
-          <div
-            style={{
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              scrollBehavior: "smooth",
-            }}
-            ref={trackMain}
-          >
-            {" " + track.name}
-            {track.artists.length > 1 ? " - " : ""} {/* </div> */}
-            {track.artists.length > 1 ? setupArtist() : ""}
-          </div>
-        </Col>
-        <Col sm='1' className='pl-3'>
-          <SongTime milli={track.duration_ms} />
-        </Col>
+        {" - "}
+        <span className='clickable' onClick={() => uriClicked(track.album.uri)}>
+          {track.album.name}
+        </span>
       </>
     );
   }
+
+  return (
+    <Row
+      className={`${
+        highlight ? "nowPlayingTrack" : "nowPlaying"
+      } pt-1 px-2 position-relative w-100`}
+      style={{ height: "2rem", zIndex: "5" }}
+      noGutters
+    >
+      <Col sm={1} className='text-center'>
+        <FASIcon
+          iClass='fas fa-plus-circle fa-lg clickable-icon'
+          iFunction={() => queueSong(track)}
+          iStyle={{ marginRight: "10px" }}
+        />
+      </Col>
+      <Col
+        sm={10}
+        className='h-100 w-100 position-relative d-flex'
+        style={{
+          whiteSpace: "nowrap",
+        }}
+      >
+        <div
+          style={{
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            scrollBehavior: "smooth",
+          }}
+          ref={trackMain}
+        >
+          {track.name}
+          {playlist ? setupAlbum() : setupArtist()}
+        </div>
+      </Col>
+      <Col sm='1' className='pl-3'>
+        <SongTime milli={track.duration_ms} />
+      </Col>
+    </Row>
+  );
 }

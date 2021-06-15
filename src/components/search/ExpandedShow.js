@@ -1,8 +1,11 @@
 import React, { useState, useEffect, useContext } from "react";
 import EpisodeListing from "../generic/EpisodeListing";
+import { Row, Col } from "react-bootstrap";
 // import useSpotifyApi from "../hooks/useSpotifyApi";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 import { TokenContext } from "../context/SpotifyContext";
+
+import ListingHeader from "../generic/ListingHeader";
 
 export default function ExpandedShow({
   uri,
@@ -49,16 +52,17 @@ export default function ExpandedShow({
 
   return (
     <>
-      {/**have show link to show incase viewing episode only */}
-      <h1> {showName} </h1>
-      <h4>{showDesc}</h4>
-      {episodes.map((episode) => (
+      <Row className='bg-dark' noGutters>
+        <Col className='w-100'>
+          <ListingHeader image={showName} data1={showDesc} />
+        </Col>
+      </Row>
+      {episodes.map((episode, index) => (
         <EpisodeListing
-          key={episode.id + Math.random()}
-          name={episode.name}
-          description={episode.description}
-          ms={episode.duration_ms}
-          id={episode.id}
+          key={index}
+          setQueueQueue={setQueueQueue}
+          setImmediateQueue={setImmediateQueue}
+          episode={episode}
           expanded={expanded}
           setExpanded={setExpanded}
           index={index}
