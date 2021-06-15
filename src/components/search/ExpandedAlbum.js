@@ -58,7 +58,7 @@ export default function ExpandedAlbum({
 
   return (
     <>
-      <Row className='bg-dark' noGutters>
+      <Row noGutters>
         <Col className='w-100'>
           <ListingHeader
             image={albumImage}
@@ -77,6 +77,7 @@ export default function ExpandedAlbum({
           setIndex={setIndex}
           accessToken={accessToken}
           highlight={trackNum && trackNum - 1 === index}
+          setQueueQueue={setQueueQueue}
         />
       ))}
     </>

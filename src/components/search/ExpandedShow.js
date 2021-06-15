@@ -52,7 +52,7 @@ export default function ExpandedShow({
 
   return (
     <>
-      <Row className='bg-dark' noGutters>
+      <Row noGutters>
         <Col className='w-100'>
           <ListingHeader image={showName} data1={showDesc} />
         </Col>

@@ -42,7 +42,7 @@ export default function ExpandedPlaylist({
 
   return (
     <>
-      <Row className='bg-dark' noGutters>
+      <Row noGutters>
         <Col className='w-100'>
           <ListingHeader
             image={playlistImage}
@@ -60,6 +60,7 @@ export default function ExpandedPlaylist({
           index={index}
           setIndex={setIndex}
           playlist={true}
+          setQueueQueue={setQueueQueue}
         />
       ))}
     </>

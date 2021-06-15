@@ -4,7 +4,6 @@ import { TokenContext } from "../context/SpotifyContext";
 import NowPlaying from "./NowPlaying";
 import SPlayer from "./SPlayer";
 import QueueItem from "./QueueItem";
-import FASIcon from "../generic/FASIcon";
 import useSpotifyConnect from "../hooks/useSpotifyConnect";
 import * as spotifyFetch from "../utilities/spotifyFetch.js";
 
@@ -236,6 +235,8 @@ export default function Queue({
     const newQueue = [...playQueue];
     newQueue.splice(index, 1);
     socket.emit("removedItem", newQueue);
+    needsUpdateRef.current = true;
+    setPlayQueue([...newQueue]);
   };
 
   const playItem = (index) => {
@@ -245,10 +246,7 @@ export default function Queue({
     newQueue.splice(index, 1);
     newQueue.splice(currentTrackRef.current, 0, playNow);
     const uris = newQueue.map((track) => track.uri);
-    console.log(currentTrackRef.current);
     spotifyFetch.playNow(uris, accessToken, 0, currentTrackRef.current);
-    console.log(index);
-    console.log(currentTrackRef.current);
     setPlayQueue([...newQueue]);
     socket.emit("playItem", newQueue, uris);
   };
@@ -268,8 +266,8 @@ export default function Queue({
       <Container className={searching ? "hideQueue" : "queue"} fluid>
         {nowPlaying ? <NowPlaying nowPlaying={nowPlaying} /> : null}
         {/** adding random number to entry id, in case same song queued more than once */}
-        <Row className='mx-4 px-4 py-2 border-bottom border-dark' noGutters>
-          <Col style={{ paddingTop: "1.25rem" }}>
+        <Row className='px-4 py-2 ' noGutters>
+          <Col className='pt-2 mb-2 border-bottom border-dark'>
             <h2> {playQueue.length > 0 ? "Up Next:" : "Nothing Queued!"} </h2>
           </Col>
         </Row>
@@ -277,37 +275,14 @@ export default function Queue({
         {
           // currentTrackIndex is in nowPlaying, and not displayed on queue
           playQueue.slice(currentTrackRef.current + 1).map((entry, index) => (
-            <Row
-              key={entry.id + Math.floor(Math.random() * 100000)}
-              className='row-nowrap nowPlaying pt-1 track-listing'
-              style={{ height: "2rem" }}
-              noGutters
-            >
-              <Col sm='auto'>
-                <FASIcon
-                  iClass='fas fa-play fa-lg clickable-icon rounded-circle'
-                  iFunction={() =>
-                    playItem(currentTrackRef.current + 1 + index)
-                  }
-                  iStyle={{ marginRight: "10px" }}
-                />
-              </Col>
-              <QueueItem
-                entry={entry}
-                setExpanded={setExpanded}
-                setSearching={setSearching}
-                expanded={expanded}
-              />
-              <Col sm='auto'>
-                <FASIcon
-                  iClass='fas fa-times-circle fa-lg clickable-icon rounded-circle'
-                  iFunction={() =>
-                    removeItem(currentTrackRef.current + 1 + index)
-                  }
-                  iStyle={{ marginLeft: "10px" }}
-                />
-              </Col>
-            </Row>
+            <QueueItem
+              entry={entry}
+              setExpanded={setExpanded}
+              setSearching={setSearching}
+              expanded={expanded}
+              playItem={() => playItem(currentTrackRef.current + 1 + index)}
+              removeItem={() => removeItem(currentTrackRef.current + 1 + index)}
+            />
           ))
         }
       </Container>

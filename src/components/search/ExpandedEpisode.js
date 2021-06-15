@@ -60,7 +60,7 @@ export default function ExpandedEpisode({
 
   return (
     <>
-      <Row className='bg-dark' noGutters>
+      <Row noGutters>
         <Col className=' w-100' onClick={() => uriClicked(showUri)}>
           <ListingHeader image={image} data1={showName} />
         </Col>

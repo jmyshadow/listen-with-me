@@ -31,18 +31,18 @@ export default function useSpotifyConnect(accessToken) {
         },
       })
         .catch(() => {
-          return axios.put(
-            `https://api.spotify.com/v1/me/player/play`,
-            {},
-            {
-              headers: {
-                Authorization: "Bearer " + accessToken,
-              },
+          return axios({
+            method: "put",
+            url: `https://api.spotify.com/v1/me/player/play`,
+            data: {
               params: {
                 device_id: device_id,
               },
-            }
-          );
+            },
+            headers: {
+              Authorization: "Bearer " + accessToken,
+            },
+          });
         })
         .catch(() => {
           alert("Spotify error: Transfer playback manually from Spotify");
